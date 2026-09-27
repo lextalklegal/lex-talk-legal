@@ -274,6 +274,18 @@ def main():
     xml += "".join(f"<url><loc>https://lextalk.legal{u}</loc><lastmod>{now}</lastmod></url>" for u in dict.fromkeys(urls))
     xml += "</urlset>"
     (ROOT / "sitemap.xml").write_text(xml, encoding="utf8")
+
+    # Cloudflare Workers Static Assets: explicitly proxy folder URLs to their
+    # index.html files. This keeps /courtrooms/ and /case-status/ working
+    # even if the asset router does not resolve nested index files as expected.
+    (ROOT / "_redirects").write_text(
+        "/courtrooms /courtrooms/ 301\n"
+        "/case-status /case-status/ 301\n"
+        "/courtrooms/ /courtrooms/index.html 200\n"
+        "/case-status/ /case-status/index.html 200\n",
+        encoding="utf8"
+    )
+
     print(f"Synced {len(arts)} Blogger articles and {len(videos)} YouTube videos.")
 
 if __name__ == "__main__":
