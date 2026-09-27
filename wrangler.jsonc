@@ -3,6 +3,7 @@
   "name": "lex-talk-legal",
   "compatibility_date": "2026-09-27",
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "html_handling": "auto-trailing-slash"
   }
 }
