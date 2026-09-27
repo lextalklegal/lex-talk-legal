@@ -120,3 +120,48 @@
     bd.classList.add('is-open'); document.body.classList.add('vc-modal-open');
   });
 })();
+
+// Homepage headline slider and floating quick links
+(function(){
+  const slider=document.getElementById('heroSlider');
+  if(slider){
+    const slides=[...slider.querySelectorAll('.hero-slide')];
+    const dots=[...slider.querySelectorAll('.hero-dots button')];
+    let idx=slides.findIndex(x=>x.classList.contains('active')); if(idx<0) idx=0;
+    let timer;
+    function show(n){
+      if(!slides.length) return;
+      idx=(n+slides.length)%slides.length;
+      slides.forEach((s,i)=>s.classList.toggle('active',i===idx));
+      dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+    }
+    function restart(){clearInterval(timer); if(slides.length>1) timer=setInterval(()=>show(idx+1),6500);}
+    dots.forEach((d,i)=>d.addEventListener('click',()=>{show(i);restart();}));
+    const prev=slider.querySelector('.hero-arrow.prev'), next=slider.querySelector('.hero-arrow.next');
+    if(prev) prev.addEventListener('click',()=>{show(idx-1);restart();});
+    if(next) next.addEventListener('click',()=>{show(idx+1);restart();});
+    slider.addEventListener('mouseenter',()=>clearInterval(timer));
+    slider.addEventListener('mouseleave',restart);
+    show(idx); restart();
+  }
+
+  const float=document.getElementById('floatingQuick');
+  if(float){
+    const toggle=float.querySelector('.floating-toggle');
+    function close(){float.classList.remove('open'); if(toggle) toggle.setAttribute('aria-expanded','false');}
+    if(toggle) toggle.addEventListener('click',e=>{e.stopPropagation(); const open=!float.classList.contains('open'); float.classList.toggle('open',open); toggle.setAttribute('aria-expanded',open?'true':'false');});
+    document.addEventListener('click',e=>{if(!float.contains(e.target)) close();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') close();});
+  }
+
+  document.querySelectorAll('.auction-widget').forEach(box=>{
+    const themes=['Residential Property','Commercial Property','Industrial Asset','Plot / Land','Vehicle Auction','Bank-Owned Asset'];
+    const theme=box.querySelector('.auction-theme');
+    if(theme) theme.textContent=themes[Math.floor(Math.random()*themes.length)];
+  });
+
+  const observer=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}});
+  },{threshold:.12}):null;
+  if(observer) document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+})();
