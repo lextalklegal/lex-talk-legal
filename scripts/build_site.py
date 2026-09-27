@@ -16,7 +16,7 @@ NAV = [
     ('Latest', '/'), ('Courts', '/category/courts/'), ('Law & Policy', '/category/law-policy/'),
     ('Banking Law', '/category/banking-law/'), ('DRT / DRAT', '/category/drt-drat/'),
     ('Legal Careers', '/category/legal-careers/'), ('DRA', '/category/dra/'),
-    ('Explained', '/category/explained/'), ('Courtrooms', '/courtrooms/'),
+    ('Bare Acts', 'https://indiacode.gov.in/'), ('Courtrooms', '/courtrooms/'),
     ('Case Status', '/case-status/'), ('Videos', '/videos/')
 ]
 
@@ -30,10 +30,14 @@ CATEGORY_MAP = {
     'explained': ('Explained', {'legal explained', 'explained', 'case laws explained', 'legal explainers'}),
 }
 
-CASE_STATUS_GENERIC_HC = 'https://hcservices.ecourts.gov.in/ecourtindiaHC/index_highcourt.php'
-ONECOURT_HC_VC = 'https://onecourt.in/VC_Hearing_Links.html'
+CASE_STATUS_GENERIC_HC = 'https://services.ecourts.gov.in/ecourtindia_v6/?p=casestatus/index&app_token=0dc6256584aa1dfddad859d53710b024acc973edfbbd1d5de5d935778a113e07'
+DRT_EFILING = 'https://efiling.drt.gov.in/'
+BARE_ACTS_URL = 'https://indiacode.gov.in/'
+ONECOURT_ROOT_VC = 'https://onecourt.in/VC_Hearing_Links.html'
 ONECOURT_SC_VC = 'https://onecourt.in/Supreme_Court_VC_Hearing_Links.html'
 ONECOURT_NCLT_VC = 'https://onecourt.in/vc-links/nclt/NCLT_VC_Hearing_Links.html'
+ONECOURT_NCLAT_VC = 'https://onecourt.in/vc-links/nclat/NCLAT_VC_Hearing_Links.html'
+VC_DATA_PATH = ROOT / 'data/vc_links.json'
 
 COURTS = {
     'high_courts': [
@@ -126,7 +130,20 @@ def youtube():
         except Exception: return []
 
 def nav_html():
-    return ''.join(f'<a href="{u}">{H.escape(x)}</a>' for x,u in NAV)
+    parts=[]
+    for x,u in NAV:
+        extra=' target="_blank" rel="noopener"' if u.startswith('http') else ''
+        parts.append(f'<a href="{H.escape(u,quote=True)}"{extra}>{H.escape(x)}</a>')
+    return ''.join(parts)
+
+def sync_nav(s):
+    nav=s.find('nav', class_='nav')
+    if not nav: return
+    wrap=nav.find(class_='wrap')
+    if not wrap: return
+    wrap.clear()
+    frag=BeautifulSoup(nav_html(),'html.parser')
+    for node in list(frag.contents): wrap.append(node)
 
 def page_shell(title, description, content):
     t=title[0] if isinstance(title,tuple) else title
@@ -178,42 +195,84 @@ def utility_card(icon,title,text,links):
     links_html=''.join(button(label,url,kind) for label,url,kind in links)
     return f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div><h3>{H.escape(title)}</h3><p>{H.escape(text)}</p></div><div class="card-actions">{links_html}</div></article>'
 
-def write_courtrooms_page():
-    sc_chips=''.join(f'<span class="court-chip">Court No. {i}</span>' for i in range(1,18))+''.join(f'<span class="court-chip">Registrar R-{i}</span>' for i in range(1,3))
-    hc_cards=''.join(utility_card('🏛️',name,'Official court website and national eCourts case-status entry point.',[
-        ('Official Court',url,'official'),('Case Status',CASE_STATUS_GENERIC_HC,'official'),('VC Directory',ONECOURT_HC_VC,'directory')]) for name,url in COURTS['high_courts'])
-    drt_cards=''.join(utility_card('⚖️',f'DRT — {city}','Use the official e-DRT portal to choose the tribunal, case service and current cause list / hearing information.',[
-        ('e-DRT Portal','https://drt.etribunals.gov.in/','official'),('DRT Website','https://drt.gov.in/','official')]) for city in COURTS['drt'])
-    drat_cards=''.join(utility_card('⚖️',f'DRAT — {city}','Official DRT/DRAT service entry point. Select the concerned tribunal and consult the current listing/cause information.',[
-        ('e-DRT Portal','https://drt.etribunals.gov.in/','official'),('DRT Website','https://drt.gov.in/','official')]) for city in COURTS['drat'])
-    nclt_cards=''.join(utility_card('🏢',f'NCLT — {bench}','Official NCLT bench information plus a current all-bench VC directory.',[
-        ('NCLT Website','https://nclt.gov.in/','official'),('VC Directory',ONECOURT_NCLT_VC,'directory')]) for bench in COURTS['nclt'])
-    nclat_cards=''.join(utility_card('🏢',name,'Official NCLAT bench information and case / cause-list services.',[
-        ('NCLAT Website','https://nclat.nic.in/','official'),('Cause / Case Status','https://nclat.nic.in/display-board/cases','official')]) for name in COURTS['nclat'])
-    delhi_cards=''.join(utility_card('🎥',name,'Public VC directory page; verify against the day\'s official cause list before joining.',[('Open VC Directory',url,'directory')]) for name,url in DELHI_DISTRICT_VC)
-    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>COURTROOMS &amp; VIRTUAL HEARINGS</h1><p class="lead">Court and tribunal access points in one place. Official court links are prioritised; third-party VC directories are clearly marked and should be checked against the current official cause list.</p><div class="directory-alert"><strong>Before joining a hearing:</strong> verify the court number, date and current VC details from the concerned court / tribunal cause list. VC links can change.</div>
-<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="featured-utility"><div><div class="court-icon large">⚖️</div><h3>Supreme Court Courtroom VC Directory</h3><p>Public directory covering Court Nos. 1–17 and Registrar Courts R-1/R-2. Use the official Supreme Court cause list to identify your courtroom before joining.</p><div class="chip-row">{sc_chips}</div></div><div class="card-actions">{button('Official Supreme Court','https://www.sci.gov.in/','official')}{button('Cause List','https://www.sci.gov.in/','official')}{button('VC Directory',ONECOURT_SC_VC,'directory')}</div></div></section>
-<section class="court-section"><div class="section-head"><h2>High Courts</h2></div><div class="section-tools"><span>25 High Courts</span>{button('High Court VC Directory',ONECOURT_HC_VC,'directory')}</div><div class="card-grid">{hc_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>Delhi District Courts — Featured VC Directories</h2></div><div class="card-grid">{delhi_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>DRT</h2></div><div class="card-grid">{drt_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>DRAT</h2></div><div class="card-grid">{drat_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>NCLT</h2></div><div class="section-tools"><span>15 Regional / Principal locations listed by NCLT</span>{button('NCLT VC Directory',ONECOURT_NCLT_VC,'directory')}</div><div class="card-grid">{nclt_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{nclat_cards}</div></section></main>'''
-    (ROOT/'courtrooms').mkdir(exist_ok=True); (ROOT/'courtrooms/index.html').write_text(page_shell(('Courtrooms & VC Links','/courtrooms/'),'Lex Talk Legal courtrooms, virtual hearing and court access directory.',content),encoding='utf8')
+def _load_vc_data():
+    try:
+        return json.loads(VC_DATA_PATH.read_text(encoding='utf8'))
+    except Exception:
+        return {}
+
+def _safe_url(u):
+    if not u: return ''
+    return u if re.match(r'^https?://', u, re.I) else ''
+
+def write_courtrooms_page(vc_data=None):
+    vc_data = vc_data or _load_vc_data()
+    sc = vc_data.get('supreme_court', [])
+    hcs = vc_data.get('high_courts', {})
+    drt_vc = vc_data.get('drt', {})
+    drat_vc = vc_data.get('drat', {})
+    nclt_vc = vc_data.get('nclt', {})
+    nclat_vc = vc_data.get('nclat', {})
+    delhi_vc = vc_data.get('delhi_district', {})
+
+    def vc_list_html(items, empty_text='VC link not available in the latest sync.'):
+        items=[x for x in items if isinstance(x,dict) and _safe_url(x.get('url'))]
+        if not items: return f'<div class="vc-empty">{H.escape(empty_text)}</div>'
+        return '<div class="vc-link-grid">'+''.join(
+            f'<a class="vc-link" href="{H.escape(x["url"],quote=True)}" target="_blank" rel="noopener">{H.escape(x.get("label") or "Join VC")}</a>'
+            for x in items)+'</div>'
+
+    def court_vc_card(icon,title,desc,links,official=''):
+        actions=''
+        if official: actions+=button('Official Court',official,'official')
+        return f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div><h3>{H.escape(title)}</h3><p>{H.escape(desc)}</p>{vc_list_html(links)}</div><div class="card-actions">{actions}</div></article>'
+
+    sc_cards=''.join(court_vc_card('⚖️', x.get('label','Supreme Court VC'), 'Direct public VC joining link extracted from the current rendered directory.', [x]) for x in sc)
+    if not sc_cards:
+        sc_cards = court_vc_card('⚖️','Supreme Court VC','Direct VC links are refreshed from the current public directory. Verify the courtroom against the Supreme Court cause list.',[], 'https://www.sci.gov.in/')
+
+    hc_cards=''
+    for name, url in COURTS['high_courts']:
+        items=hcs.get(name,[])
+        hc_cards += court_vc_card('🏛️', name, 'Official court website plus direct public VC joining links refreshed from the rendered directory.', items, url)
+
+    def grouped_cards(data, prefix, icon, official_url=None):
+        out=''
+        if prefix=='DRT': names=COURTS['drt']
+        elif prefix=='DRAT': names=COURTS['drat']
+        elif prefix=='NCLT': names=COURTS['nclt']
+        else: names=COURTS['nclat']
+        for name in names:
+            key=f'{prefix} — {name}'
+            items=data.get(key, data.get(name, []))
+            out += court_vc_card(icon,key,'Direct public VC joining links refreshed from the current public VC directory. Always verify the day’s cause list.', items, official_url or '')
+        return out
+
+    delhi_cards=''.join(court_vc_card('🎥', name, 'Direct public Delhi District Court VC links refreshed from the current public directory.', items, 'https://delhidistrictcourts.nic.in/') for name,items in delhi_vc.items())
+
+    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>COURTROOMS &amp; VIRTUAL HEARINGS</h1><p class="lead">Choose a court or tribunal and open its public courtroom / VC link directly. Lex Talk Legal does not route visitors through the OneCourt website; the public destination URLs are extracted from the rendered directory and published here.</p><div class="directory-alert"><strong>Important:</strong> VC links can change. Before joining, verify the court number, date and current VC details against the concerned court / tribunal cause list. The VC-directory data is informational only.</div>
+<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="card-grid">{sc_cards}</div></section>
+<section class="court-section"><div class="section-head"><h2>High Courts</h2></div><div class="card-grid">{hc_cards}</div></section>
+<section class="court-section"><div class="section-head"><h2>Delhi District Courts</h2></div><div class="card-grid">{delhi_cards or court_vc_card('🎥','Delhi District Courts','Use the public VC directory data refreshed by the automated sync.',[], 'https://delhidistrictcourts.nic.in/')}</div></section>
+<section class="court-section"><div class="section-head"><h2>DRT</h2></div><div class="card-grid">{grouped_cards(drt_vc,'DRT','⚖️',DRT_EFILING)}</div></section>
+<section class="court-section"><div class="section-head"><h2>DRAT</h2></div><div class="card-grid">{grouped_cards(drat_vc,'DRAT','⚖️',DRT_EFILING)}</div></section>
+<section class="court-section"><div class="section-head"><h2>NCLT</h2></div><div class="card-grid">{grouped_cards(nclt_vc,'NCLT','🏢','https://nclt.gov.in/')}</div></section>
+<section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{grouped_cards(nclat_vc,'NCLAT','🏢','https://nclat.nic.in/')}</div></section></main>'''
+    (ROOT/'courtrooms').mkdir(exist_ok=True); (ROOT/'courtrooms/index.html').write_text(page_shell(('Courtrooms & VC Links','/courtrooms/'),'Lex Talk Legal direct public courtroom and virtual hearing links for Indian courts and tribunals.',content),encoding='utf8')
 
 def write_case_status_page():
-    hc_cards=''.join(utility_card('🔎',name,'Open the official court website or the national High Court eCourts case-status entry point.',[
+    hc_cards=''.join(utility_card('🔎',name,'Open the official court website or the national eCourts case-status service.',[
         ('Court Website',url,'official'),('Case Status',CASE_STATUS_GENERIC_HC,'official')]) for name,url in COURTS['high_courts'])
-    drt_cards=''.join(utility_card('🔎',f'DRT — {city}','Official e-DRT case-status portal. Select the tribunal and search by the available case / diary fields.',[
-        ('e-DRT Case Status','https://drt.etribunals.gov.in/','official')]) for city in COURTS['drt'])
-    drat_cards=''.join(utility_card('🔎',f'DRAT — {city}','Official DRT/DRAT service portal for case information and listing services.',[
-        ('e-DRT Portal','https://drt.etribunals.gov.in/','official')]) for city in COURTS['drat'])
-    nclt_cards=''.join(utility_card('🔎',f'NCLT — {bench}','Official NCLT case-status service with bench selection and CAPTCHA-protected search.',[
+    drt_cards=''.join(utility_card('🔎',f'DRT — {city}','Official DRT e-filing / case-service entry point.',[
+        ('DRT Case Services',DRT_EFILING,'official')]) for city in COURTS['drt'])
+    drat_cards=''.join(utility_card('🔎',f'DRAT — {city}','Official DRT e-filing / case-service entry point.',[
+        ('DRAT / DRT Portal',DRT_EFILING,'official')]) for city in COURTS['drat'])
+    nclt_cards=''.join(utility_card('🔎',f'NCLT — {bench}','Official NCLT case-status service with bench selection and access controls.',[
         ('Case Status','https://efiling.nclt.gov.in/nclt/public/case_status.php','official'),('Case History','https://efiling.nclt.gov.in/casehistorybeforeloginmenutrue.drt','official')]) for bench in COURTS['nclt'])
-    nclat_cards=''.join(utility_card('🔎',name,'Official NCLAT case-status search. The portal may require case details / CAPTCHA.',[
+    nclat_cards=''.join(utility_card('🔎',name,'Official NCLAT public case / listing service.',[
         ('Case Status','https://nclat.nic.in/display-board/cases','official'),('e-Filing Portal','https://efiling.nclat.gov.in/mainPage.drt','official')]) for name in COURTS['nclat'])
-    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>CASE STATUS</h1><p class="lead">Choose the court or tribunal and open the relevant official public case-status service. Where a central selection portal is used, the portal will ask you to select the concerned court / bench.</p><div class="directory-alert"><strong>Official portal note:</strong> some case-status services use CAPTCHA or other access controls. This site links to the public portal and does not bypass those controls.</div>
-<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="card-grid">{utility_card('🔎','Supreme Court Case Status','Official Supreme Court case-status and court-services entry point.',[('Case Status','https://www.sci.gov.in/case-status-court/','official'),('Supreme Court Website','https://www.sci.gov.in/','official')])}</div></section>
+    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>CASE STATUS</h1><p class="lead">Choose the court or tribunal and open the relevant official public case-status service.</p><div class="directory-alert"><strong>Official portal note:</strong> some services use CAPTCHA or other access controls. This site links to the public portal and does not bypass those controls.</div>
+<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="card-grid">{utility_card('🔎','Supreme Court Case Status','Official Supreme Court case-status and court-services entry point.', [('Case Status','https://www.sci.gov.in/case-status-court/','official'),('Supreme Court Website','https://www.sci.gov.in/','official')])}</div></section>
 <section class="court-section"><div class="section-head"><h2>High Courts</h2></div><div class="card-grid">{hc_cards}</div></section>
 <section class="court-section"><div class="section-head"><h2>DRT</h2></div><div class="card-grid">{drt_cards}</div></section>
 <section class="court-section"><div class="section-head"><h2>DRAT</h2></div><div class="card-grid">{drat_cards}</div></section>
@@ -221,10 +280,139 @@ def write_case_status_page():
 <section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{nclat_cards}</div></section></main>'''
     (ROOT/'case-status').mkdir(exist_ok=True); (ROOT/'case-status/index.html').write_text(page_shell(('Case Status','/case-status/'),'Lex Talk Legal official public case-status entry points for Indian courts and tribunals.',content),encoding='utf8')
 
+def extract_onecourt_vc():
+    data=_load_vc_data()
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as e:
+        print('OneCourt extraction unavailable (Playwright import):', e)
+        return data
+
+    HOST='https://onecourt.in'
+    def norm(h):
+        return urllib.parse.urljoin(HOST,h) if h else ''
+    def is_direct(h):
+        if not h or 'onecourt.in' in h.lower(): return False
+        return any(x in h.lower() for x in ['webex.com','teams.live.com','teams.microsoft.com','meet.google.com','zoom.us','vcourts.gov.in'])
+
+    def extract_on_page(page):
+        rows=page.locator('a,button,[role="button"]').evaluate_all('''els => els.map(el=>({tag:el.tagName,text:(el.innerText||el.textContent||'').trim(),href:el.getAttribute('href')||'',dataUrl:el.getAttribute('data-url')||'',dataHref:el.getAttribute('data-href')||'',onclick:el.getAttribute('onclick')||'',context:(el.closest('article,tr,li,.card,.court-card')?.innerText||el.parentElement?.innerText||'').trim()}))''')
+        out=[]
+        for r in rows:
+            if 'join vc' not in r.get('text','').lower(): continue
+            candidates=[r.get('href',''),r.get('dataUrl',''),r.get('dataHref','')]
+            m=re.search(r"https?://[^'\\\"\\s)]+",r.get('onclick',''))
+            if m: candidates.append(m.group(0))
+            url=next((norm(c) for c in candidates if is_direct(norm(c))), '')
+            if url:
+                ctx=(r.get('context') or r.get('text') or 'Join VC').split('\\n')
+                label=next((z.strip() for z in ctx if z.strip() and 'join vc' not in z.lower()), 'Join VC')
+                out.append({'label':label[:120],'url':url})
+        buttons=page.locator('button,[role="button"]').filter(has_text=re.compile('Join VC',re.I))
+        count=buttons.count()
+        for i in range(min(count,300)):
+            try:
+                b=buttons.nth(i)
+                if b.get_attribute('disabled'): continue
+                b.click(timeout=1500)
+                page.wait_for_timeout(100)
+                links=page.locator('a').filter(has_text=re.compile('Join VC hearing link',re.I))
+                if links.count():
+                    u=links.last.get_attribute('href') or ''
+                    u=norm(u)
+                    if is_direct(u):
+                        ctx=(b.inner_text() or '').strip() or 'Join VC'
+                        if not any(x.get('url')==u for x in out): out.append({'label':ctx,'url':u})
+                canc=page.locator('button').filter(has_text=re.compile('Cancel|×',re.I))
+                if canc.count(): canc.last.click(timeout=1000)
+            except Exception:
+                continue
+        return out
+
+    def load(page,url):
+        page.goto(url, wait_until='domcontentloaded', timeout=60000)
+        page.wait_for_timeout(2500)
+        try:
+            if 'Unpacking' in page.locator('body').inner_text(): page.wait_for_timeout(4000)
+        except Exception: pass
+
+    pages=[]
+    with sync_playwright() as p:
+        browser=p.chromium.launch(headless=True)
+        context=browser.new_context(user_agent='Mozilla/5.0 LexTalkLegal VC Directory Sync')
+        page=context.new_page()
+        try:
+            load(page,ONECOURT_SC_VC)
+            links=extract_on_page(page)
+            if links: data['supreme_court']=links
+            load(page,ONECOURT_ROOT_VC)
+            hrefs=page.locator('a[href]').evaluate_all('els => els.map(a=>a.href)')
+            for h in hrefs:
+                if h.startswith(HOST) and '/vc-links/' in h and h not in pages: pages.append(h)
+            for _,u in DELHI_DISTRICT_VC:
+                if u not in pages: pages.append(u)
+            for u in [ONECOURT_NCLT_VC,ONECOURT_NCLAT_VC]:
+                if u not in pages: pages.append(u)
+            for u in pages:
+                try:
+                    load(page,u); links=extract_on_page(page)
+                except Exception as e:
+                    print('OneCourt page failed:',u,e); continue
+                try: title=page.locator('h1').first.inner_text().strip()
+                except Exception: title=''
+                text_title=title or u
+                low=text_title.lower()
+                ulow=u.lower()
+                if 'nclt' in low or 'nclt' in ulow:
+                    matched=None
+                    for bench in COURTS['nclt']:
+                        stem=bench.lower().replace('principal bench / ','').replace('bench','').strip()
+                        if stem and stem in low:
+                            matched=bench; break
+                    data.setdefault('nclt',{})[f'NCLT — {matched or text_title}']=links
+                elif 'nclat' in low or 'nclat' in ulow:
+                    matched=None
+                    for bench in COURTS['nclat']:
+                        stem=bench.lower().replace('principal bench / ','').replace('bench','').strip()
+                        if stem and stem in low:
+                            matched=bench; break
+                    data.setdefault('nclat',{})[f'NCLAT — {matched or text_title}']=links
+                elif 'districtcourts' in ulow:
+                    data.setdefault('delhi_district',{})[text_title]=links
+                elif 'drat' in low or 'drat' in ulow or 'debt recovery appellate' in low:
+                    matched=None
+                    for city in COURTS['drat']:
+                        if city.lower() in low: matched=city; break
+                    data.setdefault('drat',{})[f'DRAT — {matched or text_title}']=links
+                elif 'drt' in low or '/drt/' in ulow or 'debt recovery tribunal' in low:
+                    matched=None
+                    for city in COURTS['drt']:
+                        if city.lower() in low: matched=city; break
+                    data.setdefault('drt',{})[f'DRT — {matched or text_title}']=links
+                else:
+                    matched=None
+                    for name,_ in COURTS['high_courts']:
+                        lowname=name.lower()
+                        stem=lowname.replace(' high court','')
+                        if lowname in low or stem in low:
+                            matched=name; break
+                    if matched: data.setdefault('high_courts',{})[matched]=links
+        finally:
+            browser.close()
+    VC_DATA_PATH.parent.mkdir(exist_ok=True)
+    VC_DATA_PATH.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf8')
+    total=0
+    for v in data.values():
+        if isinstance(v,list): total += len(v)
+        elif isinstance(v,dict): total += sum(len(x) for x in v.values() if isinstance(x,list))
+    print('OneCourt direct VC destinations extracted:', total)
+    return data
+
 def sync_homepage(arts,videos):
     p=ROOT/'index.html'
     if not p.exists(): return
     s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
+    sync_nav(s)
     style=s.find('style',{'data-embedded':'lex-talk-legal'})
     if style: style.string=CSS
     old=s.find('script',{'data-embedded':'lex-talk-legal'})
@@ -254,8 +442,9 @@ def refresh_static_pages():
         if rel in {'videos/index.html','courtrooms/index.html','case-status/index.html'}: continue
         try: s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
         except Exception: continue
+        sync_nav(s)
         style=s.find('style',{'data-embedded':'lex-talk-legal'}); script=s.find('script',{'data-embedded':'lex-talk-legal'})
-        changed=False
+        changed=True
         if style: style.string=CSS; changed=True
         if script: script.string=JS; changed=True
         if changed: p.write_text(str(s),encoding='utf8')
@@ -270,7 +459,7 @@ def main():
     d=ROOT/'article'; d.mkdir(exist_ok=True)
     for f in d.glob('*.html'): f.unlink()
     for a in arts: (d/(slug(a['title'])+'.html')).write_text(article(a),encoding='utf8')
-    write_category_pages(arts); write_videos_page(videos); write_courtrooms_page(); write_case_status_page(); sync_homepage(arts,videos); refresh_static_pages()
+    write_category_pages(arts); write_videos_page(videos); vc_data=extract_onecourt_vc(); write_courtrooms_page(vc_data); write_case_status_page(); sync_homepage(arts,videos); refresh_static_pages()
     urls=['/','/courtrooms/','/case-status/','/videos/']+[f'/category/{k}/' for k in CATEGORY_MAP]+[a['url'] for a in arts]
     now=datetime.now(timezone.utc).date().isoformat(); xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'; xml+=''.join(f'<url><loc>https://lextalk.legal{u}</loc><lastmod>{now}</lastmod></url>' for u in dict.fromkeys(urls))+'</urlset>'; (ROOT/'sitemap.xml').write_text(xml,encoding='utf8')
     print(f'Synced {len(arts)} Blogger articles and {len(videos)} YouTube videos; refreshed courtrooms and case-status directories.')
