@@ -1,0 +1,47 @@
+
+:root{
+  --bg:#f5f7fb;
+  --surface:#ffffff;
+  --surface-2:#eef2f7;
+  --text:#111827;
+  --muted:#64748b;
+  --line:#dbe2ea;
+  --brand:#0b3b78;
+  --brand-2:#123f78;
+  --accent:#d4a72c;
+  --shadow:0 8px 24px rgba(15,23,42,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.6}
+a{color:inherit}
+img{max-width:100%;height:auto}
+.container{width:min(1180px,92%);margin:auto}
+header,.site-header{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 0}
+.logo{max-height:62px;width:auto}
+.nav{display:flex;gap:16px;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+.nav a{text-decoration:none;font-weight:700;font-size:14px}
+.nav a:hover{color:var(--brand)}
+.topbar{font-size:12px;color:var(--muted);background:var(--surface-2);padding:5px 0}
+button,.btn{border:1px solid var(--line);background:var(--surface);padding:9px 13px;border-radius:8px;cursor:pointer}
+main{padding:28px 0}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+h1,h2,h3{line-height:1.25}
+h1{font-size:34px}
+h2{font-size:25px}
+.article-card{margin-bottom:18px}
+.article-card h2{margin-top:0}
+.meta{font-size:13px;color:var(--muted)}
+.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:var(--surface-2);font-size:12px;font-weight:700}
+footer{background:#0b1220;color:#dbe4f0;margin-top:40px;padding:35px 0}
+footer a{color:#fff}
+.search{width:100%;padding:12px;border:1px solid var(--line);border-radius:8px}
+.ad-slot{min-height:90px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);margin:18px 0}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.nav{gap:10px}.masthead{align-items:flex-start}.logo{max-height:50px}h1{font-size:28px}}
+body.dark{
+  --bg:#0d1117;--surface:#151b23;--surface-2:#202938;--text:#e6edf3;--muted:#9aa7b5;--line:#303b4a;--shadow:0 8px 24px rgba(0,0,0,.28)
+}
+body.dark header,body.dark .site-header{background:var(--surface)}
+body.dark footer{background:#070a0f}
