@@ -80,24 +80,12 @@ DELHI_DISTRICT_VC = [
     ('North-West District — Rohini', 'https://onecourt.in/vc-links/delhi/districtcourts/North-West_District_VC_Links.html'),
 ]
 
-DIRECT_VC_DOMAINS = (
-    'webex.com', 'meet.google.com', 'zoom.us', 'teams.live.com', 'teams.microsoft.com', 'vcourts.gov.in'
-)
-
-GENERIC_LABELS = {
-    'join vc', 'district court join vc', 'family court join vc', 'digital court join vc',
-    'digital traffic court join vc', 'join vc hearing link', 'vc hearing links', 'vc link'
-}
-
-
 def fetch(url):
-    req = urllib.request.Request(url, headers={'User-Agent':'Mozilla/5.0 LexTalkLegalBot/2.0'})
-    return urllib.request.urlopen(req, timeout=45).read()
-
+    req = urllib.request.Request(url, headers={'User-Agent':'LexTalkLegalBot/1.0'})
+    return urllib.request.urlopen(req, timeout=30).read()
 
 def slug(s):
     return re.sub(r'-+', '-', re.sub(r'[^a-zA-Z0-9\s-]', '', s).strip().lower().replace(' ', '-'))[:90] or 'article'
-
 
 def clean(raw):
     soup = BeautifulSoup(raw or '', 'html.parser')
@@ -105,7 +93,6 @@ def clean(raw):
     for a in soup.find_all('a', href=True):
         a['target'] = '_blank'; a['rel'] = 'noopener'
     return str(soup)
-
 
 def blogger():
     try: root = ET.fromstring(fetch(f'{BLOGGER}/feeds/posts/default?alt=atom&max-results=50'))
@@ -122,7 +109,6 @@ def blogger():
         text=' '.join(soup.stripped_strings)
         out.append({'title':title,'url':'/article/'+slug(title)+'.html','source_url':link,'published':pub,'labels':labels,'category':labels[0] if labels else 'Legal News','image':img.get('src') if img else '','excerpt':text[:210]+('…' if len(text)>210 else ''),'content':clean(raw)})
     return out
-
 
 def youtube():
     channel_id=CHANNEL_ID
@@ -143,7 +129,6 @@ def youtube():
         try: return json.loads((ROOT/'data/youtube.json').read_text(encoding='utf8'))
         except Exception: return []
 
-
 def nav_html():
     parts=[]
     for x,u in NAV:
@@ -151,15 +136,14 @@ def nav_html():
         parts.append(f'<a href="{H.escape(u,quote=True)}"{extra}>{H.escape(x)}</a>')
     return ''.join(parts)
 
-
 def sync_nav(s):
     nav=s.find('nav', class_='nav')
     if not nav: return
     wrap=nav.find(class_='wrap')
     if not wrap: return
-    wrap.clear(); frag=BeautifulSoup(nav_html(),'html.parser')
+    wrap.clear()
+    frag=BeautifulSoup(nav_html(),'html.parser')
     for node in list(frag.contents): wrap.append(node)
-
 
 def page_shell(title, description, content):
     t=title[0] if isinstance(title,tuple) else title
@@ -173,381 +157,294 @@ def page_shell(title, description, content):
 <header class="masthead"><a href="/" aria-label="Lex Talk Legal Home"><img src="{LOGO}" alt="Lex Talk Legal"></a></header>
 <nav class="nav"><div class="wrap">{nav_html()}</div></nav>{content}
 <footer><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.<br>Digital Legal News &amp; Legal Education Platform.</p><p>Adv. Gagann Jha, Advocate, Supreme Court of India<br>LEXBOTICS AI MEDIA LLP</p></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/videos/">Latest Videos</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@lextalklegal" target="_blank" rel="noopener">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener">Telegram</a></li></ul></div><div><h3>Contact &amp; Legal</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy</a></li><li><a href="/terms-of-use.html">Terms</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright Policy</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer>
-<div id="google_translate_element" aria-hidden="true"></div><script data-embedded="lex-talk-legal">{JS}</script></body></html>'''
-
+{global_widget_markup()}<div id="google_translate_element" aria-hidden="true"></div><script data-embedded="lex-talk-legal">{JS}</script></body></html>'''
 
 def article(a):
     im=f'<img class="article-hero" src="{H.escape(a["image"],quote=True)}" alt="">' if a['image'] else ''
     body=f'''<main class="article-wrap"><div class="meta">{H.escape(a["category"])} · {H.escape(a["published"][:10])}</div><h1>{H.escape(a["title"])}</h1><div class="article-meta">Lex Talk Legal · <a href="{H.escape(a["source_url"],quote=True)}" target="_blank" rel="noopener">Original Blogger post</a></div>{im}<div class="article-body">{a["content"]}</div><div class="notice">For educational and informational use. Verify important legal facts, orders and case status from the concerned official source.</div></main>'''
     return page_shell((a['title'],a['url']),a['excerpt'],body)
 
-
 def article_card(a):
     image=f'<div class="cardimg"><img src="{H.escape(a["image"],quote=True)}" alt="" loading="lazy"></div>' if a.get('image') else '<div class="thumb">LEGAL NEWS</div>'
     return f'<article class="card">{image}<div class="meta">{H.escape(a["category"])} · {H.escape(a["published"][:10])}</div><h3><a href="{a["url"]}">{H.escape(a["title"])}</a></h3><p>{H.escape(a["excerpt"])}</p></article>'
-
 
 def video_card(v):
     thumb=H.escape(v.get('thumbnail',''),quote=True); title=H.escape(v.get('title','Lex Talk Legal')); date=H.escape(v.get('published','')[:10]); url=H.escape(v.get('url','https://www.youtube.com/@lextalklegal'),quote=True)
     visual = f'<img src="{thumb}" alt="" loading="lazy">' if thumb else '<div class="yt-mark">▶</div>'
     return f'<article class="yt-card"><a href="{url}" target="_blank" rel="noopener"><div class="video-thumb">{visual}<span class="play">▶</span></div></a><div class="meta">{date}</div><h3><a href="{url}" target="_blank" rel="noopener">{title}</a></h3><a class="button redbtn" href="{url}" target="_blank" rel="noopener">Watch on YouTube</a></article>'
 
-
 def category_matches(a,key):
     labels={str(x).strip().lower() for x in a.get('labels',[])}; title=a.get('title','').lower(); _,terms=CATEGORY_MAP[key]
     return bool(labels & terms) or any(t in title for t in terms)
 
 
+GUIDES = {
+    'courts': {
+        'name': 'Courts', 'kicker': 'INDIAN JUDICIARY EXPLAINED',
+        'intro': 'A practical guide to India’s judicial structure — Supreme Court, High Courts, District & Subordinate Courts, tribunals and digital court services.',
+        'history': [
+            ('1937', 'Federal Court', 'The Federal Court functioned during the pre-Constitution period and preceded the Supreme Court.'),
+            ('1950', 'Supreme Court', 'The Supreme Court came into existence with the Constitution on 26 January 1950 and was inaugurated on 28 January 1950.'),
+            ('1958', 'Present building', 'The Supreme Court moved from the old Parliament House to its present Tilak Marg building in New Delhi in 1958.'),
+            ('Today', 'Multi-level system', 'India operates through the Supreme Court, High Courts and District & Subordinate Courts, alongside specialised tribunals created by statute.')
+        ],
+        'laws': [
+            ('Constitution of India', 'Articles 124 onward deal with the Supreme Court; Article 214 deals with High Courts; Part VI and the constitutional framework govern the subordinate judiciary.', 'https://www.sci.gov.in/jurisdiction/'),
+            ('Code of Civil Procedure, 1908', 'Core procedural framework for civil litigation, subject to special statutes and court rules.', 'https://indiacode.gov.in/'),
+            ('Bharatiya Nagarik Suraksha Sanhita, 2023', 'Criminal procedure framework currently in force, subject to transition and case-specific provisions.', 'https://indiacode.gov.in/'),
+            ('e-Courts services', 'Digital case information, cause lists and other court services are part of India’s e-Courts ecosystem.', 'https://doj.gov.in/')
+        ],
+        'flow': ['Cause / dispute', 'Trial or original forum', 'High Court / appellate forum', 'Supreme Court / final appellate or constitutional route'],
+        'sources': [
+            ('Supreme Court — History', 'https://www.sci.gov.in/about-department/history/'),
+            ('Supreme Court — Jurisdiction', 'https://www.sci.gov.in/jurisdiction/'),
+            ('Department of Justice', 'https://doj.gov.in/'),
+            ('e-Courts Project', 'https://dashboard.doj.gov.in/ecourts-projects-phaseI/index.php')
+        ]
+    },
+    'law-policy': {
+        'name': 'Law & Policy', 'kicker': 'LAWMAKING & PUBLIC POLICY',
+        'intro': 'Understand how policy ideas, Bills, Acts, rules, regulations, notifications and judicial interpretation interact in India.',
+        'history': [
+            ('1950', 'Constitutional framework', 'The Constitution became the foundation for institutions, fundamental rights, governance and the distribution of legislative and judicial powers.'),
+            ('Parliament', 'Bill stage', 'Legislative proposals are introduced in the form of Bills and move through consideration and voting in Parliament.'),
+            ('Assent', 'Act of Parliament', 'A Bill passed by both Houses and assented to by the President becomes an Act.'),
+            ('Implementation', 'Rules & notifications', 'Delegated/subordinate legislation and administrative notifications may provide the operational framework under an Act.')
+        ],
+        'laws': [
+            ('Constitution of India', 'Defines legislative fields, institutional powers, rights and the constitutional limits within which legislation operates.', 'https://legislative.gov.in/constitution-of-india/'),
+            ('Parliamentary lawmaking', 'Digital Sansad explains Bills, readings, consideration, voting and the President’s assent.', 'https://sansad.in/rs/legislation/introduction'),
+            ('Subordinate legislation', 'Rules, regulations, orders and notifications may be framed under authority delegated by an Act.', 'https://www.legislative.gov.in/'),
+            ('India Code', 'Central Acts and related legislative material are available through the official India Code portal.', 'https://indiacode.gov.in/')
+        ],
+        'flow': ['Policy objective', 'Bill / legislative proposal', 'Parliamentary consideration', 'Presidential assent', 'Rules / notifications', 'Implementation & judicial review'],
+        'sources': [
+            ('Digital Sansad — How a Bill becomes an Act', 'https://sansad.in/ls/legislation/introduction'),
+            ('Legislative Department', 'https://legislative.gov.in/'),
+            ('India Code', 'https://indiacode.gov.in/'),
+            ('Department of Justice', 'https://doj.gov.in/')
+        ]
+    },
+    'banking-law': {
+        'name': 'Banking Law', 'kicker': 'BANKING, CREDIT & RECOVERY',
+        'intro': 'A practical legal map of banking regulation, loans, security enforcement, recovery, insolvency, customer protection and dispute resolution.',
+        'history': [
+            ('1934', 'RBI Act', 'The Reserve Bank of India Act, 1934 forms a foundational part of the statutory framework governing the central bank.'),
+            ('1949', 'Banking Regulation Act', 'The Banking Regulation Act, 1949 consolidated and amended the law relating to banking.'),
+            ('1993', 'Debt recovery tribunals', 'The Recovery of Debts and Bankruptcy Act framework created a specialised tribunal mechanism for expeditious adjudication and recovery of specified bank / financial-institution debts.'),
+            ('2002', 'SARFAESI', 'SARFAESI created a statutory framework for securitisation, reconstruction and enforcement of security interests.'),
+            ('2016', 'IBC', 'The Insolvency and Bankruptcy Code, 2016 consolidated the insolvency framework and established IBBI.')
+        ],
+        'laws': [
+            ('RBI Act, 1934', 'Statutory foundation for the Reserve Bank and several monetary / regulatory functions.', 'https://indiacode.gov.in/'),
+            ('Banking Regulation Act, 1949', 'Core banking regulation statute.', 'https://indiacode.gov.in/'),
+            ('SARFAESI Act, 2002', 'Security-interest enforcement, securitisation and reconstruction framework.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/2006?view_type=browse'),
+            ('Recovery of Debts and Bankruptcy Act, 1993', 'Specialised tribunal framework for specified debt-recovery disputes.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/1775?view_type=browse'),
+            ('IBC, 2016', 'Insolvency resolution and liquidation framework, with different fora and rules for different debtor categories.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/2154?view_type=browse')
+        ],
+        'flow': ['Loan / credit facility', 'Default / regulatory trigger', 'Notice / restructuring / recovery action', 'DRT / SARFAESI / IBC / civil forum as applicable', 'Order / recovery / resolution'],
+        'sources': [
+            ('India Code', 'https://indiacode.gov.in/'),
+            ('RBI', 'https://www.rbi.org.in/'),
+            ('DRT', 'https://drt.gov.in/'),
+            ('IBBI', 'https://ibbi.gov.in/')
+        ]
+    },
+    'drt-drat': {
+        'name': 'DRT / DRAT', 'kicker': 'DEBT RECOVERY TRIBUNALS EXPLAINED',
+        'intro': 'Understand what DRTs and DRATs do, how the 1993 debt-recovery framework evolved, and where SARFAESI / insolvency proceedings can intersect with tribunal practice.',
+        'history': [
+            ('1993', 'Tribunal framework', 'The Recovery of Debts Due to Banks and Financial Institutions Act, 1993 established a specialised mechanism for expeditious adjudication and recovery of specified debts.'),
+            ('2002', 'SARFAESI', 'SARFAESI introduced a separate statutory security-enforcement framework with a remedy before DRT against specified measures.'),
+            ('2016', 'RDB Act & DRAT framework', 'The debt-recovery statute is now titled the Recovery of Debts and Bankruptcy Act, 1993, with appellate tribunals for specified appeals.'),
+            ('2016 onward', 'IBC era', 'IBC added a separate insolvency architecture; the competent forum depends on the debtor category and statutory provisions in force.')
+        ],
+        'laws': [
+            ('Recovery of Debts and Bankruptcy Act, 1993', 'Primary tribunal statute for specified debt-recovery claims, procedure and appeals.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/1775?view_type=browse'),
+            ('SARFAESI Act, 2002', 'Includes the statutory remedy framework for challenging specified enforcement measures before the DRT.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/2006?view_type=browse'),
+            ('IBC, 2016', 'Provides insolvency processes and forum rules for different debtor categories.', 'https://www.indiacode.nic.in/indiacode/handle/123456789/2154?view_type=browse'),
+            ('DRT e-filing / services', 'Public portal for tribunal services and electronic filing.', 'https://efiling.drt.gov.in/')
+        ],
+        'flow': ['Bank / financial claim', 'OA / SA or other statutory proceeding', 'DRT hearing & order', 'DRAT appeal where maintainable', 'Further statutory / judicial remedy where available'],
+        'sources': [
+            ('India Code — RDB Act', 'https://www.indiacode.nic.in/indiacode/handle/123456789/1775?view_type=browse'),
+            ('India Code — SARFAESI', 'https://www.indiacode.nic.in/indiacode/handle/123456789/2006?view_type=browse'),
+            ('DRT', 'https://drt.gov.in/'),
+            ('DRT e-Filing', 'https://efiling.drt.gov.in/')
+        ]
+    },
+    'legal-careers': {
+        'name': 'Legal Careers', 'kicker': 'LAW CAREER ROADMAP',
+        'intro': 'Explore the major pathways after LL.B. — litigation, law firms, in-house legal teams, compliance, judiciary, public-sector opportunities, academia and specialised legal practice.',
+        'history': [
+            ('Step 1', 'LL.B.', 'Complete a 3-year or 5-year LL.B. from a recognised institution, subject to the applicable rules for the pathway you choose.'),
+            ('Step 2', 'Choose a track', 'Litigation, law firm practice, in-house, compliance, insolvency, banking law, policy, academia and judicial careers require different preparation.'),
+            ('Step 3', 'Professional requirements', 'Advocacy practice involves State Bar Council enrolment and applicable BCI requirements; other roles follow their own recruitment or qualification rules.'),
+            ('Step 4', 'Build proof of work', 'Internships, drafting, research, writing, mooting, court exposure, domain knowledge and a clear CV can help demonstrate capability to employers or chambers.')
+        ],
+        'laws': [
+            ('Advocates Act, 1961', 'Statutory framework governing advocates and Bar Councils in India.', 'https://indiacode.gov.in/'),
+            ('Bar Council / professional rules', 'Professional conduct and enrolment requirements are governed by applicable BCI and State Bar Council rules.', 'https://www.barcouncilofindia.org/'),
+            ('AIBE', 'The official AIBE portal publishes current eligibility, notifications, registration and examination information.', 'https://www.allindiabarexamination.com/'),
+            ('Judicial recruitment', 'Judicial service recruitment is conducted through the relevant State / High Court process and notifications.', 'https://doj.gov.in/')
+        ],
+        'flow': ['LL.B.', 'Career track selection', 'Skill building & internships', 'Eligibility / enrolment / recruitment', 'Applications & interviews', 'Practice / progression'],
+        'sources': [
+            ('AIBE — Official Portal', 'https://www.allindiabarexamination.com/'),
+            ('Bar Council of India', 'https://www.barcouncilofindia.org/'),
+            ('India Code', 'https://indiacode.gov.in/'),
+            ('Department of Justice', 'https://doj.gov.in/')
+        ],
+        'career_cta': True
+    },
+    'dra': {
+        'name': 'DRA', 'kicker': 'DEBT RECOVERY AGENT AWARENESS',
+        'intro': 'A compliance-first guide for Debt Recovery Agents: role boundaries, borrower interaction, confidentiality, communication, documentation and RBI expectations.',
+        'history': [
+            ('Outsourcing', 'Regulated entities', 'Banks and other regulated entities may use service providers for recovery activity, while the regulated entity retains responsibility under applicable RBI directions.'),
+            ('Code of conduct', 'Professional behaviour', 'RBI directions emphasise training, customer confidentiality and fair / lawful recovery practices.'),
+            ('2022', 'Specific recovery-agent directions', 'RBI reiterated that regulated entities are responsible for agents and prohibited intimidation, harassment, privacy intrusion, inappropriate communications and calls before 8:00 a.m. or after 7:00 p.m. for overdue-loan recovery.'),
+            ('Today', 'Documentation & auditability', 'A sound field process should use proper authorisation, identification, records and escalation channels rather than informal pressure.')
+        ],
+        'laws': [
+            ('RBI directions on recovery agents', 'Regulated entities remain responsible for the actions of recovery agents they employ or outsource to.', 'https://www.rbi.org.in/'),
+            ('Consumer protection & privacy principles', 'Recovery communication should respect borrower privacy, dignity and applicable legal / regulatory protections.', 'https://www.rbi.org.in/'),
+            ('SARFAESI / recovery statutes', 'Agents must operate within the actual authority given by the regulated entity and the applicable legal process.', 'https://indiacode.gov.in/'),
+            ('Escalation / grievance channels', 'Borrower grievances should be routed through the regulated entity’s complaint and escalation mechanism, and applicable RBI Ombudsman framework where eligible.', 'https://www.rbi.org.in/')
+        ],
+        'flow': ['Assignment / authorisation', 'Identification & communication', 'Lawful recovery effort', 'Documentation / receipt / escalation', 'Grievance resolution / closure'],
+        'sources': [
+            ('RBI recovery-agent directions', 'https://www.rbi.org.in/'),
+            ('RBI — Regulatory framework', 'https://www.rbi.org.in/'),
+            ('India Code', 'https://indiacode.gov.in/'),
+            ('RBI Complaint Management System', 'https://cms.rbi.org.in/')
+        ]
+    }
+}
+
+
+def guide_markup(key):
+    g=GUIDES[key]
+    timeline=''.join(f'<div class="timeline-item reveal"><div class="timeline-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
+    laws=''.join(f'<article class="law-card reveal"><div class="law-card-kicker">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a class="guide-link" href="{H.escape(u,quote=True)}" target="_blank" rel="noopener">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
+    flow=''.join(f'<div class="flow-step reveal"><span>{i+1:02d}</span><strong>{H.escape(x)}</strong></div>' for i,x in enumerate(g['flow']))
+    sources=''.join(f'<a class="source-pill" href="{H.escape(u,quote=True)}" target="_blank" rel="noopener">{H.escape(t)} ↗</a>' for t,u in g['sources'])
+    cta='''<section class="career-contact reveal"><div><div class="utility-kicker">CAREER OPPORTUNITY</div><h2>Want to work with Lex Talk Legal?</h2><p>Send your resume / CV to <strong>office.lextalklegal@gmail.com</strong>. Please mention the role, location preference and a short note about your experience.</p><small>Resume submission is for consideration only and does not create an offer, engagement or guarantee of selection.</small></div><a class="cta-button" href="mailto:office.lextalklegal@gmail.com?subject=Resume%20Submission%20-%20Lex%20Talk%20Legal">Send Resume ↗</a></section>''' if g.get('career_cta') else ''
+    return f'''<main class="guide-page">
+<section class="guide-hero"><div><div class="utility-kicker">{H.escape(g['kicker'])}</div><h1>{H.escape(g['name'])}</h1><p>{H.escape(g['intro'])}</p><div class="guide-hero-actions"><a class="cta-button" href="#explainer">Start Explainer ↓</a><a class="ghost-button" href="#latest">Latest {H.escape(g['name'])} Stories</a></div></div><div class="guide-badge"><div class="guide-badge-icon">⚖</div><strong>LEX TALK LEGAL</strong><span>Law Simplified for Everyone</span></div></section>
+<section id="explainer" class="guide-section"><div class="section-head"><h2>Animated Explainer</h2><span class="section-tools">Scroll to reveal the legal journey</span></div><div class="flow-track">{flow}</div></section>
+<section class="guide-section"><div class="section-head"><h2>Quick Timeline</h2></div><div class="timeline">{timeline}</div></section>
+<section class="guide-section"><div class="section-head"><h2>Applicable Laws &amp; Framework</h2></div><div class="law-grid">{laws}</div></section>
+{cta}
+<section id="latest" class="guide-section"><div class="section-head"><h2>Latest {H.escape(g['name'])} Stories</h2></div><div class="grid" id="latest-guide-{key}"></div></section>
+<section class="guide-section"><div class="section-head"><h2>Official References</h2></div><div class="source-pills">{sources}</div></section>
+<section class="guide-note"><strong>Editorial note:</strong> This explainer is for general legal education. Statutes, rules, notifications, court decisions and regulatory directions may change; readers should verify the current position from the linked official source.</section>
+</main>'''
+
+
 def write_category_pages(arts):
     for key,(name,_) in CATEGORY_MAP.items():
-        items=[a for a in arts if category_matches(a,key)]; cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this page.</div>'
-        content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
-        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),f'Lex Talk Legal — {name} news, updates and explainers.',content),encoding='utf8')
-
+        if key in GUIDES:
+            g=GUIDES[key]
+            items=[a for a in arts if category_matches(a,key)]
+            cards=''.join(article_card(a) for a in items[:12]) or '<div class="empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
+            content=guide_markup(key).replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
+            desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
+        else:
+            items=[a for a in arts if category_matches(a,key)]
+            cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
+            content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
+            desc=f'Lex Talk Legal — {name} news, updates and explainers.'
+        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
 
 def write_videos_page(videos):
     cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
     content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>LATEST VIDEOS</h1><p class="lead">Latest Lex Talk Legal videos are synced automatically from YouTube.</p><div class="yt-grid">{cards}</div></main>'
     (ROOT/'videos').mkdir(exist_ok=True); (ROOT/'videos/index.html').write_text(page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content),encoding='utf8')
 
-
 def button(label,url,kind='official'):
     return f'<a class="link-button {kind}" href="{H.escape(url,quote=True)}" target="_blank" rel="noopener">{H.escape(label)}</a>'
-
 
 def utility_card(icon,title,text,links):
     links_html=''.join(button(label,url,kind) for label,url,kind in links)
     return f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div><h3>{H.escape(title)}</h3><p>{H.escape(text)}</p></div><div class="card-actions">{links_html}</div></article>'
 
-
 def _load_vc_data():
-    try: return json.loads(VC_DATA_PATH.read_text(encoding='utf8'))
-    except Exception: return {}
-
+    try:
+        return json.loads(VC_DATA_PATH.read_text(encoding='utf8'))
+    except Exception:
+        return {}
 
 def _safe_url(u):
     if not u: return ''
-    try:
-        p=urllib.parse.urlparse(u)
-        if p.scheme.lower()!='https' or not p.netloc: return ''
-        host=p.netloc.lower().split(':')[0]
-        if 'onecourt.in' in host: return ''
-        return u
-    except Exception: return ''
-
-
-def _is_direct_vc(u):
-    u=_safe_url(u)
-    if not u: return False
-    host=urllib.parse.urlparse(u).netloc.lower().split(':')[0]
-    return any(host==d or host.endswith('.'+d) for d in DIRECT_VC_DOMAINS)
-
-
-def _clean_vc_label(label):
-    label=re.sub(r'\s+',' ',(label or '')).strip(' |:-')
-    label=re.sub(r'\[?Join VC\]?\s*', '', label, flags=re.I).strip(' |:-')
-    label=re.sub(r'https?://\S+','',label).strip(' |:-')
-    return label[:140]
-
-
-def _dedupe_items(items):
-    out=[]; seen=set()
-    for x in items or []:
-        if not isinstance(x,dict): continue
-        u=_safe_url(x.get('url',''))
-        if not _is_direct_vc(u): continue
-        label=_clean_vc_label(x.get('label',''))
-        key=(label.lower(),u)
-        if key in seen: continue
-        seen.add(key); out.append({'label':label,'url':u})
-    return out
-
-
-def _fallback_label_from_context(txt):
-    lines=[re.sub(r'\s+',' ',z).strip() for z in (txt or '').splitlines()]
-    banned=('join vc','verify against','information purpose','clicking join','i confirm','applicable laws','cancel','direct public vc','vc link not available')
-    for z in lines:
-        zl=z.lower()
-        if not z or len(z)<2 or any(b in zl for b in banned): continue
-        if re.match(r'^(courtrooms?|virtual hearings?)$',z,re.I): continue
-        if re.match(r'^[A-Z0-9 .&()\-/,]+$',z) and len(z)<120: return z
-        if len(z)<140: return z
-    return ''
-
-
-def extract_onecourt_vc():
-    old=_load_vc_data()
-    data={}
-    try:
-        from playwright.sync_api import sync_playwright
-    except Exception as e:
-        print('OneCourt extraction unavailable (Playwright import):', e)
-        return old
-
-    HOST='https://onecourt.in'
-    def norm(h): return urllib.parse.urljoin(HOST,h) if h else ''
-
-    def dialog_text(page):
-        selectors=['[role="dialog"]:visible','dialog:visible','.modal:visible','.popup:visible','[class*="modal"]:visible']
-        for sel in selectors:
-            try:
-                loc=page.locator(sel)
-                if loc.count():
-                    txt=loc.last.inner_text(timeout=800)
-                    if txt and txt.strip(): return txt.strip()
-            except Exception: pass
-        return ''
-
-    def dialog_direct_links(page):
-        candidates=[]
-        selectors=['[role="dialog"]:visible a','dialog:visible a','.modal:visible a','.popup:visible a','[class*="modal"]:visible a']
-        for sel in selectors:
-            try:
-                loc=page.locator(sel)
-                for i in range(min(loc.count(),20)):
-                    a=loc.nth(i); href=a.get_attribute('href') or ''; txt=(a.inner_text() or '').strip()
-                    if _is_direct_vc(norm(href)):
-                        candidates.append((norm(href),txt))
-            except Exception: pass
-        # If the modal uses an anchor elsewhere in the page after opening, look for visible direct VC anchors.
-        if not candidates:
-            try:
-                loc=page.locator('a:visible')
-                for i in range(min(loc.count(),300)):
-                    a=loc.nth(i); href=a.get_attribute('href') or ''; txt=(a.inner_text() or '').strip()
-                    if _is_direct_vc(norm(href)) and ('join vc' in txt.lower() or 'hearing' in txt.lower() or 'webex' in txt.lower() or 'meet' in txt.lower()):
-                        candidates.append((norm(href),txt))
-            except Exception: pass
-        return candidates
-
-    def label_for(page, base_context, page_title='', supreme=False):
-        txt=dialog_text(page)
-        # Supreme Court: explicitly retain courtroom number from modal heading.
-        for source in [txt, base_context, page_title]:
-            m=re.search(r'Court\s*(?:No\.?|Number)\s*[:\-]?\s*(\d+)', source or '', re.I)
-            if m: return f'Court No. {m.group(1)}'
-            m=re.search(r'(Registrar(?:\'s)? Court(?:\s*[-–]?\s*\d+)?)', source or '', re.I)
-            if m: return re.sub(r'\s+',' ',m.group(1)).strip()
-        # Other courts/tribunals: use a meaningful first line from the modal, then card context.
-        for source in [txt, base_context, page_title]:
-            z=_fallback_label_from_context(source)
-            if z: return z
-        return ''
-
-    def close_modal(page):
-        for sel in ['button','[role="button"]']:
-            try:
-                loc=page.locator(sel).filter(has_text=re.compile(r'^(Cancel|Close|×)$',re.I))
-                if loc.count(): loc.last.click(timeout=800); page.wait_for_timeout(100); return
-            except Exception: pass
-        try: page.keyboard.press('Escape'); page.wait_for_timeout(100)
-        except Exception: pass
-
-    def extract_on_page(page, page_title='', supreme=False):
-        out=[]
-        # Direct anchors and buttons. We click buttons to resolve popup/modal destinations and labels.
-        elements=page.locator('a,button,[role="button"]')
-        count=min(elements.count(),600)
-        for i in range(count):
-            try:
-                el=elements.nth(i)
-                if not el.is_visible(): continue
-                txt=(el.inner_text() or el.text_content() or '').strip()
-                href=el.get_attribute('href') or ''
-                data_url=el.get_attribute('data-url') or el.get_attribute('data-href') or ''
-                onclick=el.get_attribute('onclick') or ''
-                direct_candidates=[norm(href),norm(data_url)]
-                mm=re.search(r'https://[^\"\'\s)]+',onclick)
-                if mm: direct_candidates.append(norm(mm.group(0)))
-                direct=next((u for u in direct_candidates if _is_direct_vc(u)), '')
-                base=''
-                try:
-                    base=el.locator('xpath=ancestor::*[self::article or self::tr or contains(@class,"card") or contains(@class,"court")][1]').inner_text(timeout=600)
-                except Exception: base=txt
-                is_join=('join vc' in txt.lower()) or ('join vc' in (el.get_attribute('aria-label') or '').lower()) or ('join vc' in onclick.lower())
-                if direct:
-                    lab=label_for(page,base,page_title,supreme) or _clean_vc_label(txt) or 'VC Link'
-                    out.append({'label':lab,'url':direct})
-                    continue
-                if not is_join: continue
-                # Resolve via popup/modal.
-                try:
-                    el.click(timeout=1500)
-                    page.wait_for_timeout(220)
-                    for u, modal_txt in dialog_direct_links(page):
-                        lab=label_for(page,base,page_title,supreme) or _clean_vc_label(modal_txt) or _clean_vc_label(txt) or 'VC Link'
-                        out.append({'label':lab,'url':u})
-                except Exception:
-                    pass
-                finally:
-                    close_modal(page)
-            except Exception:
-                continue
-        return _dedupe_items(out)
-
-    def load(page,url):
-        page.goto(url, wait_until='domcontentloaded', timeout=60000)
-        page.wait_for_timeout(2800)
-        try:
-            body=page.locator('body').inner_text(timeout=1000)
-            if 'Unpacking' in body: page.wait_for_timeout(4500)
-        except Exception: pass
-
-    pages=[]
-    with sync_playwright() as p:
-        browser=p.chromium.launch(headless=True)
-        context=browser.new_context(viewport={'width':1440,'height':1200}, user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) LexTalkLegalBot/2.0')
-        page=context.new_page()
-        try:
-            # Supreme Court
-            load(page,ONECOURT_SC_VC)
-            title=''
-            try: title=page.locator('h1').first.inner_text().strip()
-            except Exception: pass
-            sc_links=extract_on_page(page,title,True)
-            if sc_links: data['supreme_court']=sc_links
-
-            # Root VC directory: discover all directory pages, then extract court-wise items.
-            load(page,ONECOURT_ROOT_VC)
-            hrefs=page.locator('a[href]').evaluate_all('els => els.map(a=>a.href)')
-            for h in hrefs:
-                if h.startswith(HOST) and '/vc-links/' in h and h not in pages: pages.append(h)
-            for _,u in DELHI_DISTRICT_VC:
-                if u not in pages: pages.append(u)
-            for u in [ONECOURT_NCLT_VC,ONECOURT_NCLAT_VC]:
-                if u not in pages: pages.append(u)
-
-            for u in pages:
-                try: load(page,u)
-                except Exception as e:
-                    print('OneCourt page failed:',u,e); continue
-                try: title=page.locator('h1').first.inner_text().strip()
-                except Exception: title=''
-                links=extract_on_page(page,title,False)
-                low=(title or u).lower(); ulow=u.lower()
-                if 'districtcourts' in ulow:
-                    district_name=next((n for n,du in DELHI_DISTRICT_VC if du==u), title or u)
-                    if links: data.setdefault('delhi_district',{})[district_name]=links
-                elif 'nclt' in low or 'nclt' in ulow:
-                    matched=None
-                    for bench in COURTS['nclt']:
-                        stem=bench.lower().replace('principal bench / ','').replace('bench','').strip()
-                        if stem and stem in low: matched=bench; break
-                    data.setdefault('nclt',{})[f'NCLT — {matched or title or "Bench"}']=links
-                elif 'nclat' in low or 'nclat' in ulow:
-                    matched=None
-                    for bench in COURTS['nclat']:
-                        stem=bench.lower().replace('principal bench / ','').replace('bench','').strip()
-                        if stem and stem in low: matched=bench; break
-                    data.setdefault('nclat',{})[f'NCLAT — {matched or title or "Bench"}']=links
-                elif 'drat' in low or 'drat' in ulow or 'debt recovery appellate' in low:
-                    matched=None
-                    for city in COURTS['drat']:
-                        if city.lower() in low: matched=city; break
-                    data.setdefault('drat',{})[f'DRAT — {matched or title or "Tribunal"}']=links
-                elif 'drt' in low or '/drt/' in ulow or 'debt recovery tribunal' in low:
-                    matched=None
-                    for city in COURTS['drt']:
-                        if city.lower() in low: matched=city; break
-                    data.setdefault('drt',{})[f'DRT — {matched or title or "Tribunal"}']=links
-                else:
-                    matched=None
-                    for name,_ in COURTS['high_courts']:
-                        stem=name.lower().replace(' high court','')
-                        if name.lower() in low or stem in low: matched=name; break
-                    if matched: data.setdefault('high_courts',{})[matched]=links
-        finally:
-            browser.close()
-
-    # Keep prior working data only where a page could not be refreshed, but always sanitize it.
-    if not data:
-        data=old
-    else:
-        for key,val in old.items():
-            if key not in data: data[key]=val
-            elif isinstance(val,dict):
-                for k,v in val.items():
-                    if k not in data[key]: data[key][k]=v
-
-    def sanitise(obj):
-        if isinstance(obj,list): return _dedupe_items(obj)
-        if isinstance(obj,dict): return {k:sanitise(v) for k,v in obj.items() if isinstance(v,(dict,list))}
-        return obj
-    data=sanitise(data)
-    VC_DATA_PATH.parent.mkdir(exist_ok=True)
-    VC_DATA_PATH.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf8')
-    total=sum(len(v) if isinstance(v,list) else sum(len(x) for x in v.values() if isinstance(x,list)) if isinstance(v,dict) else 0 for v in data.values())
-    print('OneCourt direct VC destinations extracted/refreshed:', total)
-    return data
-
-
-def vc_button(item, kind='link'):
-    label=_clean_vc_label(item.get('label','')) or 'VC Link'
-    url=_safe_url(item.get('url',''))
-    if kind=='link' and _is_direct_vc(url):
-        return f'<button class="vc-link" type="button" data-vc-title="{H.escape(label,quote=True)}" data-vc-url="{H.escape(url,quote=True)}"><span class="vc-icon">↗</span><span>{H.escape(label)}</span><small>Open VC</small></button>'
-    return f'<button class="vc-link vc-unavailable" type="button" data-vc-title="{H.escape(label or "This court",quote=True)}"><span class="vc-icon">i</span><span>{H.escape(label or "VC Link")}</span><small>Not available</small></button>'
-
+    return u if re.match(r'^https?://', u, re.I) else ''
 
 def write_courtrooms_page(vc_data=None):
-    vc_data=vc_data or _load_vc_data(); sc=_dedupe_items(vc_data.get('supreme_court',[])); hcs=vc_data.get('high_courts',{})
-    drt_vc=vc_data.get('drt',{}); drat_vc=vc_data.get('drat',{}); nclt_vc=vc_data.get('nclt',{}); nclat_vc=vc_data.get('nclat',{}); delhi_vc=vc_data.get('delhi_district',{})
+    vc_data = vc_data or _load_vc_data()
+    sc = vc_data.get('supreme_court', [])
+    hcs = vc_data.get('high_courts', {})
+    drt_vc = vc_data.get('drt', {})
+    drat_vc = vc_data.get('drat', {})
+    nclt_vc = vc_data.get('nclt', {})
+    nclat_vc = vc_data.get('nclat', {})
+    delhi_vc = vc_data.get('delhi_district', {})
 
-    def card(title, icon, desc, links=None, official=''):
-        links=_dedupe_items(links or [])
-        if links:
-            if len(links)==1:
-                vc_html=vc_button(links[0])
-            else:
-                vc_html='<div class="vc-directory-list">'+''.join(vc_button(x) for x in links)+'</div>'
-        else:
-            vc_html=vc_button({'label':'VC Link not available'})
-        official_html=button('Official Court',''+official,'official') if official else ''
-        return f'<article class="utility-card court-card vc-court-card"><div><div class="court-icon">{icon}</div><div class="vc-card-kicker">PUBLIC VC ACCESS</div><h3>{H.escape(title)}</h3><p>{H.escape(desc)}</p>{vc_html}</div><div class="card-actions">{official_html}</div></article>'
+    def vc_list_html(items, empty_text='VC link not available in the latest sync.'):
+        items=[x for x in items if isinstance(x,dict) and _safe_url(x.get('url'))]
+        if not items: return f'<div class="vc-empty">{H.escape(empty_text)}</div>'
+        return '<div class="vc-link-grid">'+''.join(
+            f'<a class="vc-link" href="{H.escape(x["url"],quote=True)}" target="_blank" rel="noopener">{H.escape(x.get("label") or "Join VC")}</a>'
+            for x in items)+'</div>'
 
-    sc_cards=''.join(card(x.get('label') or 'Supreme Court VC','⚖️','Direct public VC destination. Verify the courtroom and the day’s cause list before joining.',[x]) for x in sc)
+    def court_vc_card(icon,title,desc,links,official=''):
+        actions=''
+        if official: actions+=button('Official Court',official,'official')
+        return f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div><h3>{H.escape(title)}</h3><p>{H.escape(desc)}</p>{vc_list_html(links)}</div><div class="card-actions">{actions}</div></article>'
+
+    sc_cards=''.join(court_vc_card('⚖️', x.get('label','Supreme Court VC'), 'Direct public VC joining link extracted from the current rendered directory.', [x]) for x in sc)
     if not sc_cards:
-        sc_cards=card('Supreme Court VC','⚖️','No direct VC destination was available in the latest public sync. Verify the official cause list / court website.',[], 'https://www.sci.gov.in/')
+        sc_cards = court_vc_card('⚖️','Supreme Court VC','Direct VC links are refreshed from the current public directory. Verify the courtroom against the Supreme Court cause list.',[], 'https://www.sci.gov.in/')
 
     hc_cards=''
-    for name,url in COURTS['high_courts']:
-        items=hcs.get(name,[]) if isinstance(hcs,dict) else []
-        hc_cards+=card(name,'🏛️','Public VC destinations where available; verify against the current cause list.',items,url)
+    for name, url in COURTS['high_courts']:
+        items=hcs.get(name,[])
+        hc_cards += court_vc_card('🏛️', name, 'Official court website plus direct public VC joining links refreshed from the rendered directory.', items, url)
 
-    delhi_cards=''
-    district_names=[]
-    for configured_name, u in DELHI_DISTRICT_VC:
-        district_names.append(configured_name)
-        items=delhi_vc.get(configured_name,[]) if isinstance(delhi_vc,dict) else []
-        delhi_cards+=card(configured_name,'🎥','Court-wise public VC links are listed individually where available.',items,'https://delhidistrictcourts.nic.in/')
-    if isinstance(delhi_vc,dict):
-        for name,items in delhi_vc.items():
-            if name not in district_names: delhi_cards+=card(name,'🎥','Public VC directory entry.',items,'https://delhidistrictcourts.nic.in/')
-
-    def grouped_cards(data,prefix,icon,official_url,desc):
-        out=''; names=COURTS[prefix.lower()]
+    def grouped_cards(data, prefix, icon, official_url=None):
+        out=''
+        if prefix=='DRT': names=COURTS['drt']
+        elif prefix=='DRAT': names=COURTS['drat']
+        elif prefix=='NCLT': names=COURTS['nclt']
+        else: names=COURTS['nclat']
         for name in names:
-            key=f'{prefix.upper()} — {name}'; items=data.get(key,data.get(name,[])) if isinstance(data,dict) else []
-            out+=card(key,icon,desc,items,official_url)
+            key=f'{prefix} — {name}'
+            items=data.get(key, data.get(name, []))
+            out += court_vc_card(icon,key,'Direct public VC joining links refreshed from the current public VC directory. Always verify the day’s cause list.', items, official_url or '')
         return out
 
-    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>COURTROOMS &amp; VIRTUAL HEARINGS</h1><p class="lead">Open a public courtroom / VC destination without routing through OneCourt. Where a court-wise or courtroom-wise destination is available, it is shown separately.</p><div class="directory-alert"><strong>Before joining:</strong> VC details can change. Verify the court number, date and current VC details against the concerned court / tribunal cause list. Where a direct public VC destination is unavailable, refer to the cause list or contact the concerned court office / courtroom master / reader.</div>
-<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2><div class="section-tools">{len(sc)} direct public courtroom destination(s) refreshed</div></div><div class="card-grid">{sc_cards}</div></section>
+    delhi_cards=''.join(court_vc_card('🎥', name, 'Direct public Delhi District Court VC links refreshed from the current public directory.', items, 'https://delhidistrictcourts.nic.in/') for name,items in delhi_vc.items())
+
+    content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>COURTROOMS &amp; VIRTUAL HEARINGS</h1><p class="lead">Choose a court or tribunal and open its public courtroom / VC link directly. Lex Talk Legal does not route visitors through the OneCourt website; the public destination URLs are extracted from the rendered directory and published here.</p><div class="directory-alert"><strong>Important:</strong> VC links can change. Before joining, verify the court number, date and current VC details against the concerned court / tribunal cause list. The VC-directory data is informational only.</div>
+<section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="card-grid">{sc_cards}</div></section>
 <section class="court-section"><div class="section-head"><h2>High Courts</h2></div><div class="card-grid">{hc_cards}</div></section>
-<section class="court-section"><div class="section-head"><h2>Delhi District Courts</h2></div><div class="card-grid">{delhi_cards or card('Delhi District Courts','🎥','Use the official cause list / public VC information.',[],'https://delhidistrictcourts.nic.in/')}</div></section>
-<section class="court-section"><div class="section-head"><h2>Debt Recovery Tribunals (DRT)</h2></div><div class="card-grid">{grouped_cards(drt_vc,'drt','⚖️',DRT_EFILING,'Public VC destination where available. Verify the daily cause list before joining.')}</div></section>
-<section class="court-section"><div class="section-head"><h2>Debt Recovery Appellate Tribunals (DRAT)</h2></div><div class="card-grid">{grouped_cards(drat_vc,'drat','⚖️',DRT_EFILING,'Public VC destination where available. Verify the daily cause list before joining.')}</div></section>
-<section class="court-section"><div class="section-head"><h2>NCLT</h2></div><div class="card-grid">{grouped_cards(nclt_vc,'nclt','🏢','https://nclt.gov.in/','Public VC destination where available. Verify the bench-wise cause list.')}</div></section>
-<section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{grouped_cards(nclat_vc,'nclat','🏢','https://nclat.nic.in/','Public VC destination where available. Verify the bench-wise cause list.')}</div></section></main>'''
+<section class="court-section"><div class="section-head"><h2>Delhi District Courts</h2></div><div class="card-grid">{delhi_cards or court_vc_card('🎥','Delhi District Courts','Use the public VC directory data refreshed by the automated sync.',[], 'https://delhidistrictcourts.nic.in/')}</div></section>
+<section class="court-section"><div class="section-head"><h2>DRT</h2></div><div class="card-grid">{grouped_cards(drt_vc,'DRT','⚖️',DRT_EFILING)}</div></section>
+<section class="court-section"><div class="section-head"><h2>DRAT</h2></div><div class="card-grid">{grouped_cards(drat_vc,'DRAT','⚖️',DRT_EFILING)}</div></section>
+<section class="court-section"><div class="section-head"><h2>NCLT</h2></div><div class="card-grid">{grouped_cards(nclt_vc,'NCLT','🏢','https://nclt.gov.in/')}</div></section>
+<section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{grouped_cards(nclat_vc,'NCLAT','🏢','https://nclat.nic.in/')}</div></section></main>'''
     (ROOT/'courtrooms').mkdir(exist_ok=True); (ROOT/'courtrooms/index.html').write_text(page_shell(('Courtrooms & VC Links','/courtrooms/'),'Lex Talk Legal direct public courtroom and virtual hearing links for Indian courts and tribunals.',content),encoding='utf8')
 
-
 def write_case_status_page():
-    hc_cards=''.join(utility_card('🔎',name,'Open the official court website or the public eCourts case-status service.',[('Court Website',url,'official'),('Case Status',CASE_STATUS_GENERIC_HC,'official')]) for name,url in COURTS['high_courts'])
-    drt_cards=''.join(utility_card('🔎',f'DRT — {city}','Official DRT e-filing / case-service entry point.',[('DRT Case Services',DRT_EFILING,'official')]) for city in COURTS['drt'])
-    drat_cards=''.join(utility_card('🔎',f'DRAT — {city}','Official DRT e-filing / case-service entry point.',[('DRAT / DRT Portal',DRT_EFILING,'official')]) for city in COURTS['drat'])
-    nclt_cards=''.join(utility_card('🔎',f'NCLT — {bench}','Official NCLT case-status service with bench selection and access controls.',[('Case Status','https://efiling.nclt.gov.in/nclt/public/case_status.php','official'),('Case History','https://efiling.nclt.gov.in/casehistorybeforeloginmenutrue.drt','official')]) for bench in COURTS['nclt'])
-    nclat_cards=''.join(utility_card('🔎',name,'Official NCLAT public case / listing service.',[('Case Status','https://nclat.nic.in/display-board/cases','official'),('e-Filing Portal','https://efiling.nclat.gov.in/mainPage.drt','official')]) for name in COURTS['nclat'])
+    hc_cards=''.join(utility_card('🔎',name,'Open the official court website or the national eCourts case-status service.',[
+        ('Court Website',url,'official'),('Case Status',CASE_STATUS_GENERIC_HC,'official')]) for name,url in COURTS['high_courts'])
+    drt_cards=''.join(utility_card('🔎',f'DRT — {city}','Official DRT e-filing / case-service entry point.',[
+        ('DRT Case Services',DRT_EFILING,'official')]) for city in COURTS['drt'])
+    drat_cards=''.join(utility_card('🔎',f'DRAT — {city}','Official DRT e-filing / case-service entry point.',[
+        ('DRAT / DRT Portal',DRT_EFILING,'official')]) for city in COURTS['drat'])
+    nclt_cards=''.join(utility_card('🔎',f'NCLT — {bench}','Official NCLT case-status service with bench selection and access controls.',[
+        ('Case Status','https://efiling.nclt.gov.in/nclt/public/case_status.php','official'),('Case History','https://efiling.nclt.gov.in/casehistorybeforeloginmenutrue.drt','official')]) for bench in COURTS['nclt'])
+    nclat_cards=''.join(utility_card('🔎',name,'Official NCLAT public case / listing service.',[
+        ('Case Status','https://nclat.nic.in/display-board/cases','official'),('e-Filing Portal','https://efiling.nclat.gov.in/mainPage.drt','official')]) for name in COURTS['nclat'])
     content=f'''<main class="utility-page directory-page"><div class="utility-kicker">LEGAL UTILITY</div><h1>CASE STATUS</h1><p class="lead">Choose the court or tribunal and open the relevant official public case-status service.</p><div class="directory-alert"><strong>Official portal note:</strong> some services use CAPTCHA or other access controls. This site links to the public portal and does not bypass those controls.</div>
 <section class="court-section"><div class="section-head"><h2>Supreme Court of India</h2></div><div class="card-grid">{utility_card('🔎','Supreme Court Case Status','Official Supreme Court case-status and court-services entry point.', [('Case Status','https://www.sci.gov.in/case-status-court/','official'),('Supreme Court Website','https://www.sci.gov.in/','official')])}</div></section>
 <section class="court-section"><div class="section-head"><h2>High Courts</h2></div><div class="card-grid">{hc_cards}</div></section>
@@ -557,17 +454,165 @@ def write_case_status_page():
 <section class="court-section"><div class="section-head"><h2>NCLAT</h2></div><div class="card-grid">{nclat_cards}</div></section></main>'''
     (ROOT/'case-status').mkdir(exist_ok=True); (ROOT/'case-status/index.html').write_text(page_shell(('Case Status','/case-status/'),'Lex Talk Legal official public case-status entry points for Indian courts and tribunals.',content),encoding='utf8')
 
+def extract_onecourt_vc():
+    data=_load_vc_data()
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as e:
+        print('OneCourt extraction unavailable (Playwright import):', e)
+        return data
+
+    HOST='https://onecourt.in'
+    def norm(h):
+        return urllib.parse.urljoin(HOST,h) if h else ''
+    def is_direct(h):
+        if not h or 'onecourt.in' in h.lower(): return False
+        return any(x in h.lower() for x in ['webex.com','teams.live.com','teams.microsoft.com','meet.google.com','zoom.us','vcourts.gov.in'])
+
+    def extract_on_page(page):
+        rows=page.locator('a,button,[role="button"]').evaluate_all('''els => els.map(el=>({tag:el.tagName,text:(el.innerText||el.textContent||'').trim(),href:el.getAttribute('href')||'',dataUrl:el.getAttribute('data-url')||'',dataHref:el.getAttribute('data-href')||'',onclick:el.getAttribute('onclick')||'',context:(el.closest('article,tr,li,.card,.court-card')?.innerText||el.parentElement?.innerText||'').trim()}))''')
+        out=[]
+        for r in rows:
+            if 'join vc' not in r.get('text','').lower(): continue
+            candidates=[r.get('href',''),r.get('dataUrl',''),r.get('dataHref','')]
+            m=re.search(r"https?://[^'\\\"\\s)]+",r.get('onclick',''))
+            if m: candidates.append(m.group(0))
+            url=next((norm(c) for c in candidates if is_direct(norm(c))), '')
+            if url:
+                ctx=(r.get('context') or r.get('text') or 'Join VC').split('\\n')
+                label=next((z.strip() for z in ctx if z.strip() and 'join vc' not in z.lower()), 'Join VC')
+                out.append({'label':label[:120],'url':url})
+        buttons=page.locator('button,[role="button"]').filter(has_text=re.compile('Join VC',re.I))
+        count=buttons.count()
+        for i in range(min(count,300)):
+            try:
+                b=buttons.nth(i)
+                if b.get_attribute('disabled'): continue
+                b.click(timeout=1500)
+                page.wait_for_timeout(100)
+                links=page.locator('a').filter(has_text=re.compile('Join VC hearing link',re.I))
+                if links.count():
+                    u=links.last.get_attribute('href') or ''
+                    u=norm(u)
+                    if is_direct(u):
+                        ctx=(b.inner_text() or '').strip() or 'Join VC'
+                        if not any(x.get('url')==u for x in out): out.append({'label':ctx,'url':u})
+                canc=page.locator('button').filter(has_text=re.compile('Cancel|×',re.I))
+                if canc.count(): canc.last.click(timeout=1000)
+            except Exception:
+                continue
+        return out
+
+    def load(page,url):
+        page.goto(url, wait_until='domcontentloaded', timeout=60000)
+        page.wait_for_timeout(2500)
+        try:
+            if 'Unpacking' in page.locator('body').inner_text(): page.wait_for_timeout(4000)
+        except Exception: pass
+
+    pages=[]
+    with sync_playwright() as p:
+        browser=p.chromium.launch(headless=True)
+        context=browser.new_context(user_agent='Mozilla/5.0 LexTalkLegal VC Directory Sync')
+        page=context.new_page()
+        try:
+            load(page,ONECOURT_SC_VC)
+            links=extract_on_page(page)
+            if links: data['supreme_court']=links
+            load(page,ONECOURT_ROOT_VC)
+            hrefs=page.locator('a[href]').evaluate_all('els => els.map(a=>a.href)')
+            for h in hrefs:
+                if h.startswith(HOST) and '/vc-links/' in h and h not in pages: pages.append(h)
+            for _,u in DELHI_DISTRICT_VC:
+                if u not in pages: pages.append(u)
+            for u in [ONECOURT_NCLT_VC,ONECOURT_NCLAT_VC]:
+                if u not in pages: pages.append(u)
+            for u in pages:
+                try:
+                    load(page,u); links=extract_on_page(page)
+                except Exception as e:
+                    print('OneCourt page failed:',u,e); continue
+                try: title=page.locator('h1').first.inner_text().strip()
+                except Exception: title=''
+                text_title=title or u
+                if 'NCLT' in text_title or 'nclt' in u.lower():
+                    data.setdefault('nclt',{})[text_title]=links
+                elif 'NCLAT' in text_title or 'nclat' in u.lower():
+                    data.setdefault('nclat',{})[text_title]=links
+                elif 'districtcourts' in u.lower():
+                    data.setdefault('delhi_district',{})[text_title]=links
+                else:
+                    matched=None; low=text_title.lower()
+                    for name,_ in COURTS['high_courts']:
+                        stem=name.lower().replace(' high court','')
+                        if stem in low or name.lower() in low:
+                            matched=name; break
+                    if matched: data.setdefault('high_courts',{})[matched]=links
+        finally:
+            browser.close()
+    VC_DATA_PATH.parent.mkdir(exist_ok=True)
+    VC_DATA_PATH.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf8')
+    total=0
+    for v in data.values():
+        if isinstance(v,list): total += len(v)
+        elif isinstance(v,dict): total += sum(len(x) for x in v.values() if isinstance(x,list))
+    print('OneCourt direct VC destinations extracted:', total)
+    return data
+
+
+def under_construction_page():
+    content='''<main class="utility-page under-page"><div class="guide-badge large"><div class="guide-badge-icon">🏦</div><strong>LEX TALK LEGAL</strong><span>Utility Module</span></div><div class="utility-kicker">COMING SOON</div><h1>Today's Bank Auction</h1><p class="lead">The searchable bank-auction directory is currently under construction. We are preparing a structured module for bank / authorised-officer auction notices, location filters and source links.</p><div class="under-box"><h2>What will appear here?</h2><div class="under-grid"><div>🏠 Property Auctions</div><div>🏢 Commercial Assets</div><div>🚗 Vehicle Auctions</div><div>📍 Location Filters</div><div>🏦 Bank / Institution</div><div>📄 Official Notice Links</div></div></div><a class="cta-button" href="/">Return to Lex Talk Legal ↗</a></main>'''
+    (ROOT/'under-construction.html').write_text(page_shell(("Today's Bank Auction",'/under-construction.html'),'Lex Talk Legal bank auction directory — currently under construction.',content),encoding='utf8')
+
+
+def global_widget_markup():
+    return '''<div class="floating-quick" id="floatingQuick"><button class="floating-toggle" type="button" aria-expanded="false" aria-controls="floatingPanel">↟ <span>Quick Links</span></button><div class="floating-panel" id="floatingPanel"><div class="floating-title">Legal Utilities</div><a href="/courtrooms/">🎥 Courtrooms &amp; VC</a><a href="/case-status/">🔎 Case Status</a><a href="/category/drt-drat/">⚖ DRT / DRAT</a><a href="/category/banking-law/">🏦 Banking Law</a><a href="/category/legal-careers/">👨‍⚖ Legal Careers</a><a href="https://indiacode.gov.in/" target="_blank" rel="noopener">📚 Bare Acts</a><a href="/videos/">▶ Latest Videos</a></div></div>'''
+
+
+def auction_widget_markup():
+    return '''<article class="auction-widget"><div class="auction-kicker">FEATURED UTILITY</div><div class="auction-icon">🏦</div><h3>Today's Bank Auction</h3><div class="auction-theme">Bank Auction Preview</div><p>Listings module is under construction. Public auction notices will be added after source and verification workflow is ready.</p><a href="/under-construction.html">Explore Auction Module ↗</a></article>'''
+
+
+def homepage_sidebar_markup():
+    return f'''<article class="sidebar-utility"><div class="sidebar-icon">🎥</div><div class="meta">LEGAL UTILITY</div><h3><a href="/courtrooms/">Official courtroom &amp; VC links in one place</a></h3><p>Open court-wise public virtual-hearing destinations and courtroom information.</p><a class="sidebar-link" href="/courtrooms/">Open Courtrooms ↗</a></article>
+<article class="sidebar-utility"><div class="sidebar-icon">🔎</div><div class="meta">LEGAL UTILITY</div><h3><a href="/case-status/">Choose a court and open its official case-status portal</a></h3><p>Quick access to public case-status services for courts and tribunals.</p><a class="sidebar-link" href="/case-status/">Check Case Status ↗</a></article>
+<article class="sidebar-utility"><div class="sidebar-icon">📚</div><div class="meta">LEGAL KNOWLEDGE</div><h3><a href="/category/drt-drat/">DRT, DRAT, SARFAESI &amp; Banking Law</a></h3><p>Animated explainers, legal history and practical guides.</p><a class="sidebar-link" href="/category/banking-law/">Explore Banking Law ↗</a></article>
+{auction_widget_markup()}'''
+
+
+def hero_slider_markup(arts):
+    slides=[]
+    for i,a in enumerate(arts[:10]):
+        img=a.get('image','')
+        bg=f' style="background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.78)),url(\'{H.escape(img,quote=True)}\');"' if img else ''
+        slides.append(f'''<article class="hero-slide{' active' if i==0 else ''}" data-index="{i}"{bg}><a href="{H.escape(a['url'],quote=True)}" class="hero-slide-link"><div class="hero-slide-copy"><div class="kicker">{H.escape(a.get('category','Legal News'))} · {H.escape(a.get('published','')[:10])}</div><h1>{H.escape(a['title'])}</h1><p>{H.escape(a.get('excerpt',''))}</p><span class="button">Read Story ↗</span></div></a></article>''')
+    if not slides:
+        slides=['<article class="hero-slide active"><div class="hero-slide-copy"><div class="kicker">Digital Legal News &amp; Legal Education</div><h1>Law, Courts &amp; Justice — Explained in Simple Language</h1><p>Publish your first Blogger article to activate the automatic headline slider.</p></div></article>']
+    dots=''.join('<button type="button" data-slide="%d" aria-label="Go to slide %d" class="%s"></button>' % (i,i+1,'active' if i==0 else '') for i in range(len(slides)))
+    return f'''<div class="hero-slider" id="heroSlider">{''.join(slides)}<div class="hero-dots" id="heroDots">{dots}</div><button class="hero-arrow prev" type="button" aria-label="Previous story">‹</button><button class="hero-arrow next" type="button" aria-label="Next story">›</button></div>'''
+
+
 
 def sync_homepage(arts,videos):
     p=ROOT/'index.html'
     if not p.exists(): return
-    s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser'); sync_nav(s)
-    style=s.find('style',{'data-embedded':'lex-talk-legal'}); old=s.find('script',{'data-embedded':'lex-talk-legal'})
+    s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
+    sync_nav(s)
+    style=s.find('style',{'data-embedded':'lex-talk-legal'})
     if style: style.string=CSS
+    old=s.find('script',{'data-embedded':'lex-talk-legal'})
     if old: old.string=JS
     if not s.find(id='google_translate_element'):
         holder=s.new_tag('div',id='google_translate_element'); holder['aria-hidden']='true';
         if s.body: s.body.append(holder)
+
+    hero=s.select_one('.hero-main') or s.select_one('.hero-slider')
+    if hero:
+        hero.replace_with(BeautifulSoup(hero_slider_markup(arts[:10]),'html.parser'))
+    side=s.select_one('.side')
+    if side:
+        side.clear(); side.append(BeautifulSoup(homepage_sidebar_markup(),'html.parser'))
+
     lg=s.find(id='latestGrid')
     if lg:
         lg.clear(); latest=arts[:8]
@@ -580,21 +625,37 @@ def sync_homepage(arts,videos):
         if latest_videos:
             for v in latest_videos: vg.append(BeautifulSoup(video_card(v),'html.parser'))
         else: vg.append(BeautifulSoup('<div class="empty">No YouTube videos returned in the latest sync.</div>','html.parser'))
+
+    # Remove old floating widget / auction widgets and append the current versions.
+    for oldw in s.select('#floatingQuick, .floating-quick, .home-auction-wrap'):
+        oldw.decompose()
+    footer=s.find('footer')
+    widgets=BeautifulSoup(global_widget_markup(),'html.parser')
+    s.body.append(widgets) if footer is None else footer.insert_before(widgets)
+    under=ROOT/'under-construction.html'
+    if not under.exists(): under_construction_page()
     p.write_text(str(s),encoding='utf8')
 
-
 def refresh_static_pages():
+    skip={'index.html'}
     for p in ROOT.rglob('*.html'):
         rel=p.relative_to(ROOT).as_posix()
-        if rel.startswith('article/') or rel in {'videos/index.html','courtrooms/index.html','case-status/index.html'}: continue
+        if rel.startswith('article/'): continue
+        if rel in {'videos/index.html','courtrooms/index.html','case-status/index.html'}: continue
         try: s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
         except Exception: continue
         sync_nav(s)
         style=s.find('style',{'data-embedded':'lex-talk-legal'}); script=s.find('script',{'data-embedded':'lex-talk-legal'})
-        if style: style.string=CSS
-        if script: script.string=JS
-        p.write_text(str(s),encoding='utf8')
-
+        changed=True
+        if style: style.string=CSS; changed=True
+        if script: script.string=JS; changed=True
+        if not s.select_one('#floatingQuick') and s.body:
+            footer=s.find('footer')
+            widgets=BeautifulSoup(global_widget_markup(),'html.parser')
+            if footer is None: s.body.append(widgets)
+            else: footer.insert_before(widgets)
+            changed=True
+        if changed: p.write_text(str(s),encoding='utf8')
 
 def main():
     ap=ROOT/'data/articles.json'; arts=blogger()
@@ -606,8 +667,8 @@ def main():
     d=ROOT/'article'; d.mkdir(exist_ok=True)
     for f in d.glob('*.html'): f.unlink()
     for a in arts: (d/(slug(a['title'])+'.html')).write_text(article(a),encoding='utf8')
-    vc_data=extract_onecourt_vc(); write_category_pages(arts); write_videos_page(videos); write_courtrooms_page(vc_data); write_case_status_page(); sync_homepage(arts,videos); refresh_static_pages()
-    urls=['/','/courtrooms/','/case-status/','/videos/']+[f'/category/{k}/' for k in CATEGORY_MAP]+[a['url'] for a in arts]
+    write_category_pages(arts); write_videos_page(videos); under_construction_page(); vc_data=extract_onecourt_vc(); write_courtrooms_page(vc_data); write_case_status_page(); sync_homepage(arts,videos); refresh_static_pages()
+    urls=['/','/courtrooms/','/case-status/','/videos/','/under-construction.html']+[f'/category/{k}/' for k in CATEGORY_MAP]+[a['url'] for a in arts]
     now=datetime.now(timezone.utc).date().isoformat(); xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'; xml+=''.join(f'<url><loc>https://lextalk.legal{u}</loc><lastmod>{now}</lastmod></url>' for u in dict.fromkeys(urls))+'</urlset>'; (ROOT/'sitemap.xml').write_text(xml,encoding='utf8')
     print(f'Synced {len(arts)} Blogger articles and {len(videos)} YouTube videos; refreshed courtrooms and case-status directories.')
 
