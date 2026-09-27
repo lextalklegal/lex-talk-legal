@@ -1,5 +1,9 @@
-# Lex Talk Legal
+# Lex Talk Legal — production static site
 
-Blogger is the CMS. GitHub Actions syncs Blogger + YouTube into this static site. Connect this repository to Cloudflare Pages for deployment to `lextalk.legal`.
+This package is self-contained for Cloudflare Workers Static Assets: the main CSS, JavaScript, and masthead logo are embedded in HTML so the homepage remains styled even if asset folders are not served.
 
-Owner workflow: publish on Blogger, add labels, and the website updates automatically.
+GitHub repository: lextalklegal/lex-talk-legal
+Blogger source: https://lextalklegal.blogspot.com
+YouTube: https://www.youtube.com/@lextalklegal
+
+Cloudflare deployment uses wrangler.jsonc with the repository root as the static asset directory.
