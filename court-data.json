@@ -1,0 +1,150 @@
+{
+  "high_courts": [
+    [
+      "Allahabad High Court",
+      "https://www.allahabadhighcourt.in/"
+    ],
+    [
+      "Andhra Pradesh High Court",
+      "https://aphc.gov.in/"
+    ],
+    [
+      "Bombay High Court",
+      "https://bombayhighcourt.nic.in/"
+    ],
+    [
+      "Calcutta High Court",
+      "https://www.calcuttahighcourt.gov.in/"
+    ],
+    [
+      "Chhattisgarh High Court",
+      "https://highcourt.cg.gov.in/"
+    ],
+    [
+      "Delhi High Court",
+      "https://www.delhihighcourt.nic.in/"
+    ],
+    [
+      "Gauhati High Court",
+      "https://ghconline.gov.in/"
+    ],
+    [
+      "Gujarat High Court",
+      "https://gujarathighcourt.nic.in/"
+    ],
+    [
+      "Himachal Pradesh High Court",
+      "https://hphighcourt.nic.in/"
+    ],
+    [
+      "Jammu & Kashmir and Ladakh High Court",
+      "https://jkhighcourt.nic.in/"
+    ],
+    [
+      "Jharkhand High Court",
+      "https://jharkhandhighcourt.nic.in/"
+    ],
+    [
+      "Karnataka High Court",
+      "https://karnatakajudiciary.kar.nic.in/"
+    ],
+    [
+      "Kerala High Court",
+      "https://highcourtofkerala.nic.in/"
+    ],
+    [
+      "Madhya Pradesh High Court",
+      "https://mphc.gov.in/"
+    ],
+    [
+      "Madras High Court",
+      "https://www.mhc.tn.gov.in/"
+    ],
+    [
+      "Manipur High Court",
+      "https://hcmimphal.nic.in/"
+    ],
+    [
+      "Meghalaya High Court",
+      "https://meghalayahighcourt.nic.in/"
+    ],
+    [
+      "Orissa High Court",
+      "https://orissahighcourt.nic.in/"
+    ],
+    [
+      "Patna High Court",
+      "https://patnahighcourt.gov.in/"
+    ],
+    [
+      "Punjab & Haryana High Court",
+      "https://highcourtchd.gov.in/"
+    ],
+    [
+      "Rajasthan High Court",
+      "https://hcraj.nic.in/"
+    ],
+    [
+      "Sikkim High Court",
+      "https://highcourtofsikkim.nic.in/"
+    ],
+    [
+      "Telangana High Court",
+      "https://hc.ts.nic.in/"
+    ],
+    [
+      "Tripura High Court",
+      "https://thc.nic.in/"
+    ],
+    [
+      "Uttarakhand High Court",
+      "https://highcourtofuttarakhand.gov.in/"
+    ]
+  ],
+  "nclt": [
+    "Principal Bench / New Delhi",
+    "Ahmedabad",
+    "Allahabad",
+    "Amaravati",
+    "Bengaluru",
+    "Chandigarh",
+    "Chennai",
+    "Cuttack",
+    "Guwahati",
+    "Hyderabad",
+    "Indore",
+    "Jaipur",
+    "Kochi",
+    "Kolkata",
+    "Mumbai"
+  ],
+  "drt": [
+    "Ahmedabad",
+    "Allahabad",
+    "Aurangabad",
+    "Bengaluru",
+    "Chandigarh",
+    "Chennai",
+    "Cochin",
+    "Cuttack",
+    "Delhi",
+    "Guwahati",
+    "Hyderabad",
+    "Jaipur",
+    "Kolkata",
+    "Lucknow",
+    "Mumbai",
+    "Nagpur",
+    "Patna",
+    "Pune",
+    "Ranchi",
+    "Visakhapatnam"
+  ],
+  "drat": [
+    "Delhi",
+    "Allahabad",
+    "Chennai",
+    "Kolkata",
+    "Mumbai"
+  ]
+}
