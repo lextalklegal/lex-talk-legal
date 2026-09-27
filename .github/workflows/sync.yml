@@ -1,4 +1,4 @@
-name: Lex Talk Legal - Sync Blogger and YouTube
+name: Lex Talk Legal - Sync Blogger, YouTube and Court VC Links
 
 on:
   workflow_dispatch:
@@ -22,9 +22,12 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install beautifulsoup4
+        run: pip install beautifulsoup4 playwright
 
-      - name: Sync Blogger and YouTube
+      - name: Install Chromium for VC directory sync
+        run: python -m playwright install --with-deps chromium
+
+      - name: Sync Blogger, YouTube and public court VC destinations
         env:
           BLOGGER_URL: https://lextalklegal.blogspot.com
           YOUTUBE_HANDLE: "@lextalklegal"
@@ -38,6 +41,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No new content to commit."
           else
-            git commit -m "chore: sync Blogger and YouTube"
+            git commit -m "chore: sync Blogger YouTube and court VC links"
             git push
           fi
