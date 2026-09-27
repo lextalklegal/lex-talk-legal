@@ -396,8 +396,8 @@ def extract_onecourt_vc():
     pages=[]
     with sync_playwright() as p:
         browser=p.chromium.launch(headless=True)
-        context=browser.new_context(user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) LexTalkLegalBot/2.0')
-        page=context.new_page(viewport={'width':1440,'height':1200})
+        context=browser.new_context(viewport={'width':1440,'height':1200}, user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) LexTalkLegalBot/2.0')
+        page=context.new_page()
         try:
             # Supreme Court
             load(page,ONECOURT_SC_VC)
