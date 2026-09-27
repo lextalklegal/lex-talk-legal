@@ -31,22 +31,14 @@ CATEGORY_MAP = {
 }
 
 ARTICLE_CSS = r"""
-.article-site-header{background:#fff;border-bottom:1px solid #dbe2ea}
-.article-header-inner{max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:center}
-.article-logo{display:block;width:auto;max-width:280px;height:auto;max-height:78px;object-fit:contain}
-.article-nav{background:#111;color:#fff;border-bottom:3px solid #d4a72c}
-.article-nav-inner{max-width:1180px;margin:0 auto;padding:10px 18px;display:flex;gap:18px;flex-wrap:wrap}
-.article-nav a{color:#fff;text-decoration:none;font-size:13px;font-weight:700}
-.article-nav a:hover{color:#d4a72c}
-.article-wrap{width:min(900px,92%);margin:35px auto 60px;background:#fff;padding:35px 45px;border:1px solid #e1e6ed;box-shadow:0 8px 25px rgba(15,23,42,.07)}
-.article-wrap .meta{font-size:13px;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-.article-wrap h1{font-size:42px;line-height:1.18;margin:10px 0 12px;color:#111827}
-.article-meta{font-size:13px;color:#64748b;margin-bottom:22px}.article-meta a{color:#0b3b78}
-.article-hero{display:block;width:100%;max-height:520px;object-fit:cover;border-radius:8px;margin:0 0 28px}
-.article-body{font-size:18px;line-height:1.8}.article-body img{max-width:100%;height:auto}
-.article-body h2,.article-body h3{line-height:1.3;margin-top:30px}.article-body p{margin:0 0 18px}
-.article-footer{background:#0b1220;color:#dbe4f0;padding:30px 20px;text-align:center;font-size:13px}
-@media(max-width:700px){.article-header-inner{padding:10px 15px}.article-logo{max-width:230px;max-height:68px}.article-nav-inner{gap:10px;padding:9px 12px}.article-wrap{padding:24px 18px;margin-top:20px}.article-wrap h1{font-size:30px}.article-body{font-size:16px}}
+.article-wrap{max-width:920px;margin:32px auto;padding:38px 20px 60px}
+.article-wrap h1{font-size:48px;line-height:1.08;margin:9px 0}
+.article-meta{font:12px Arial;color:var(--muted);margin-bottom:24px}
+.article-hero{width:100%;max-height:500px;object-fit:cover;margin-bottom:25px}
+.article-body{font-size:19px;line-height:1.72}
+.article-body img{max-width:100%;height:auto}
+.article-body a{color:var(--red);text-decoration:underline}
+@media(max-width:560px){.article-wrap{padding:25px 16px 45px}.article-wrap h1{font-size:32px}.article-body{font-size:17px}}
 """
 
 
@@ -139,15 +131,7 @@ def article(a):
 {im}<div class="article-body">{a["content"]}</div>
 <div class="notice">For educational and informational use. Verify important legal facts, orders and case status from the concerned official source.</div>
 </main>'''
-    return f'''<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="{H.escape(a["excerpt"], quote=True)}"><link rel="canonical" href="https://lextalk.legal{a["url"]}">
-<title>{H.escape(a["title"])} | Lex Talk Legal</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script>
-<style>{CSS}{ARTICLE_CSS}</style></head><body>
-<header class="article-site-header"><div class="article-header-inner"><a href="/" aria-label="Lex Talk Legal Home"><img class="article-logo" src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
-<nav class="article-nav"><div class="article-nav-inner">{nav_html()}</div></nav>{body}
-<footer class="article-footer">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational & Informational Use Only</footer>
-<script>{JS}</script></body></html>'''
+    return page_shell((a["title"], a["url"]), a["excerpt"], body)
 
 
 def page_shell(title, description, content):
@@ -155,12 +139,16 @@ def page_shell(title, description, content):
 <meta name="description" content="{H.escape(description, quote=True)}"><link rel="canonical" href="https://lextalk.legal{title[1] if isinstance(title,tuple) else ''}">
 <title>{H.escape(title[0] if isinstance(title,tuple) else title)} | Lex Talk Legal</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script>
-<style>{CSS}</style></head><body><div class="top"></div>
+<style>{CSS}{ARTICLE_CSS}</style></head><body><div class="top"></div>
 <div class="utility"><div class="wrap"><div class="live-info"><span class="dot">●</span><span id="dateLabel">--</span><span>|</span><span id="timeLabel">--:--:-- IST</span><span>|</span><span>New Delhi, India</span></div><div class="controls"><button class="control" id="langBtn">हिन्दी</button><button class="control" id="themeBtn">☾ Dark</button></div></div></div>
 <header class="masthead"><a href="/"><img src="{LOGO}" alt="Lex Talk Legal"></a></header>
 <nav class="nav"><div class="wrap">{nav_html()}</div></nav>{content}
 <footer><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational & Informational Use Only</div></footer>
-<script>{JS}</script></body></html>'''
+<div id="google_translate_element" aria-hidden="true"></div>
+<script>{JS}</script>
+<script>function googleTranslateElementInit(){{new google.translate.TranslateElement({{pageLanguage:'en',includedLanguages:'en,hi',autoDisplay:false}},'google_translate_element');window.lexGoogleTranslateReady=true;if(window.lexApplyLanguage)window.lexApplyLanguage();}}</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body></html>'''
 
 
 def article_card(a):
@@ -201,6 +189,26 @@ def write_videos_page(videos):
     content = f'<main class="utility-page"><h1>LATEST VIDEOS</h1><p class="lead">Latest Lex Talk Legal videos are synced automatically from YouTube.</p><div class="yt-grid">{cards}</div></main>'
     (ROOT / "videos").mkdir(exist_ok=True)
     (ROOT / "videos/index.html").write_text(page_shell(("Latest Videos", "/videos/"), "Latest Lex Talk Legal videos, legal news and explainers.", content), encoding="utf8")
+
+
+def patch_shared_assets():
+    # Refresh shared CSS/JS and the Google Translate widget on existing HTML pages.
+    translate_block = '''<div id="google_translate_element" aria-hidden="true"></div>
+<script>function googleTranslateElementInit(){{new google.translate.TranslateElement({{pageLanguage:'en',includedLanguages:'en,hi',autoDisplay:false}},'google_translate_element');window.lexGoogleTranslateReady=true;if(window.lexApplyLanguage)window.lexApplyLanguage();}}</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>'''
+    for p in ROOT.rglob("*.html"):
+        if "/.git/" in str(p):
+            continue
+        try:
+            txt=p.read_text(encoding="utf8")
+        except Exception:
+            continue
+        if 'data-embedded="lex-talk-legal"' in txt:
+            txt=re.sub(r'<style data-embedded="lex-talk-legal">.*?</style>', '<style data-embedded="lex-talk-legal">'+CSS+'</style>', txt, count=1, flags=re.S)
+            txt=re.sub(r'<script data-embedded="lex-talk-legal">.*?</script>', '<script data-embedded="lex-talk-legal">'+JS+'</script>', txt, count=1, flags=re.S)
+        if 'id="google_translate_element"' not in txt and '</body>' in txt:
+            txt=txt.replace('</body>', translate_block+'\n</body>', 1)
+        p.write_text(txt,encoding="utf8")
 
 
 def update_homepage(arts, videos):
@@ -256,6 +264,7 @@ def main():
     write_category_pages(arts)
     write_videos_page(videos)
     update_homepage(arts, videos)
+    patch_shared_assets()
 
     urls = ["/", "/courtrooms/", "/case-status/", "/videos/"]
     urls += [f"/category/{k}/" for k in CATEGORY_MAP]
