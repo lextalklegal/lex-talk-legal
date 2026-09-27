@@ -73,3 +73,50 @@
   script.async=true;
   document.head.appendChild(script);
 })();
+
+// Courtroom VC confirmation / unavailable message
+(function(){
+  function ensureModal(){
+    let bd=document.getElementById('vcModalBackdrop');
+    if(bd) return bd;
+    bd=document.createElement('div');
+    bd.id='vcModalBackdrop'; bd.className='vc-modal-backdrop';
+    bd.innerHTML='<div class="vc-modal" role="dialog" aria-modal="true" aria-labelledby="vcModalTitle">'
+      +'<div class="vc-modal-head"><div><div class="vc-modal-kicker">PUBLIC COURT / VC LINK</div><h2 class="vc-modal-title" id="vcModalTitle">VC Link</h2></div><button class="vc-modal-close" type="button" aria-label="Close">×</button></div>'
+      +'<div class="vc-modal-body"><p id="vcModalText"></p><div class="vc-modal-note" id="vcModalNote"></div></div>'
+      +'<div class="vc-modal-actions"><button class="vc-modal-btn cancel" type="button">Cancel</button><button class="vc-modal-btn proceed" id="vcModalProceed" type="button">Proceed to VC</button></div>'
+      +'</div>';
+    document.body.appendChild(bd);
+    function close(){bd.classList.remove('is-open');document.body.classList.remove('vc-modal-open');window.__lexVCUrl='';}
+    bd.querySelector('.vc-modal-close').addEventListener('click',close);
+    bd.querySelector('.cancel').addEventListener('click',close);
+    bd.addEventListener('click',function(e){if(e.target===bd) close();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape') close();});
+    bd.querySelector('.proceed').addEventListener('click',function(){const u=window.__lexVCUrl;if(u){window.open(u,'_blank','noopener');close();}});
+    return bd;
+  }
+  document.addEventListener('click',function(e){
+    const btn=e.target.closest('.vc-link');
+    if(!btn) return;
+    e.preventDefault();
+    const bd=ensureModal();
+    const title=btn.getAttribute('data-vc-title')||'VC Link';
+    const url=btn.getAttribute('data-vc-url')||'';
+    bd.querySelector('#vcModalTitle').textContent=title;
+    const txt=bd.querySelector('#vcModalText');
+    const note=bd.querySelector('#vcModalNote');
+    const proceed=bd.querySelector('#vcModalProceed');
+    if(url){
+      txt.textContent='You are about to open the public virtual-hearing destination for this court / courtroom in a new tab.';
+      note.textContent='Please verify the court number, date and current VC details against the concerned court / tribunal cause list before joining.';
+      proceed.style.display='inline-block';
+      proceed.textContent='Proceed to VC';
+    }else{
+      txt.textContent='A direct public VC link is not available for this court in the latest automated sync.';
+      note.textContent='Please refer to the current cause list or contact the concerned Court Registrar, Courtroom Master or Reader for the current hearing instructions.';
+      proceed.style.display='none';
+    }
+    window.__lexVCUrl=url;
+    bd.classList.add('is-open'); document.body.classList.add('vc-modal-open');
+  });
+})();
