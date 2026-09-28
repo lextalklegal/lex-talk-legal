@@ -3,6 +3,6 @@
   "name":"lex-talk-legal",
   "main":"src/index.js",
   "compatibility_date":"2026-09-28",
-  "assets":{"directory":".","binding":"ASSETS","html_handling":"auto-trailing-slash","run_worker_first":["/api/*","/admin/*","/advocates/*"]},
+  "assets":{"directory":".","binding":"ASSETS"},
   "vars":{"SITE_URL":"https://lextalk.legal"}
 }
