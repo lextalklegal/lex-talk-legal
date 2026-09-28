@@ -1,37 +1,29 @@
-/* Lex Talk Legal — publication UI v8 */
+/* Lex Talk Legal — shared publication controls */
 (function(){
   const root=document.documentElement;
-  const nav=document.querySelector('.nav');
-  const menuBtn=document.getElementById('menuBtn');
+  const menuBtn=document.getElementById('menuTrigger');
+  const menu=document.getElementById('megaMenu');
   const themeBtn=document.getElementById('themeBtn');
-  const moreBtn=document.getElementById('moreBtn');
-  const moreWrap=document.querySelector('.nav-more');
-  if(menuBtn&&nav){
-    menuBtn.addEventListener('click',()=>{
-      const open=nav.classList.toggle('open');
-      menuBtn.setAttribute('aria-expanded',open?'true':'false');
-      menuBtn.textContent=open?'× Close':'☰ Menu';
-    });
+  function closeMenu(){
+    if(!menu||!menuBtn)return;
+    menu.hidden=true;menuBtn.setAttribute('aria-expanded','false');
   }
-  document.querySelectorAll('.mobile-menu a').forEach(a=>a.addEventListener('click',()=>{
-    nav?.classList.remove('open');
-    if(menuBtn){menuBtn.textContent='☰ Menu';menuBtn.setAttribute('aria-expanded','false');}
-  }));
-  if(moreBtn&&moreWrap){
-    moreBtn.addEventListener('click',e=>{e.stopPropagation();moreWrap.classList.toggle('open');});
-    document.addEventListener('click',e=>{if(!moreWrap.contains(e.target))moreWrap.classList.remove('open')});
+  if(menuBtn&&menu){
+    menuBtn.addEventListener('click',e=>{e.stopPropagation();const open=menu.hidden;menu.hidden=!open;menuBtn.setAttribute('aria-expanded',open?'true':'false');});
+    document.addEventListener('click',e=>{if(!menu.contains(e.target)&&e.target!==menuBtn)closeMenu();});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+    menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
   }
   function applyTheme(mode){
     root.dataset.theme=mode;
-    try{localStorage.setItem('lexThemeV8',mode)}catch(_){ }
+    try{localStorage.setItem('lexThemeV9',mode)}catch(_){ }
     if(themeBtn){
       themeBtn.textContent=mode==='dark'?'☼ Light':'☾ Dark';
       themeBtn.setAttribute('aria-label',mode==='dark'?'Switch to light mode':'Switch to dark mode');
-      themeBtn.title=mode==='dark'?'Switch to light mode':'Switch to dark mode';
     }
   }
   let stored=null;
-  try{stored=localStorage.getItem('lexThemeV8')}catch(_){ }
+  try{stored=localStorage.getItem('lexThemeV9')}catch(_){ }
   applyTheme(stored==='dark'?'dark':'light');
   themeBtn?.addEventListener('click',()=>applyTheme(root.dataset.theme==='dark'?'light':'dark'));
   function clock(){
@@ -40,6 +32,17 @@
     if(tl)tl.textContent=d.toLocaleTimeString('en-IN',{...o,hour12:false})+' IST';
   }
   clock();setInterval(clock,1000);
+  function relativeUpdate(){
+    const el=document.querySelector('[data-built-epoch]');if(!el)return;
+    const epoch=Number(el.getAttribute('data-built-epoch'));if(!Number.isFinite(epoch))return;
+    const now=Date.now(), mins=Math.max(0,Math.floor((now-epoch*1000)/60000));
+    const label=mins<1?'just now':mins<60?mins+' min ago':Math.floor(mins/60)+' hr '+(mins%60)+' min ago';
+    const exact=el.textContent||'';
+    if(!el.dataset.exact)el.dataset.exact=exact;
+    el.textContent='Content last updated: '+label;
+    el.title=el.dataset.exact;
+  }
+  relativeUpdate();setInterval(relativeUpdate,60000);
 })();
 (function(){
   function ensureModal(){
