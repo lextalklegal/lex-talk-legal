@@ -37,11 +37,14 @@ Add official team photographs under `assets/team/` and set the corresponding `ph
 
 ## Cloudflare
 
-The repository is prepared for Cloudflare Workers + Static Assets using `src/index.js` and `wrangler.jsonc`. No public advocate directory or profile-approval database is included in v10; that earlier concept has been removed.
+The repository is prepared for Cloudflare Workers + Static Assets using `src/index.js` and `wrangler.jsonc`. Production is served through the `lextalk.legal` Custom Domain. The `workers.dev` production endpoint remains enabled as a legacy-browser compatibility bridge so visitors with an older cached redirect can be returned to the canonical domain without manual browser-cache cleanup.
+
+The deployment workflow uses GitHub Actions with `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` secrets. The scheduled sync workflow also deploys committed content changes in the same run, preventing generated files from getting out of sync with the live Worker.
+
+No public advocate directory or profile-approval database is included in v10; that earlier concept has been removed.
 
 ## Build reliability
-The sync workflow runs a Python syntax check and regression smoke test before contacting Blogger, YouTube or court/VC sources. This prevents a broken generator from silently publishing a partial site update.
-
+The deployment and scheduled-sync workflows run Python syntax checks and a regression smoke test before and after the generator runs. The smoke test also verifies the canonical-domain/legacy-bridge contract so the scheduled generator cannot silently overwrite the routing fix.
 
 ## Cloudflare deployment
 Production deployment is handled by `.github/workflows/deploy-worker.yml` using GitHub Actions secrets. Credentials are intentionally not stored in the repository.

@@ -1,3 +1,18 @@
+/* Legacy URL cleanup: silently restore the canonical address after the workers.dev compatibility bridge. */
+(function(){
+  const u=new URL(window.location.href);
+  if(u.pathname==='/__legacy-bridge/'){
+    let target='/';
+    try{
+      const raw=u.searchParams.get('__to')||'/';
+      const t=new URL(raw,window.location.origin);
+      if(t.origin===window.location.origin){
+        target=t.pathname+t.search+t.hash;
+      }
+    }catch(_){}
+    try{window.history.replaceState(null,'',target)}catch(_){}
+  }
+})();
 /* Lex Talk Legal — shared publication controls */
 (function(){
   const root=document.documentElement;

@@ -612,7 +612,7 @@ def page_shell(title,description,content):
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
 <nav class="nav"><div class="wrap nav-inner">{nav}</div></nav>
 {content}
-<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{BUILD_TIME} IST" data-built-epoch="{BUILD_EPOCH}">Content last updated: {BUILD_TIME} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
+<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{BUILD_TIME} IST" data-built-epoch="{BUILD_EPOCH}">Content last updated: {BUILD_TIME} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js?v=20260928-bridge1" defer></script></body></html>'''
 
 def article(a):
     image=a.get('image','')
@@ -731,6 +731,7 @@ def write_config():
   "name":"lex-talk-legal",
   "main":"src/index.js",
   "compatibility_date":"2026-09-28",
+  "workers_dev":true,
   "assets":{"directory":".","binding":"ASSETS"},
   "vars":{"SITE_URL":"https://lextalk.legal"}
 }
@@ -780,11 +781,75 @@ Sitemap: https://lextalk.legal/sitemap.xml
   async fetch(request, env) {
     try {
       const url = new URL(request.url);
-      if (/^\\/admin(?:\\/|$)/.test(url.pathname)) return Response.redirect(new URL('/', request.url), 302);
-      if (/^\\/advocates(?:\\/|$)/.test(url.pathname)) return Response.redirect(new URL('/team.html', request.url), 301);
+      const host = url.hostname.toLowerCase();
+
+      // Legacy compatibility bridge.
+      // Some browsers may still have the previous permanent redirect
+      // cached from the canonical domain to this workers.dev hostname.
+      if (host === "lex-talk-legal.office-lextalklegal.workers.dev") {
+        const target = new URL("https://lextalk.legal/__legacy-bridge/");
+        target.searchParams.set("__to", url.pathname + url.search);
+
+        return new Response(null, {
+          status: 302,
+          headers: {
+            "Location": target.toString(),
+            "Cache-Control": "no-store",
+            "X-Robots-Tag": "noindex, nofollow, noarchive"
+          }
+        });
+      }
+
+      // The bridge endpoint serves the intended asset while the shared
+      // site.js removes the bridge URL from the visible address bar.
+      if (host === "lextalk.legal" && url.pathname === "/__legacy-bridge/") {
+        let targetPath = url.searchParams.get("__to") || "/";
+
+        try {
+          const target = new URL(targetPath, "https://lextalk.legal");
+          if (target.origin !== "https://lextalk.legal") {
+            targetPath = "/";
+          } else {
+            targetPath = target.pathname + target.search;
+          }
+        } catch (_) {
+          targetPath = "/";
+        }
+
+        const assetUrl = new URL(targetPath, "https://lextalk.legal");
+        const assetRequest = new Request(assetUrl.toString(), request);
+        const response = await env.ASSETS.fetch(assetRequest);
+
+        const headers = new Headers(response.headers);
+        headers.set("Cache-Control", "no-store");
+
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers
+        });
+      }
+
+      if (/^\\/admin(?:\\/|$)/.test(url.pathname)) {
+        return Response.redirect(new URL("/", request.url), 302);
+      }
+
+      if (/^\\/advocates(?:\\/|$)/.test(url.pathname)) {
+        return Response.redirect(new URL("/team.html", request.url), 301);
+      }
+
       return await env.ASSETS.fetch(request);
+
     } catch (_) {
-      return new Response("Lex Talk Legal — Temporary service error.", {status: 503, headers: {"content-type":"text/plain; charset=UTF-8"}});
+      return new Response(
+        "Lex Talk Legal — Temporary service error.",
+        {
+          status: 503,
+          headers: {
+            "content-type": "text/plain; charset=UTF-8"
+          }
+        }
+      );
     }
   }
 };
