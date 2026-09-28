@@ -1,3 +1,4 @@
+# Cloudflare Workers Static Assets exclusions
 .git
 .git/**
 .github
