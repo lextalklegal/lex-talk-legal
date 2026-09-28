@@ -1,8 +1,14 @@
 {
-  "$schema":"https://unpkg.com/wrangler@latest/config-schema.json",
-  "name":"lex-talk-legal",
-  "main":"src/index.js",
-  "compatibility_date":"2026-09-28",
-  "assets":{"directory":".","binding":"ASSETS"},
-  "vars":{"SITE_URL":"https://lextalk.legal"}
+  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
+  "name": "lex-talk-legal",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-28",
+  "workers_dev": false,
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "SITE_URL": "https://lextalk.legal"
+  }
 }
