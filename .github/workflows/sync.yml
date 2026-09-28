@@ -20,34 +20,27 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install beautifulsoup4 playwright
-
       - name: Install Chromium for VC directory sync
         run: python -m playwright install --with-deps chromium
-
       - name: Validate build before sync
         run: |
           python -m py_compile scripts/build_site.py scripts/smoke_test.py
           python scripts/smoke_test.py
-
       - name: Sync Blogger, YouTube and public court VC destinations
         env:
           BLOGGER_URL: https://lextalklegal.blogspot.com
           YOUTUBE_HANDLE: "@lextalklegal"
         run: python scripts/build_site.py
-
       - name: Validate generated build
         run: |
           python -m py_compile scripts/build_site.py scripts/smoke_test.py
           python scripts/smoke_test.py
-
       - name: Commit generated content
         id: commit
         shell: bash
@@ -63,4 +56,10 @@ jobs:
             git push
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
-
+      - name: Deploy Worker after sync
+        if: steps.commit.outputs.changed == 'true'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
