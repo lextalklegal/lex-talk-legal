@@ -4,6 +4,7 @@ src
 db
 admin
 advocates
+functions
 scripts
 *.py
 *.md
