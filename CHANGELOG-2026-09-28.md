@@ -1,31 +1,28 @@
-# Lex Talk Legal — 28 September 2026 merged refinement
+# Lex Talk Legal — corrected final merged build
 
-This release keeps the supplied existing repository as the base and adds the agreed professional-community foundation.
+This build is based on the exact existing GitHub repository ZIP supplied by the user and is intended to be copied back into the existing `main` repository.
 
-## Preserved
+## Visible/refinement changes
+- Added **Legal Professionals** to the main navigation, homepage community area, sidebar and quick links.
+- Added a free professional profile application flow with mandatory administrative review.
+- Added public approved-profile pages with `ProfilePage`/`Person` structured-data foundation and clear informational disclaimers.
+- Added moderation states: pending, under review, approved/published, rejected and suspended.
+- Added admin moderation actions and audit logging.
+- Replaced the unreliable Google Translate widget dependency with a deterministic local Hindi/English UI switch.
+- Added a one-time language migration key so an older saved language state does not silently control the newly deployed UI.
+- Removed the redundant client-side article/video JSON injection script to reduce duplicate work and avoid inserting unescaped Blogger data into HTML.
+- Switched generated pages from embedded CSS/JS/base64-logo payloads to cacheable `/assets/site.css`, `/assets/site.js` and the official logo asset.
 
-- Existing article archive and data
-- Blogger/YouTube/courtroom/case-status sync logic
-- Existing legal guides and policy pages
-- Existing branding assets and navigation architecture
+## Security / infrastructure changes
+- Added Cloudflare Worker runtime routing for `/api/*`, `/admin/*` and `/advocates/*`.
+- Added `.assetsignore` so source code, build scripts, functions and database files are not exposed as public static assets.
+- Added stronger response security headers and no-store/noindex controls for admin/API routes.
+- Admin operations now require a real Cloudflare Access identity in the Worker context and then check that identity against `ADMIN_EMAILS`; a browser-supplied Access email header is not trusted by itself.
+- Added D1 schema for professional profiles, submissions and moderation audit logs.
+- Added rate limiting/honeypot/origin validation to profile submissions.
+- Added a fallback so a temporary Playwright/browser/network failure during VC extraction does not wipe the previously cached VC directory.
 
-## Added/refined
+## Deployment note
+The profile database is intentionally not enabled until a real Cloudflare D1 database is created and bound as `DB`. The admin UI is intentionally not usable until Cloudflare Access protects `/admin/*` and `/api/admin/*` and the authorized email(s) are placed in `ADMIN_EMAILS`.
 
-- Legal Professionals navigation and homepage community panel
-- Free advocate profile submission page
-- Mandatory administrative review workflow
-- Cloudflare Pages Functions routes
-- Cloudflare D1 schema for profiles, submissions and audit log
-- Public server-rendered advocate directory and profile pages
-- Admin moderation console protected by Cloudflare Access identity
-- No public ratings, rankings, success-rate claims or guaranteed outcomes
-- Profile guidelines and informational disclaimer language
-- Security headers and API no-store rules
-- `security.txt`
-- Cacheable external logo references instead of embedding the logo as base64 in every generated page
-- `.gitignore` and local variable example
-- Deployment checklist
-
-## Important
-
-The database ID and secrets are intentionally not included. Configure them in Cloudflare. Do not commit production secrets to GitHub.
+The application is currently designed for the existing Cloudflare Workers deployment model. Cloudflare's current documentation recommends using a custom domain or Worker route for production rather than relying on `workers.dev`; the existing `workers.dev` URL can remain useful for testing until `lextalk.legal` is connected.

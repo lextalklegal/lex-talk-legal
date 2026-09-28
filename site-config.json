@@ -13,5 +13,6 @@
   "location": "New Delhi, India",
   "profile_directory": "/advocates/",
   "profile_apply": "/advocates/apply.html",
-  "profile_status": "free_and_admin_reviewed"
+  "profile_status": "free_and_admin_reviewed",
+  "deployment_model": "cloudflare_workers_static_assets"
 }

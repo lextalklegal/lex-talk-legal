@@ -1,64 +1,76 @@
 # Lex Talk Legal — Deployment Checklist
 
-## Before pushing to GitHub
+This repository is the merged production codebase built from the exact existing GitHub repository supplied for refinement. Existing articles, data, court/VC utilities, case-status pages, YouTube/Blogger automation and official brand assets are retained.
 
-- Confirm `site-config.json` uses `https://lextalk.legal`.
-- Confirm no real secrets are present in source.
-- Keep `dev.vars` local only; `.gitignore` excludes it.
-- Keep the existing official logo assets in `assets/`.
+## 1. Cloudflare Worker
+The live architecture is Cloudflare Workers Static Assets with `src/index.js` as the Worker entry point. Static site files are served from the `assets.directory` root, while `/api/*`, `/admin/*` and `/advocates/*` are handled by the Worker.
 
-## Cloudflare Pages
+Deploy with the repository's `wrangler.jsonc`. Keep the `workers.dev` URL for testing until the custom domain is ready. For production, use the custom domain and consider disabling the public `workers.dev` URL after the custom domain is active.
 
-1. Connect the GitHub repository to the Cloudflare Pages project.
-2. Production branch: `main`.
-3. Build output directory: repository root (`.`) when using the current Wrangler Pages configuration.
-4. Ensure Pages Functions are enabled/discovered from `/functions`.
+## 2. D1 profile database
+Create a Cloudflare D1 database and bind it in `wrangler.jsonc` as:
 
-## D1 profile database
-
-Create the database:
-
-```bash
-npx wrangler d1 create lex-talk-legal-profiles
+```jsonc
+"d1_databases": [
+  { "binding": "DB", "database_name": "lex-talk-legal-profiles", "database_id": "REPLACE_WITH_REAL_DATABASE_ID" }
+]
 ```
 
-Apply schema:
+Apply `db/schema.sql` to the database. Do not put a real database ID, token or credential in source-control unless it is intended to be public metadata; secrets must remain in Cloudflare/GitHub secret storage.
 
-```bash
-npx wrangler d1 execute lex-talk-legal-profiles --remote --file=db/schema.sql
-```
+Until `DB` is bound, profile pages and submission endpoints deliberately show a configuration message and do not create partial records.
 
-Then bind the database as **`DB`** in Cloudflare Pages → Settings → Bindings for production (and preview if required).
-
-## Admin protection
-
-Set a Pages/Worker variable:
-
-`ADMIN_EMAILS=your-admin@example.com`
-
-Set a long random variable/secret:
-
-`RATE_LIMIT_SALT=<long-random-value>`
-
-Configure Cloudflare Access so that these paths are restricted to the admin email(s):
+## 3. Admin security — mandatory
+Protect these paths with Cloudflare Access:
 
 - `/admin/*`
 - `/api/admin/*`
 
-The application also checks the Cloudflare Access-authenticated email against `ADMIN_EMAILS`.
+The Worker also uses Cloudflare Access identity (`ctx.access.getIdentity()`) as a defense-in-depth check and only permits emails listed in the `ADMIN_EMAILS` Worker variable. A browser-supplied `CF-Access-Authenticated-User-Email` header is not trusted by the Worker.
 
-## Recommended launch checks
+Set:
 
-- Submit a test profile.
-- Confirm it stays `pending` and is not public.
-- Open `/admin/profiles` while authenticated through Cloudflare Access.
-- Approve the test profile.
-- Confirm `/advocates/` shows it.
-- Confirm `/advocates/<slug>/` is server-rendered.
-- Confirm the profile URL has a canonical link and ProfilePage JSON-LD.
-- Reject a second test profile and confirm it is not public.
-- Test suspension and restoration.
-- Test invalid URLs, oversized submissions and repeated submissions.
-- Confirm `/admin/` and `/api/admin/` are not indexed/cached publicly.
-- Confirm existing Blogger, YouTube, Courtroom and Case Status pages still work.
-- Confirm the official logo renders from `/assets/LexTalkLegal_Logo-wo-bg.png`.
+```text
+ADMIN_EMAILS=your-authorized-email@example.com
+RATE_LIMIT_SALT=<random-long-value>
+```
+
+as Cloudflare Worker variables/secrets. Never commit real secret values.
+
+## 4. Professional profiles
+Public directory: `/advocates/`
+
+Application: `/advocates/apply.html`
+
+Profile lifecycle:
+
+`Pending → Under Review → Published / Rejected / Suspended`
+
+Material profile edits are intended to return to moderation. The public profile design deliberately avoids paid ranking, star ratings, success-rate claims, guaranteed outcomes and “best lawyer” labels.
+
+## 5. Hindi / English UI
+The website chrome now uses a deterministic local language switch. It does not depend on Google's legacy website-translation widget and it does not automatically machine-translate user-submitted professional profiles or full editorial articles.
+
+The language preference is stored locally in the browser. The current code version includes a one-time migration key so an earlier translation state cannot silently force the new UI into the wrong initial language.
+
+## 6. Security / privacy
+Before accepting production profile submissions, review the live Privacy Policy, Terms, Profile Guidelines and Corrections / Grievance process. Uploaded identity documents are not part of the public profile model. Public profiles expose only the information intentionally published by the profile holder after review.
+
+## 7. Automated sync
+`.github/workflows/sync.yml` continues the existing scheduled Blogger, YouTube and public VC synchronization. The sync script also regenerates category pages, the homepage and sitemap.
+
+The sync script has a fallback for VC extraction failures so a temporary Playwright/browser/network problem does not erase the previously cached VC directory.
+
+## 8. Final production checks
+After deployment, test:
+
+1. Home page and mobile layout.
+2. Hindi ↔ English toggle and Dark mode.
+3. Existing article URLs and category pages.
+4. YouTube section and Courtroom / Case Status utilities.
+5. `/advocates/` directory and `/advocates/apply.html`.
+6. D1 profile submission after database binding.
+7. Cloudflare Access protection on `/admin/*` and `/api/admin/*`.
+8. Admin approve/reject/suspend/note actions.
+9. `robots.txt`, `sitemap.xml`, canonical tags and profile structured data.
+10. `lextalk.legal` custom domain before treating the `workers.dev` URL as production.
