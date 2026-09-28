@@ -41,3 +41,7 @@ The repository is prepared for Cloudflare Workers + Static Assets using `src/ind
 
 ## Build reliability
 The sync workflow runs a Python syntax check and regression smoke test before contacting Blogger, YouTube or court/VC sources. This prevents a broken generator from silently publishing a partial site update.
+
+
+## Cloudflare deployment
+Production deployment is handled by `.github/workflows/deploy-worker.yml` using GitHub Actions secrets. Credentials are intentionally not stored in the repository.
