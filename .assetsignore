@@ -2,11 +2,12 @@
 .github
 src
 db
+admin
+advocates
 scripts
-README*.md
-DEPLOYMENT*.md
-CHANGELOG*.md
 *.py
+*.md
+README*.txt
 wrangler.jsonc
 .gitignore
 .assetsignore
