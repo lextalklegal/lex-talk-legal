@@ -21,17 +21,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-
       - name: Validate build
         run: |
           python -m py_compile scripts/build_site.py scripts/smoke_test.py
           python scripts/smoke_test.py
-
       - name: Deploy Worker and Static Assets
         uses: cloudflare/wrangler-action@v4
         with:
