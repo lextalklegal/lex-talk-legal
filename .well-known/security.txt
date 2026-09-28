@@ -1,4 +1,3 @@
 Contact: mailto:office.lextalklegal@gmail.com
-Policy: https://lextalk.legal/contact.html
-Preferred-Languages: en, hi
-Expires: 2027-09-28T00:00:00Z
+Canonical: https://lextalk.legal/.well-known/security.txt
+Preferred-Languages: en
