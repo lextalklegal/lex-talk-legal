@@ -25,11 +25,10 @@ This build is based on the exact existing GitHub repository ZIP supplied by the 
 ## Deployment note
 The profile database is intentionally not enabled until a real Cloudflare D1 database is created and bound as `DB`. The admin UI is intentionally not usable until Cloudflare Access protects `/admin/*` and `/api/admin/*` and the authorized email(s) are placed in `ADMIN_EMAILS`.
 
-The application is configured to serve production through the existing `lextalk.legal` Custom Domain. The `workers.dev` production endpoint is intentionally kept enabled as a temporary legacy-browser compatibility bridge for visitors who may still have an older cached permanent redirect. The bridge uses a `302` response and a dedicated canonical-domain bridge path, then silently restores the visible address to `https://lextalk.legal/`.
+The application is currently designed for the existing Cloudflare Workers deployment model. Cloudflare's current documentation recommends using a custom domain or Worker route for production rather than relying on `workers.dev`; the existing `workers.dev` URL can remain useful for testing until `lextalk.legal` is connected.
 
-## 2026-09-28 — deployment/routing hardening
-- Fixed the build generator so scheduled syncs no longer overwrite the Worker routing configuration or legacy-browser compatibility code.
-- Added the missing GitHub Actions deployment workflow using the Cloudflare Wrangler Action.
-- Updated the scheduled sync workflow to validate the build before and after generation and deploy generated changes in the same run.
-- Added a canonical-domain bridge for browsers that still hold the old `lextalk.legal` → `workers.dev` permanent redirect in cache.
-- Versioned the shared site JavaScript reference so the bridge cleanup code is refreshed for newly served pages.
+
+## ONE-TIME DEPLOY PATCH
+- Persist `node_modules` and `.wrangler` in `.assetsignore` and the build generator.
+- Persist the legacy `workers.dev` compatibility bridge in the build generator.
+- Scheduled sync keeps an in-job Cloudflare deploy; direct pushes use `deploy-worker.yml`.

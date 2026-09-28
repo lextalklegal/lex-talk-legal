@@ -2,52 +2,22 @@ export default {
   async fetch(request, env) {
     try {
       const url = new URL(request.url);
-      const host = url.hostname.toLowerCase();
 
-      // Legacy compatibility bridge.
-      // Some browsers may still have the previous permanent redirect
-      // cached from the canonical domain to this workers.dev hostname.
-      if (host === "lex-talk-legal.office-lextalklegal.workers.dev") {
-        const target = new URL("https://lextalk.legal/__legacy-bridge/");
-        target.searchParams.set("__to", url.pathname + url.search);
+      // Legacy browser compatibility:
+      // Old cached redirects may still send some visitors to the
+      // previous workers.dev hostname. Send them back to the
+      // canonical website without creating another permanent redirect.
+      if (url.hostname === "lex-talk-legal.office-lextalklegal.workers.dev") {
+        const canonical = new URL(request.url);
+        canonical.protocol = "https:";
+        canonical.hostname = "lextalk.legal";
 
         return new Response(null, {
           status: 302,
           headers: {
-            "Location": target.toString(),
-            "Cache-Control": "no-store",
-            "X-Robots-Tag": "noindex, nofollow, noarchive"
+            "Location": canonical.toString(),
+            "Cache-Control": "no-store"
           }
-        });
-      }
-
-      // The bridge endpoint serves the intended asset while the shared
-      // site.js removes the bridge URL from the visible address bar.
-      if (host === "lextalk.legal" && url.pathname === "/__legacy-bridge/") {
-        let targetPath = url.searchParams.get("__to") || "/";
-
-        try {
-          const target = new URL(targetPath, "https://lextalk.legal");
-          if (target.origin !== "https://lextalk.legal") {
-            targetPath = "/";
-          } else {
-            targetPath = target.pathname + target.search;
-          }
-        } catch (_) {
-          targetPath = "/";
-        }
-
-        const assetUrl = new URL(targetPath, "https://lextalk.legal");
-        const assetRequest = new Request(assetUrl.toString(), request);
-        const response = await env.ASSETS.fetch(assetRequest);
-
-        const headers = new Headers(response.headers);
-        headers.set("Cache-Control", "no-store");
-
-        return new Response(response.body, {
-          status: response.status,
-          statusText: response.statusText,
-          headers
         });
       }
 
