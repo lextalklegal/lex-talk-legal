@@ -1,4 +1,11 @@
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+  X-Frame-Options: SAMEORIGIN
+
+/api/*
+  Cache-Control: no-store
+
+/admin/*
+  Cache-Control: no-store
