@@ -1,13 +1,8 @@
 {
-  "$schema": "https://unpkg.com/wrangler@latest/config-schema.json",
-  "name": "lex-talk-legal",
-  "main": "src/index.js",
-  "compatibility_date": "2026-09-27",
-  "assets": {
-    "directory": ".",
-    "binding": "ASSETS",
-    "html_handling": "auto-trailing-slash",
-    "run_worker_first": ["/api/*", "/admin/*", "/advocates/*"]
-  }
-  // After creating D1, add a d1_databases entry with binding "DB" and the real database_id.
+  "$schema":"https://unpkg.com/wrangler@latest/config-schema.json",
+  "name":"lex-talk-legal",
+  "main":"src/index.js",
+  "compatibility_date":"2026-09-28",
+  "assets":{"directory":".","binding":"ASSETS","html_handling":"auto-trailing-slash","run_worker_first":["/api/*","/admin/*","/advocates/*"]},
+  "vars":{"SITE_URL":"https://lextalk.legal"}
 }

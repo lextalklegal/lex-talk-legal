@@ -1,9 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /admin/
+Disallow: /admin
 Disallow: /api/
-Disallow: /functions/
-Disallow: /src/
-Disallow: /db/
-Disallow: /scripts/
+Disallow: /advocates/apply
 Sitemap: https://lextalk.legal/sitemap.xml

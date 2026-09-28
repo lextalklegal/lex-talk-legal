@@ -10,9 +10,5 @@
   "phone1": "+91-8368268507",
   "phone2": "+91-9318445957",
   "domain": "https://lextalk.legal",
-  "location": "New Delhi, India",
-  "profile_directory": "/advocates/",
-  "profile_apply": "/advocates/apply.html",
-  "profile_status": "free_and_admin_reviewed",
-  "deployment_model": "cloudflare_workers_static_assets"
+  "location": "New Delhi, India"
 }
