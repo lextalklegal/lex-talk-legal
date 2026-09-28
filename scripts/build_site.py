@@ -257,6 +257,15 @@ def guide_markup(key):
 </main>'''
 
 
+def category_matches(a, key):
+    labels = {str(x).strip().lower() for x in a.get("labels", [])}
+    title = str(a.get("title", "")).lower()
+    _, terms = CATEGORY_MAP[key]
+    if labels & {str(t).strip().lower() for t in terms}:
+        return True
+    return any(str(term).strip().lower() in title for term in terms)
+
+
 def write_category_pages(arts):
     for key,(name,_) in CATEGORY_MAP.items():
         if key in GUIDES:
@@ -732,6 +741,7 @@ src
 db
 admin
 advocates
+functions
 scripts
 *.py
 *.md

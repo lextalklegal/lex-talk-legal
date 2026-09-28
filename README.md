@@ -1,8 +1,8 @@
-# Lex Talk Legal — Editorial Platform v8
+# Lex Talk Legal — Editorial Platform v10
 
 Lex Talk Legal is a digital legal news, legal education and public-information platform operated as a media initiative of LEXBOTICS AI MEDIA LLP.
 
-## v8 product direction
+## v10 product direction
 
 This build is intentionally editorial-first and monetisation-ready. The homepage is a fresh front page, not an archive: it shows one lead story, up to three secondary stories and a small latest-story set. Older articles remain available through category and article pages.
 
@@ -29,7 +29,7 @@ Article and homepage images use contained media frames with a blurred backdrop s
 
 ## Theme
 
-The website has a light default theme with a manual light/dark toggle. The v8 theme preference uses a new localStorage key so older versions cannot force the new site into a stale theme state.
+The website has a light default theme with a manual light/dark toggle. The v10 theme preference uses a new localStorage key so older versions cannot force the new site into a stale theme state.
 
 ## Team photographs
 
@@ -37,4 +37,7 @@ Add official team photographs under `assets/team/` and set the corresponding `ph
 
 ## Cloudflare
 
-The repository is prepared for Cloudflare Workers + Static Assets using `src/index.js` and `wrangler.jsonc`. No public advocate directory or profile-approval database is included in v8; that earlier concept has been removed.
+The repository is prepared for Cloudflare Workers + Static Assets using `src/index.js` and `wrangler.jsonc`. No public advocate directory or profile-approval database is included in v10; that earlier concept has been removed.
+
+## Build reliability
+The sync workflow runs a Python syntax check and regression smoke test before contacting Blogger, YouTube or court/VC sources. This prevents a broken generator from silently publishing a partial site update.
