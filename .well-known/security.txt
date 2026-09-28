@@ -1,1 +1,3 @@
-
+Contact: mailto:office.lextalklegal@gmail.com
+Canonical: https://lextalk.legal/.well-known/security.txt
+Preferred-Languages: en
