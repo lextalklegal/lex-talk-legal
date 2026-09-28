@@ -2,76 +2,28 @@
   const root=document.documentElement;
   const langBtn=document.getElementById('langBtn');
   const themeBtn=document.getElementById('themeBtn');
-
-  function currentLang(){
-    const m=document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
-    if(m){ const v=decodeURIComponent(m[1]); if(v.endsWith('/hi')) return 'hi'; }
-    return localStorage.getItem('lex-lang')==='hi' ? 'hi' : 'en';
+  if(localStorage.getItem('lex-lang-version')!=='v5'){
+    localStorage.setItem('lex-lang','en');
+    localStorage.setItem('lex-lang-version','v5');
   }
-
-  function setButton(){
-    const hi=currentLang()==='hi';
-    root.lang=hi?'hi':'en';
-    if(langBtn) langBtn.textContent=hi?'English':'हिन्दी';
-  }
-
-  function setGoogleCookie(lang){
-    if(lang==='hi'){
-      const value='/en/hi';
-      document.cookie='googtrans='+value+';path=/';
-    }else{
-      document.cookie='googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-    }
-    localStorage.setItem('lex-lang',lang);
-  }
-
-  if(langBtn){
-    langBtn.addEventListener('click',function(){
-      const next=currentLang()==='hi'?'en':'hi';
-      setGoogleCookie(next);
-      location.reload();
-    });
-  }
-
-  const savedTheme=localStorage.getItem('lex-theme');
-  if(savedTheme) root.dataset.theme=savedTheme;
-  if(themeBtn){
-    themeBtn.textContent=root.dataset.theme==='dark'?'☀ Light':'☾ Dark';
-    themeBtn.addEventListener('click',function(){
-      root.dataset.theme=root.dataset.theme==='dark'?'':'dark';
-      localStorage.setItem('lex-theme',root.dataset.theme);
-      themeBtn.textContent=root.dataset.theme==='dark'?'☀ Light':'☾ Dark';
-    });
-  }
-
-  function clock(){
-    const d=new Date();
-    const o={timeZone:'Asia/Kolkata'};
-    const dl=document.getElementById('dateLabel');
-    const tl=document.getElementById('timeLabel');
-    if(dl) dl.textContent=d.toLocaleDateString('en-IN',{...o,weekday:'long',day:'2-digit',month:'long',year:'numeric'});
-    if(tl) tl.textContent=d.toLocaleTimeString('en-IN',{...o,hour12:false})+' IST';
-  }
-  clock(); setInterval(clock,1000); setButton();
-
-  window.googleTranslateElementInit=function(){
-    try{
-      if(window.google && google.translate && google.translate.TranslateElement){
-        new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,hi',autoDisplay:false},'google_translate_element');
-        if(currentLang()==='hi'){
-          setTimeout(function(){
-            const select=document.querySelector('.goog-te-combo');
-            if(select){ select.value='hi'; select.dispatchEvent(new Event('change')); }
-          },500);
-        }
-      }
-    }catch(e){}
+  const T={
+    en:{latest:'Latest',courts:'Courts',lawPolicy:'Law & Policy',bankingLaw:'Banking Law',drtDrat:'DRT / DRAT',legalCareers:'Legal Careers',dra:'DRA',legalProfessionals:'Legal Professionals',bareActs:'Bare Acts',courtrooms:'Courtrooms',caseStatus:'Case Status',videos:'Videos',hindi:'हिन्दी',english:'English',dark:'☾ Dark',light:'☀ Light',breaking:'BREAKING',tick:'Legal news • Courts • Judgments • Law & Policy • DRT/DRAT • Legal Careers • Legal Explainers',legalUtility:'LEGAL UTILITY',legalKnowledge:'LEGAL KNOWLEDGE',legalCommunity:'LEGAL COMMUNITY',quickLinks:'Quick Links',utilities:'Legal Utilities',latestVideos:'Latest Videos',communityTitle:'Build Your Free Professional Profile',communityText:'Lex Talk Legal is developing an informational legal-professional community where advocates can maintain a free public professional profile, share knowledge and connect with the wider legal community. Profiles are reviewed before publication.',communityFree:'Profile creation is free',communityReview:'Submitted information is reviewed',communitySearch:'Published profiles can be discoverable',noPaidRanking:'NO PAID RANKING',communitySide:'Informational profiles. No star ratings, paid ranking, guaranteed results or “best lawyer” claims.',exploreProfiles:'Explore Profiles ↗',readStory:'Read Story ↗',watchYouTube:'Watch on YouTube',privacy:'Privacy',terms:'Terms',disclaimer:'Disclaimer',editorial:'Editorial Policy',copyright:'Copyright / Takedown',corrections:'Corrections & Grievance',aiPolicy:'AI Content Policy',advertise:'Advertise With Us'},
+    hi:{latest:'ताज़ा',courts:'न्यायालय',lawPolicy:'कानून और नीति',bankingLaw:'बैंकिंग कानून',drtDrat:'DRT / DRAT',legalCareers:'कानूनी करियर',dra:'DRA',legalProfessionals:'कानूनी पेशेवर',bareActs:'Bare Acts',courtrooms:'कोर्टरूम',caseStatus:'केस स्टेटस',videos:'वीडियो',hindi:'हिन्दी',english:'English',dark:'☾ डार्क',light:'☀ लाइट',breaking:'ब्रेकिंग',tick:'कानूनी समाचार • न्यायालय • फैसले • कानून और नीति • DRT/DRAT • कानूनी करियर • कानूनी जानकारी',legalUtility:'कानूनी उपयोगिता',legalKnowledge:'कानूनी जानकारी',legalCommunity:'कानूनी समुदाय',quickLinks:'त्वरित लिंक',utilities:'कानूनी उपयोगिताएँ',latestVideos:'ताज़ा वीडियो',communityTitle:'अपनी निःशुल्क प्रोफेशनल प्रोफाइल बनाएं',communityText:'Lex Talk Legal एक सूचनात्मक कानूनी-पेशेवर समुदाय विकसित कर रहा है, जहाँ अधिवक्ता निःशुल्क सार्वजनिक प्रोफेशनल प्रोफाइल रख सकते हैं, ज्ञान साझा कर सकते हैं और व्यापक कानूनी समुदाय से जुड़ सकते हैं। प्रोफाइल प्रकाशन से पहले समीक्षा की जाती है।',communityFree:'प्रोफाइल बनाना निःशुल्क है',communityReview:'जमा की गई जानकारी की समीक्षा होती है',communitySearch:'प्रकाशित प्रोफाइल खोज इंजनों द्वारा खोजी जा सकती हैं',noPaidRanking:'पेड रैंकिंग नहीं',communitySide:'सूचनात्मक प्रोफाइल। कोई स्टार रेटिंग, पेड रैंकिंग, परिणाम की गारंटी या “बेस्ट लॉयर” जैसे दावे नहीं।',exploreProfiles:'प्रोफाइल देखें ↗',readStory:'स्टोरी पढ़ें ↗',watchYouTube:'YouTube पर देखें',privacy:'गोपनीयता',terms:'उपयोग की शर्तें',disclaimer:'डिस्क्लेमर',editorial:'एडिटोरियल नीति',copyright:'कॉपीराइट / टेकडाउन',corrections:'सुधार और शिकायत',aiPolicy:'AI कंटेंट नीति',advertise:'हमारे साथ विज्ञापन करें'}
   };
-
-  const script=document.createElement('script');
-  script.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-  script.async=true;
-  document.head.appendChild(script);
+  function lang(){return localStorage.getItem('lex-lang')==='hi'?'hi':'en';}
+  function applyLanguage(l){
+    l=l==='hi'?'hi':'en'; root.lang=l; localStorage.setItem('lex-lang',l);
+    document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(T[l][k]!==undefined)el.textContent=T[l][k];});
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.getAttribute('data-i18n-placeholder');if(T[l][k]!==undefined)el.setAttribute('placeholder',T[l][k]);});
+    if(langBtn)langBtn.textContent=l==='hi'?T.en.english:T.en.hindi;
+    if(themeBtn)themeBtn.textContent=root.dataset.theme==='dark'?T[l].light:T[l].dark;
+    window.dispatchEvent(new CustomEvent('lex-language-change',{detail:{lang:l}}));
+  }
+  if(langBtn)langBtn.addEventListener('click',()=>applyLanguage(lang()==='hi'?'en':'hi'));
+  const savedTheme=localStorage.getItem('lex-theme');if(savedTheme)root.dataset.theme=savedTheme;
+  if(themeBtn)themeBtn.addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'':'dark';localStorage.setItem('lex-theme',root.dataset.theme);applyLanguage(lang());});
+  function clock(){const d=new Date(),o={timeZone:'Asia/Kolkata'},l=lang();const dl=document.getElementById('dateLabel'),tl=document.getElementById('timeLabel');if(dl)dl.textContent=d.toLocaleDateString(l==='hi'?'hi-IN':'en-IN',{...o,weekday:'long',day:'2-digit',month:'long',year:'numeric'});if(tl)tl.textContent=d.toLocaleTimeString('en-IN',{...o,hour12:false})+' IST';}
+  clock();setInterval(clock,1000);applyLanguage(lang());
 })();
 
 // Courtroom VC confirmation / unavailable message
