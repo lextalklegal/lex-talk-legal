@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 ROOT = Path(__file__).resolve().parents[1]
 CSS = (ROOT / 'assets/site.css').read_text(encoding='utf8')
 JS = (ROOT / 'assets/site.js').read_text(encoding='utf8')
-LOGO = 'data:image/png;base64,' + __import__('base64').b64encode((ROOT / 'assets/LexTalkLegal_Logo-wo-bg.png').read_bytes()).decode()
+LOGO = '/assets/LexTalkLegal_Logo-wo-bg.png'
 BLOGGER = os.getenv('BLOGGER_URL', 'https://lextalklegal.blogspot.com').rstrip('/')
 HANDLE = os.getenv('YOUTUBE_HANDLE', '@lextalklegal')
 CHANNEL_ID = os.getenv('YOUTUBE_CHANNEL_ID', '').strip()
@@ -15,7 +15,7 @@ NS = {'a': 'http://www.w3.org/2005/Atom', 'yt': 'http://www.youtube.com/xml/sche
 NAV = [
     ('Latest', '/'), ('Courts', '/category/courts/'), ('Law & Policy', '/category/law-policy/'),
     ('Banking Law', '/category/banking-law/'), ('DRT / DRAT', '/category/drt-drat/'),
-    ('Legal Careers', '/category/legal-careers/'), ('DRA', '/category/dra/'),
+    ('Legal Careers', '/category/legal-careers/'), ('DRA', '/category/dra/'), ('Legal Professionals', '/advocates/'),
     ('Bare Acts', 'https://indiacode.gov.in/'), ('Courtrooms', '/courtrooms/'),
     ('Case Status', '/case-status/'), ('Videos', '/videos/')
 ]
@@ -130,10 +130,11 @@ def youtube():
         except Exception: return []
 
 def nav_html():
+    keys={'Latest':'latest','Courts':'courts','Law & Policy':'lawPolicy','Banking Law':'bankingLaw','DRT / DRAT':'drtDrat','Legal Careers':'legalCareers','DRA':'dra','Legal Professionals':'legalProfessionals','Bare Acts':'bareActs','Courtrooms':'courtrooms','Case Status':'caseStatus','Videos':'videos'}
     parts=[]
     for x,u in NAV:
         extra=' target="_blank" rel="noopener"' if u.startswith('http') else ''
-        parts.append(f'<a href="{H.escape(u,quote=True)}"{extra}>{H.escape(x)}</a>')
+        parts.append(f'<a href="{H.escape(u,quote=True)}"{extra} data-i18n="{keys[x]}">{H.escape(x)}</a>')
     return ''.join(parts)
 
 def sync_nav(s):
@@ -152,12 +153,13 @@ def page_shell(title, description, content):
 <meta name="description" content="{H.escape(description,quote=True)}"><link rel="canonical" href="https://lextalk.legal{canonical}">
 <title>{H.escape(t)} | Lex Talk Legal</title>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script>
-<style data-embedded="lex-talk-legal">{CSS}</style></head><body><div class="top"></div>
-<div class="utility"><div class="wrap"><div class="live-info"><span class="dot">●</span><span id="dateLabel">--</span><span>|</span><span id="timeLabel">--:--:-- IST</span><span>|</span><span>New Delhi, India</span></div><div class="controls"><button class="control" id="langBtn">हिन्दी</button><button class="control" id="themeBtn">☾ Dark</button></div></div></div>
+<link rel="stylesheet" href="/assets/site.css">
+</head><body><div class="top"></div>
+<div class="utility"><div class="wrap"><div class="live-info"><span class="dot">●</span><span id="dateLabel">--</span><span>|</span><span id="timeLabel">--:--:-- IST</span><span>|</span><span>New Delhi, India</span></div><div class="controls"><button class="control" id="langBtn" type="button" aria-label="Switch language">हिन्दी</button><button class="control" id="themeBtn" type="button" aria-label="Switch theme">☾ Dark</button></div></div></div>
 <header class="masthead"><a href="/" aria-label="Lex Talk Legal Home"><img src="{LOGO}" alt="Lex Talk Legal"></a></header>
 <nav class="nav"><div class="wrap">{nav_html()}</div></nav>{content}
 <footer><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.<br>Digital Legal News &amp; Legal Education Platform.</p><p>Adv. Gagann Jha, Advocate, Supreme Court of India<br>LEXBOTICS AI MEDIA LLP</p></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/videos/">Latest Videos</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@lextalklegal" target="_blank" rel="noopener">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener">Telegram</a></li></ul></div><div><h3>Contact &amp; Legal</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy</a></li><li><a href="/terms-of-use.html">Terms</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright Policy</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer>
-{global_widget_markup()}<div id="google_translate_element" aria-hidden="true"></div><script data-embedded="lex-talk-legal">{JS}</script></body></html>'''
+{global_widget_markup()}<script src="/assets/site.js" defer></script></body></html>'''
 
 def article(a):
     im=f'<img class="article-hero" src="{H.escape(a["image"],quote=True)}" alt="">' if a['image'] else ''
@@ -171,7 +173,7 @@ def article_card(a):
 def video_card(v):
     thumb=H.escape(v.get('thumbnail',''),quote=True); title=H.escape(v.get('title','Lex Talk Legal')); date=H.escape(v.get('published','')[:10]); url=H.escape(v.get('url','https://www.youtube.com/@lextalklegal'),quote=True)
     visual = f'<img src="{thumb}" alt="" loading="lazy">' if thumb else '<div class="yt-mark">▶</div>'
-    return f'<article class="yt-card"><a href="{url}" target="_blank" rel="noopener"><div class="video-thumb">{visual}<span class="play">▶</span></div></a><div class="meta">{date}</div><h3><a href="{url}" target="_blank" rel="noopener">{title}</a></h3><a class="button redbtn" href="{url}" target="_blank" rel="noopener">Watch on YouTube</a></article>'
+    return f'<article class="yt-card"><a href="{url}" target="_blank" rel="noopener"><div class="video-thumb">{visual}<span class="play">▶</span></div></a><div class="meta">{date}</div><h3><a href="{url}" target="_blank" rel="noopener">{title}</a></h3><a class="button redbtn" href="{url}" target="_blank" rel="noopener" data-i18n="watchYouTube">Watch on YouTube</a></article>'
 
 def category_matches(a,key):
     labels={str(x).strip().lower() for x in a.get('labels',[])}; title=a.get('title','').lower(); _,terms=CATEGORY_MAP[key]
@@ -511,45 +513,48 @@ def extract_onecourt_vc():
         except Exception: pass
 
     pages=[]
-    with sync_playwright() as p:
-        browser=p.chromium.launch(headless=True)
-        context=browser.new_context(user_agent='Mozilla/5.0 LexTalkLegal VC Directory Sync')
-        page=context.new_page()
-        try:
-            load(page,ONECOURT_SC_VC)
-            links=extract_on_page(page)
-            if links: data['supreme_court']=links
-            load(page,ONECOURT_ROOT_VC)
-            hrefs=page.locator('a[href]').evaluate_all('els => els.map(a=>a.href)')
-            for h in hrefs:
-                if h.startswith(HOST) and '/vc-links/' in h and h not in pages: pages.append(h)
-            for _,u in DELHI_DISTRICT_VC:
-                if u not in pages: pages.append(u)
-            for u in [ONECOURT_NCLT_VC,ONECOURT_NCLAT_VC]:
-                if u not in pages: pages.append(u)
-            for u in pages:
-                try:
-                    load(page,u); links=extract_on_page(page)
-                except Exception as e:
-                    print('OneCourt page failed:',u,e); continue
-                try: title=page.locator('h1').first.inner_text().strip()
-                except Exception: title=''
-                text_title=title or u
-                if 'NCLT' in text_title or 'nclt' in u.lower():
-                    data.setdefault('nclt',{})[text_title]=links
-                elif 'NCLAT' in text_title or 'nclat' in u.lower():
-                    data.setdefault('nclat',{})[text_title]=links
-                elif 'districtcourts' in u.lower():
-                    data.setdefault('delhi_district',{})[text_title]=links
-                else:
-                    matched=None; low=text_title.lower()
-                    for name,_ in COURTS['high_courts']:
-                        stem=name.lower().replace(' high court','')
-                        if stem in low or name.lower() in low:
-                            matched=name; break
-                    if matched: data.setdefault('high_courts',{})[matched]=links
-        finally:
-            browser.close()
+    try:
+        with sync_playwright() as p:
+            browser=p.chromium.launch(headless=True)
+            context=browser.new_context(user_agent='Mozilla/5.0 LexTalkLegal VC Directory Sync')
+            page=context.new_page()
+            try:
+                load(page,ONECOURT_SC_VC)
+                links=extract_on_page(page)
+                if links: data['supreme_court']=links
+                load(page,ONECOURT_ROOT_VC)
+                hrefs=page.locator('a[href]').evaluate_all('els => els.map(a=>a.href)')
+                for h in hrefs:
+                    if h.startswith(HOST) and '/vc-links/' in h and h not in pages: pages.append(h)
+                for _,u in DELHI_DISTRICT_VC:
+                    if u not in pages: pages.append(u)
+                for u in [ONECOURT_NCLT_VC,ONECOURT_NCLAT_VC]:
+                    if u not in pages: pages.append(u)
+                for u in pages:
+                    try:
+                        load(page,u); links=extract_on_page(page)
+                    except Exception as e:
+                        print('OneCourt page failed:',u,e); continue
+                    try: title=page.locator('h1').first.inner_text().strip()
+                    except Exception: title=''
+                    text_title=title or u
+                    if 'NCLT' in text_title or 'nclt' in u.lower():
+                        data.setdefault('nclt',{})[text_title]=links
+                    elif 'NCLAT' in text_title or 'nclat' in u.lower():
+                        data.setdefault('nclat',{})[text_title]=links
+                    elif 'districtcourts' in u.lower():
+                        data.setdefault('delhi_district',{})[text_title]=links
+                    else:
+                        matched=None; low=text_title.lower()
+                        for name,_ in COURTS['high_courts']:
+                            stem=name.lower().replace(' high court','')
+                            if stem in low or name.lower() in low:
+                                matched=name; break
+                        if matched: data.setdefault('high_courts',{})[matched]=links
+            finally:
+                browser.close()
+    except Exception as e:
+        print('OneCourt extraction failed; keeping previous cached VC data:', e)
     VC_DATA_PATH.parent.mkdir(exist_ok=True)
     VC_DATA_PATH.write_text(json.dumps(data,ensure_ascii=False,indent=2),encoding='utf8')
     total=0
@@ -566,7 +571,7 @@ def under_construction_page():
 
 
 def global_widget_markup():
-    return '''<div class="floating-quick" id="floatingQuick"><button class="floating-toggle" type="button" aria-expanded="false" aria-controls="floatingPanel">↟ <span>Quick Links</span></button><div class="floating-panel" id="floatingPanel"><div class="floating-title">Legal Utilities</div><a href="/courtrooms/">🎥 Courtrooms &amp; VC</a><a href="/case-status/">🔎 Case Status</a><a href="/category/drt-drat/">⚖ DRT / DRAT</a><a href="/category/banking-law/">🏦 Banking Law</a><a href="/category/legal-careers/">👨‍⚖ Legal Careers</a><a href="https://indiacode.gov.in/" target="_blank" rel="noopener">📚 Bare Acts</a><a href="/videos/">▶ Latest Videos</a></div></div>'''
+    return '''<div class="floating-quick" id="floatingQuick"><button class="floating-toggle" type="button" aria-expanded="false" aria-controls="floatingPanel">↟ <span data-i18n="quickLinks">Quick Links</span></button><div class="floating-panel" id="floatingPanel"><div class="floating-title" data-i18n="utilities">Legal Utilities</div><a href="/courtrooms/">🎥 <span data-i18n="courtrooms">Courtrooms &amp; VC</span></a><a href="/case-status/">🔎 <span data-i18n="caseStatus">Case Status</span></a><a href="/category/drt-drat/">⚖ DRT / DRAT</a><a href="/category/banking-law/">🏦 <span data-i18n="bankingLaw">Banking Law</span></a><a href="/category/legal-careers/">👨‍⚖ <span data-i18n="legalCareers">Legal Careers</span></a><a href="/advocates/">👥 <span data-i18n="legalProfessionals">Legal Professionals</span></a><a href="https://indiacode.gov.in/" target="_blank" rel="noopener">📚 <span data-i18n="bareActs">Bare Acts</span></a><a href="/videos/">▶ <span data-i18n="videos">Latest Videos</span></a></div></div>'''
 
 
 def auction_widget_markup():
@@ -577,6 +582,7 @@ def homepage_sidebar_markup():
     return f'''<article class="sidebar-utility"><div class="sidebar-icon">🎥</div><div class="meta">LEGAL UTILITY</div><h3><a href="/courtrooms/">Official courtroom &amp; VC links in one place</a></h3><p>Open court-wise public virtual-hearing destinations and courtroom information.</p><a class="sidebar-link" href="/courtrooms/">Open Courtrooms ↗</a></article>
 <article class="sidebar-utility"><div class="sidebar-icon">🔎</div><div class="meta">LEGAL UTILITY</div><h3><a href="/case-status/">Choose a court and open its official case-status portal</a></h3><p>Quick access to public case-status services for courts and tribunals.</p><a class="sidebar-link" href="/case-status/">Check Case Status ↗</a></article>
 <article class="sidebar-utility"><div class="sidebar-icon">📚</div><div class="meta">LEGAL KNOWLEDGE</div><h3><a href="/category/drt-drat/">DRT, DRAT, SARFAESI &amp; Banking Law</a></h3><p>Animated explainers, legal history and practical guides.</p><a class="sidebar-link" href="/category/banking-law/">Explore Banking Law ↗</a></article>
+<article class="sidebar-utility"><div class="sidebar-icon">👥</div><div class="meta">LEGAL COMMUNITY</div><h3><a href="/advocates/">Legal Professional Profiles</a></h3><p>Free informational profiles for advocates, subject to review and publication guidelines.</p><a class="sidebar-link" href="/advocates/apply.html">Create Free Profile ↗</a></article>
 {auction_widget_markup()}'''
 
 
@@ -585,7 +591,7 @@ def hero_slider_markup(arts):
     for i,a in enumerate(arts[:10]):
         img=a.get('image','')
         bg=f' style="background-image:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.78)),url(\'{H.escape(img,quote=True)}\');"' if img else ''
-        slides.append(f'''<article class="hero-slide{' active' if i==0 else ''}" data-index="{i}"{bg}><a href="{H.escape(a['url'],quote=True)}" class="hero-slide-link"><div class="hero-slide-copy"><div class="kicker">{H.escape(a.get('category','Legal News'))} · {H.escape(a.get('published','')[:10])}</div><h1>{H.escape(a['title'])}</h1><p>{H.escape(a.get('excerpt',''))}</p><span class="button">Read Story ↗</span></div></a></article>''')
+        slides.append(f'''<article class="hero-slide{' active' if i==0 else ''}" data-index="{i}"{bg}><a href="{H.escape(a['url'],quote=True)}" class="hero-slide-link"><div class="hero-slide-copy"><div class="kicker">{H.escape(a.get('category','Legal News'))} · {H.escape(a.get('published','')[:10])}</div><h1>{H.escape(a['title'])}</h1><p>{H.escape(a.get('excerpt',''))}</p><span class="button" data-i18n="readStory">Read Story ↗</span></div></a></article>''')
     if not slides:
         slides=['<article class="hero-slide active"><div class="hero-slide-copy"><div class="kicker">Digital Legal News &amp; Legal Education</div><h1>Law, Courts &amp; Justice — Explained in Simple Language</h1><p>Publish your first Blogger article to activate the automatic headline slider.</p></div></article>']
     dots=''.join('<button type="button" data-slide="%d" aria-label="Go to slide %d" class="%s"></button>' % (i,i+1,'active' if i==0 else '') for i in range(len(slides)))
@@ -593,18 +599,38 @@ def hero_slider_markup(arts):
 
 
 
+def homepage_community_markup():
+    return '''<section class="legal-community"><div class="community-inner"><div class="community-panel"><div class="community-copy"><div class="community-kicker" data-i18n="legalCommunity">LEGAL COMMUNITY</div><h2 data-i18n="communityTitle">Build Your Free Professional Profile</h2><p data-i18n="communityText">Lex Talk Legal is developing an informational legal-professional community where advocates can maintain a free public professional profile, share knowledge and connect with the wider legal community. Profiles are reviewed before publication.</p><div class="community-points"><div class="community-point"><b>FREE PROFILE</b><br><span data-i18n="communityFree">Profile creation is free</span></div><div class="community-point"><b>ADMIN REVIEW</b><br><span data-i18n="communityReview">Submitted information is reviewed</span></div><div class="community-point"><b>SEARCH-FRIENDLY</b><br><span data-i18n="communitySearch">Published profiles can be discoverable</span></div></div></div><div class="community-cta"><div class="badge" data-i18n="noPaidRanking">NO PAID RANKING</div><h3 data-i18n="legalProfessionals">Legal Professionals</h3><p data-i18n="communitySide">Informational profiles. No star ratings, paid ranking, guaranteed results or “best lawyer” claims.</p><a class="cta-button" href="/advocates/" data-i18n="exploreProfiles">Explore Profiles ↗</a></div></div></div></section>'''
+
+
 def sync_homepage(arts,videos):
     p=ROOT/'index.html'
     if not p.exists(): return
     s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
     sync_nav(s)
-    style=s.find('style',{'data-embedded':'lex-talk-legal'})
-    if style: style.string=CSS
-    old=s.find('script',{'data-embedded':'lex-talk-legal'})
-    if old: old.string=JS
-    if not s.find(id='google_translate_element'):
-        holder=s.new_tag('div',id='google_translate_element'); holder['aria-hidden']='true';
-        if s.body: s.body.append(holder)
+    for node in s.find_all('style', {'data-embedded':'lex-talk-legal'}):
+        node.decompose()
+    for node in s.find_all('script', {'data-embedded':'lex-talk-legal'}):
+        node.decompose()
+    if not s.find('link', href='/assets/site.css'):
+        head=s.find('head')
+        if head: head.append(BeautifulSoup('<link rel="stylesheet" href="/assets/site.css">','html.parser'))
+    # Keep exactly one shared site script.
+    for node in s.find_all('script', src='/assets/site.js'):
+        node.decompose()
+    script=BeautifulSoup('<script src="/assets/site.js" defer></script>','html.parser')
+    s.body.append(script)
+    # Normalize the official logo asset instead of embedding it as base64.
+    for img in s.select('.masthead img, .article-site-header img, header img.logo'):
+        img['src']=LOGO
+        img.attrs.pop('data-src', None)
+    for holder in s.select('#google_translate_element'):
+        holder.decompose()
+    for legacy in list(s.find_all('script')):
+        src=legacy.get('src','') or ''
+        body=legacy.get_text() or ''
+        if 'googleTranslateElementInit' in body or 'translate.google.com' in src or "fetch('/data/articles.json')" in body or 'fetch("/data/articles.json")' in body:
+            legacy.decompose()
 
     hero=s.select_one('.hero-main') or s.select_one('.hero-slider')
     if hero:
@@ -626,6 +652,14 @@ def sync_homepage(arts,videos):
             for v in latest_videos: vg.append(BeautifulSoup(video_card(v),'html.parser'))
         else: vg.append(BeautifulSoup('<div class="empty">No YouTube videos returned in the latest sync.</div>','html.parser'))
 
+    old_comm=s.select_one('.legal-community')
+    if old_comm: old_comm.decompose()
+    yts=s.select_one('.youtube-section')
+    if yts: yts.insert_before(BeautifulSoup(homepage_community_markup(),'html.parser'))
+    else:
+        footer=s.find('footer')
+        if footer: footer.insert_before(BeautifulSoup(homepage_community_markup(),'html.parser'))
+
     # Remove old floating widget / auction widgets and append the current versions.
     for oldw in s.select('#floatingQuick, .floating-quick, .home-auction-wrap'):
         oldw.decompose()
@@ -645,10 +679,23 @@ def refresh_static_pages():
         try: s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
         except Exception: continue
         sync_nav(s)
-        style=s.find('style',{'data-embedded':'lex-talk-legal'}); script=s.find('script',{'data-embedded':'lex-talk-legal'})
+        for holder in s.select('#google_translate_element'):
+            holder.decompose()
+        for node in s.find_all('style', {'data-embedded':'lex-talk-legal'}):
+            node.decompose()
+        for node in s.find_all('script', {'data-embedded':'lex-talk-legal'}):
+            node.decompose()
+        if not s.find('link', href='/assets/site.css'):
+            head=s.find('head')
+            if head: head.append(BeautifulSoup('<link rel="stylesheet" href="/assets/site.css">','html.parser'))
+        for node in s.find_all('script', src='/assets/site.js'):
+            node.decompose()
+        if s.body:
+            s.body.append(BeautifulSoup('<script src="/assets/site.js" defer></script>','html.parser'))
+        for img in s.select('.masthead img, .article-site-header img, header img.logo'):
+            img['src']=LOGO
+            img.attrs.pop('data-src', None)
         changed=True
-        if style: style.string=CSS; changed=True
-        if script: script.string=JS; changed=True
         if not s.select_one('#floatingQuick') and s.body:
             footer=s.find('footer')
             widgets=BeautifulSoup(global_widget_markup(),'html.parser')
@@ -668,7 +715,7 @@ def main():
     for f in d.glob('*.html'): f.unlink()
     for a in arts: (d/(slug(a['title'])+'.html')).write_text(article(a),encoding='utf8')
     write_category_pages(arts); write_videos_page(videos); under_construction_page(); vc_data=extract_onecourt_vc(); write_courtrooms_page(vc_data); write_case_status_page(); sync_homepage(arts,videos); refresh_static_pages()
-    urls=['/','/courtrooms/','/case-status/','/videos/','/under-construction.html']+[f'/category/{k}/' for k in CATEGORY_MAP]+[a['url'] for a in arts]
+    urls=['/','/courtrooms/','/case-status/','/videos/','/under-construction.html','/advocates/','/profile-guidelines.html']+[f'/category/{k}/' for k in CATEGORY_MAP]+[a['url'] for a in arts]
     now=datetime.now(timezone.utc).date().isoformat(); xml='<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'; xml+=''.join(f'<url><loc>https://lextalk.legal{u}</loc><lastmod>{now}</lastmod></url>' for u in dict.fromkeys(urls))+'</urlset>'; (ROOT/'sitemap.xml').write_text(xml,encoding='utf8')
     print(f'Synced {len(arts)} Blogger articles and {len(videos)} YouTube videos; refreshed courtrooms and case-status directories.')
 
