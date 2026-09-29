@@ -238,12 +238,164 @@ GUIDES = {
 }
 
 
+COURTS_PAGE_CSS = '''<style id="courts-page-v2">
+.courts-v2{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 70px}
+.courts-v2 *{box-sizing:border-box}
+.courts-v2-crumb{font:800 10px Arial,sans-serif;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.courts-v2-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:22px;align-items:stretch;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 70%);box-shadow:var(--shadow)}
+.courts-v2-hero:before{content:"";position:absolute;width:320px;height:320px;right:-110px;top:-120px;border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);border-radius:50%;box-shadow:0 0 0 28px color-mix(in srgb,var(--gold) 8%,transparent),0 0 0 56px color-mix(in srgb,var(--gold) 5%,transparent);pointer-events:none}
+.courts-v2-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.courts-v2-hero h1{font-size:clamp(50px,7vw,84px);line-height:.9;letter-spacing:-2.8px;margin:0 0 18px;max-width:800px}
+.courts-v2-hero .hero-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:800px;margin:0 0 20px}
+.courts-v2-actions{display:flex;flex-wrap:wrap;gap:9px}
+.courts-v2-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
+.courts-v2-btn.primary{background:var(--text);color:var(--paper)}
+.courts-v2-btn.primary:hover{background:var(--red);border-color:var(--red)}
+.courts-v2-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}
+.courts-v2-btn.secondary:hover{border-color:var(--red);color:var(--red)}
+.courts-v2-hero-card{position:relative;z-index:1;border:1px solid var(--line);background:var(--card);padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:250px}
+.courts-v2-hero-card .seal{width:58px;height:58px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;color:var(--gold);font-size:29px;margin-bottom:28px;background:var(--paper)}
+.courts-v2-hero-card .mini-kicker{font:900 9px Arial,sans-serif;letter-spacing:1.1px;color:var(--gold);text-transform:uppercase}
+.courts-v2-hero-card h2{font-size:24px;line-height:1.05;margin:6px 0 8px}
+.courts-v2-hero-card p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0}
+.courts-v2-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
+.courts-v2-stat{background:var(--card);padding:16px 18px;min-height:112px;transition:transform .18s ease,background .18s ease}
+.courts-v2-stat:hover{transform:translateY(-2px);background:var(--paper2)}
+.courts-v2-stat .num{font:900 11px Arial,sans-serif;letter-spacing:1px;color:var(--gold)}
+.courts-v2-stat h3{font-size:20px;line-height:1.06;margin:7px 0 5px}
+.courts-v2-stat p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.45;margin:0}
+.courts-v2-section{padding:42px 0 0}
+.courts-v2-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
+.courts-v2-head .eyebrow{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:3px}
+.courts-v2-head h2{font-size:34px;line-height:1.02;margin:0}
+.courts-v2-head p{max-width:430px;margin:0;font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;text-align:right}
+.courts-v2-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;border:1px solid var(--line);background:var(--line)}
+.courts-v2-node{position:relative;background:var(--card);min-height:170px;padding:21px 20px 18px;overflow:hidden}
+.courts-v2-node:after{content:"";position:absolute;right:-25px;bottom:-25px;width:86px;height:86px;border:1px solid color-mix(in srgb,var(--red) 23%,transparent);border-radius:50%}
+.courts-v2-node .node-no{font:900 10px Arial,sans-serif;color:var(--gold);letter-spacing:1px}
+.courts-v2-node .node-icon{font-size:25px;margin:16px 0 9px;filter:saturate(.85)}
+.courts-v2-node h3{font-size:20px;line-height:1.05;margin:0 0 6px}
+.courts-v2-node p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0;max-width:260px}
+.courts-v2-journey{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);background:var(--line)}
+.courts-v2-journey-step{background:var(--paper2);padding:19px 18px;min-height:132px;position:relative}
+.courts-v2-journey-step:not(:last-child):before{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:var(--paper);font:900 13px Arial,sans-serif;z-index:2}
+.courts-v2-journey-step .no{font:900 10px Arial,sans-serif;color:var(--red);letter-spacing:1px}
+.courts-v2-journey-step h3{font-size:18px;line-height:1.08;margin:8px 0 0}
+.courts-v2-journey-step p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.45;margin:6px 0 0}
+.courts-v2-timeline{position:relative;padding-left:30px}
+.courts-v2-timeline:before{content:"";position:absolute;left:9px;top:5px;bottom:5px;width:1px;background:var(--line)}
+.courts-v2-timeline-item{position:relative;display:grid;grid-template-columns:92px minmax(0,1fr);gap:20px;padding:0 0 22px}
+.courts-v2-timeline-item:before{content:"";position:absolute;left:-26px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--paper);border:2px solid var(--red)}
+.courts-v2-timeline-item:last-child{padding-bottom:0}
+.courts-v2-year{font:900 11px Arial,sans-serif;color:var(--gold);letter-spacing:1px;text-transform:uppercase;padding-top:2px}
+.courts-v2-timeline-item h3{font-size:21px;margin:0 0 5px;line-height:1.05}
+.courts-v2-timeline-item p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0;max-width:850px}
+.courts-v2-law-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.courts-v2-law{border:1px solid var(--line);background:var(--card);padding:21px;min-height:205px;display:flex;flex-direction:column;box-shadow:0 5px 16px rgba(0,0,0,.03)}
+.courts-v2-law .law-type{font:900 9px Arial,sans-serif;letter-spacing:1.2px;color:var(--red);text-transform:uppercase}
+.courts-v2-law h3{font-size:21px;line-height:1.05;margin:7px 0 9px}
+.courts-v2-law p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0 0 17px}
+.courts-v2-law a{margin-top:auto;font:900 10px Arial,sans-serif;color:var(--red);text-transform:uppercase;letter-spacing:.45px}
+.courts-v2-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.courts-v2-tool{border:1px solid var(--line);background:var(--paper2);padding:20px;min-height:155px;display:flex;flex-direction:column;justify-content:space-between}
+.courts-v2-tool .tool-icon{font-size:24px;margin-bottom:10px}
+.courts-v2-tool h3{font-size:20px;line-height:1.05;margin:0 0 6px}
+.courts-v2-tool p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 15px}
+.courts-v2-tool a{font:900 10px Arial,sans-serif;color:var(--red);text-transform:uppercase;letter-spacing:.45px}
+.courts-v2-latest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.courts-v2-latest .story-card{background:var(--card);border:1px solid var(--line);padding:0 0 15px;box-shadow:0 8px 22px rgba(0,0,0,.045);transition:transform .18s ease,box-shadow .18s ease}
+.courts-v2-latest .story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.courts-v2-latest .story-card .story-image{aspect-ratio:16/9;margin:0}
+.courts-v2-latest .story-card .story-meta,.courts-v2-latest .story-card h3,.courts-v2-latest .story-card p{margin-left:15px;margin-right:15px}
+.courts-v2-latest .story-card h3{font-size:20px;line-height:1.08;margin-top:7px}
+.courts-v2-latest .story-card p{font-size:11px;line-height:1.45;color:var(--muted)}
+.courts-v2-empty{border:1px dashed var(--line);padding:26px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted);line-height:1.55}
+.courts-v2-sources{display:flex;flex-wrap:wrap;gap:8px}
+.courts-v2-sources a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);background:var(--card);font:900 9px Arial,sans-serif;color:var(--text);text-transform:uppercase;letter-spacing:.35px}
+.courts-v2-sources a:hover{color:var(--red);border-color:var(--red)}
+.courts-v2-note{margin-top:26px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}
+.courts-v2-note strong{color:var(--text)}
+@media(max-width:1050px){.courts-v2-hero{grid-template-columns:1fr}.courts-v2-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.courts-v2-map,.courts-v2-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.courts-v2-journey-step:nth-child(2):before{display:none}.courts-v2-tools{grid-template-columns:1fr 1fr}.courts-v2-latest{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.courts-v2{width:min(var(--max),calc(100% - 28px));padding-top:18px}.courts-v2-hero{padding:22px}.courts-v2-hero h1{font-size:54px;letter-spacing:-1.8px}.courts-v2-hero .hero-lead{font-size:14px}.courts-v2-hero-card{min-height:210px}.courts-v2-strip,.courts-v2-map,.courts-v2-journey,.courts-v2-law-grid,.courts-v2-tools,.courts-v2-latest{grid-template-columns:1fr}.courts-v2-head{align-items:flex-start;flex-direction:column}.courts-v2-head h2{font-size:29px}.courts-v2-head p{text-align:left}.courts-v2-journey-step:not(:last-child):before{display:none}.courts-v2-timeline{padding-left:24px}.courts-v2-timeline-item{grid-template-columns:1fr;gap:5px;padding-bottom:18px}.courts-v2-timeline-item:before{left:-20px}}
+@media(prefers-reduced-motion:reduce){.courts-v2-stat,.courts-v2-latest .story-card{transition:none}}
+</style>'''
+
+
 def guide_markup(key):
     g=GUIDES[key]
-    timeline=''.join(f'<div class="timeline-item reveal"><div class="timeline-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
-    laws=''.join(f'<article class="law-card reveal"><div class="law-card-kicker">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a class="guide-link" href="{H.escape(u,quote=True)}" target="_blank" rel="noopener">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
-    flow=''.join(f'<div class="flow-step reveal"><span>{i+1:02d}</span><strong>{H.escape(x)}</strong></div>' for i,x in enumerate(g['flow']))
-    sources=''.join(f'<a class="source-pill" href="{H.escape(u,quote=True)}" target="_blank" rel="noopener">{H.escape(t)} ↗</a>' for t,u in g['sources'])
+    timeline=''.join(f'<div class="courts-v2-timeline-item"><div class="courts-v2-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
+    laws=''.join(f'<article class="courts-v2-law"><div class="law-type">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
+    flow=''.join(f'<article class="courts-v2-journey-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The applicable forum and procedure depend on the dispute, statute and jurisdiction.</p></article>' for i,x in enumerate(g['flow']))
+    sources=''.join(f'<a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(t)} ↗</a>' for t,u in g['sources'])
+    if key == 'courts':
+        return f'''<main class="courts-v2">
+<div class="courts-v2-crumb">Lex Talk Legal / Indian Judiciary Explained</div>
+<section class="courts-v2-hero">
+  <div>
+    <div class="courts-v2-kicker">INDIAN JUDICIARY EXPLAINED</div>
+    <h1>Courts</h1>
+    <p class="hero-lead">{H.escape(g['intro'])}</p>
+    <div class="courts-v2-actions">
+      <a class="courts-v2-btn primary" href="#latest">Explore Court Updates ↓</a>
+      <a class="courts-v2-btn secondary" href="/case-status/">Check Case Status ↗</a>
+      <a class="courts-v2-btn secondary" href="/courtrooms/">Courtrooms &amp; VC ↗</a>
+    </div>
+  </div>
+  <aside class="courts-v2-hero-card">
+    <div>
+      <div class="seal">⚖</div>
+      <div class="mini-kicker">THE COURTS DESK</div>
+      <h2>Understand the forum before the filing.</h2>
+      <p>Explore the judicial structure, common procedural pathways, key legal frameworks and current court coverage from one place.</p>
+    </div>
+    <div class="mini-kicker" style="margin-top:18px">Law · Context · Clarity.</div>
+  </aside>
+</section>
+<section class="courts-v2-strip" aria-label="Courts overview">
+  <article class="courts-v2-stat"><div class="num">01 / APEX</div><h3>Supreme Court</h3><p>Final appellate and constitutional jurisdiction within the constitutional framework.</p></article>
+  <article class="courts-v2-stat"><div class="num">02 / STATE</div><h3>High Courts</h3><p>State-level constitutional courts with appellate and writ jurisdiction as provided by law.</p></article>
+  <article class="courts-v2-stat"><div class="num">03 / TRIAL</div><h3>District &amp; Subordinate Courts</h3><p>Trial and other original-jurisdiction forums operating within the subordinate judiciary.</p></article>
+  <article class="courts-v2-stat"><div class="num">04 / SPECIALISED</div><h3>Tribunals &amp; e-Courts</h3><p>Specialised statutory forums and digital public court-services form part of the wider justice ecosystem.</p></article>
+</section>
+<section class="courts-v2-section" id="explainer">
+  <div class="courts-v2-head"><div><div class="eyebrow">A COMMON PROCEDURAL VIEW</div><h2>The legal journey</h2></div><p>A matter does not always follow one identical path. The applicable forum depends on the nature of the dispute, statute and jurisdiction.</p></div>
+  <div class="courts-v2-journey">{flow}</div>
+</section>
+<section class="courts-v2-section">
+  <div class="courts-v2-head"><div><div class="eyebrow">COURT SYSTEM</div><h2>Where the forums fit</h2></div><p>A practical visual map of the principal court layers and specialised services readers encounter most often.</p></div>
+  <div class="courts-v2-map">
+    <article class="courts-v2-node"><div class="node-no">01</div><div class="node-icon">⚖</div><h3>Supreme Court</h3><p>India's apex constitutional court and final appellate forum within its jurisdiction.</p></article>
+    <article class="courts-v2-node"><div class="node-no">02</div><div class="node-icon">🏛</div><h3>High Courts</h3><p>Constitutional courts serving States and, where applicable, Union Territories.</p></article>
+    <article class="courts-v2-node"><div class="node-no">03</div><div class="node-icon">▣</div><h3>District Judiciary</h3><p>District and subordinate courts hear matters assigned under the applicable law and procedure.</p></article>
+    <article class="courts-v2-node"><div class="node-no">04</div><div class="node-icon">◈</div><h3>Specialised Forums</h3><p>Statutory tribunals and digital court services operate alongside the court structure.</p></article>
+  </div>
+</section>
+<section class="courts-v2-section">
+  <div class="courts-v2-head"><div><div class="eyebrow">HISTORY</div><h2>Quick timeline</h2></div><p>Key moments from the existing Courts explainer, presented as a visual editorial timeline.</p></div>
+  <div class="courts-v2-timeline">{timeline}</div>
+</section>
+<section class="courts-v2-section">
+  <div class="courts-v2-head"><div><div class="eyebrow">LAW &amp; PROCEDURE</div><h2>Applicable frameworks</h2></div><p>Core constitutional, procedural and digital-service references linked to official sources.</p></div>
+  <div class="courts-v2-law-grid">{laws}</div>
+</section>
+<section class="courts-v2-section">
+  <div class="courts-v2-head"><div><div class="eyebrow">LEGAL UTILITIES</div><h2>Need a court-related service?</h2></div><p>Use Lex Talk Legal as a starting point, then verify current details on the relevant official portal.</p></div>
+  <div class="courts-v2-tools">
+    <article class="courts-v2-tool"><div><div class="tool-icon">⌕</div><h3>Case Status</h3><p>Find official case-status entry points for courts and tribunals.</p></div><a href="/case-status/">Open Case Status ↗</a></article>
+    <article class="courts-v2-tool"><div><div class="tool-icon">🎥</div><h3>Courtrooms &amp; VC</h3><p>Open publicly available courtroom and virtual-hearing destinations.</p></div><a href="/courtrooms/">Open Courtrooms ↗</a></article>
+    <article class="courts-v2-tool"><div><div class="tool-icon">⌕</div><h3>Search Coverage</h3><p>Search Lex Talk Legal for judgments, court updates and explainers.</p></div><a href="/search.html">Search the site ↗</a></article>
+  </div>
+</section>
+<section class="courts-v2-section" id="latest">
+  <div class="courts-v2-head"><div><div class="eyebrow">NEWS DESK</div><h2>Latest Courts Stories</h2></div><p>Current court coverage appears here when a synced article carries a Courts-related label or matches the Courts section.</p></div>
+  <div class="courts-v2-latest" id="latest-guide-courts"></div>
+</section>
+<section class="courts-v2-section">
+  <div class="courts-v2-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official source to verify current jurisdiction, statutes, services and historical information.</p></div>
+  <div class="courts-v2-sources">{sources}</div>
+  <div class="courts-v2-note"><strong>Editorial note:</strong> This page is for general legal education and information. Statutes, rules, notifications, court decisions and digital services may change. Readers should verify the current position from the concerned official source.</div>
+</section>
+</main>'''
     cta='''<section class="career-contact reveal"><div><div class="utility-kicker">CAREER OPPORTUNITY</div><h2>Want to work with Lex Talk Legal?</h2><p>Send your resume / CV to <strong>office.lextalklegal@gmail.com</strong>. Please mention the role, location preference and a short note about your experience.</p><small>Resume submission is for consideration only and does not create an offer, engagement or guarantee of selection.</small></div><a class="cta-button" href="mailto:office.lextalklegal@gmail.com?subject=Resume%20Submission%20-%20Lex%20Talk%20Legal">Send Resume ↗</a></section>''' if g.get('career_cta') else ''
     return f'''<main class="guide-page">
 <section class="guide-hero"><div><div class="utility-kicker">{H.escape(g['kicker'])}</div><h1>{H.escape(g['name'])}</h1><p>{H.escape(g['intro'])}</p><div class="guide-hero-actions"><a class="cta-button" href="#explainer">Start Explainer ↓</a><a class="ghost-button" href="#latest">Latest {H.escape(g['name'])} Stories</a></div></div><div class="guide-badge"><div class="guide-badge-icon">⚖</div><strong>LEX TALK LEGAL</strong><span>Law Simplified for Everyone</span></div></section>
@@ -272,14 +424,18 @@ def write_category_pages(arts):
             g=GUIDES[key]
             items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:12]) or '<div class="empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
-            content=guide_markup(key).replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
+            content=guide_markup(key)
+            if key == "courts":
+                content=content.replace('<div class="courts-v2-latest" id="latest-guide-courts"></div>', f'<div class="courts-v2-latest">{cards}</div>')
+            else:
+                content=content.replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
             desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
         else:
             items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
             content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
             desc=f'Lex Talk Legal — {name} news, updates and explainers.'
-        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
+        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content,COURTS_PAGE_CSS if key == "courts" else ""),encoding='utf8')
 
 def write_videos_page(videos):
     cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
@@ -595,7 +751,7 @@ def build_timestamp():
 BUILD_TIME=build_timestamp()
 BUILD_EPOCH=int(datetime.now(ZoneInfo('Asia/Kolkata')).timestamp())
 
-def page_shell(title,description,content):
+def page_shell(title,description,content,extra_head=""):
     t=title[0] if isinstance(title,tuple) else title
     canonical=title[1] if isinstance(title,tuple) else '/'
     robots='index,follow,max-image-preview:large'
@@ -607,7 +763,7 @@ def page_shell(title,description,content):
 <link rel="canonical" href="{SITE_URL}{H.escape(canonical,quote=True)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Lex Talk Legal"><meta property="og:title" content="{H.escape(t,quote=True)}"><meta property="og:description" content="{H.escape(description,quote=True)}"><meta property="og:url" content="{SITE_URL}{H.escape(canonical,quote=True)}"><meta property="og:image" content="{SITE_URL}/assets/LexTalkLegal_Logo-wo-bg.png"><meta name="twitter:card" content="summary_large_image">
 <title>{H.escape(t)} | Lex Talk Legal</title><link rel="stylesheet" href="/assets/site.css"><script type="application/ld+json">{schema_json}</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script></head><body>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script>{extra_head}</head><body>
 <div class="site-accent"></div><div class="utility-bar"><div class="wrap utility-inner"><div class="utility-left"><span class="live-dot">●</span><span id="dateLabel">--</span><span class="utility-sep">|</span><span id="timeLabel">--:--:-- IST</span></div><div class="utility-actions"><button class="control-btn" id="themeBtn" type="button" aria-label="Switch to dark mode">☾ Dark</button></div></div></div>
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
 <nav class="nav"><div class="wrap nav-inner">{nav}</div></nav>
