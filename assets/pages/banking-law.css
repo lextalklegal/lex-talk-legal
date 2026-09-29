@@ -1,4 +1,3 @@
-<style id="banking-page-v1">
 .banking-v1{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 72px}
 .banking-v1 *{box-sizing:border-box}
 .banking-v1-crumb{font:800 10px Arial,sans-serif;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
