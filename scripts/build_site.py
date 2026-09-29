@@ -321,12 +321,155 @@ COURTS_PAGE_CSS = '''<style id="courts-page-v2">
 </style>'''
 
 
+BANKING_PAGE_CSS = """<style id="banking-page-v1">
+.banking-v1{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 72px}
+.banking-v1 *{box-sizing:border-box}
+.banking-v1-crumb{font:800 10px Arial,sans-serif;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.banking-v1-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:22px;align-items:stretch;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 68%);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.banking-v1-hero:before{content:"";position:absolute;width:360px;height:360px;right:-145px;top:-150px;border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);border-radius:50%;box-shadow:0 0 0 24px color-mix(in srgb,var(--gold) 8%,transparent),0 0 0 50px color-mix(in srgb,var(--gold) 5%,transparent),0 0 0 76px color-mix(in srgb,var(--red) 4%,transparent);pointer-events:none}
+.banking-v1-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.banking-v1-hero h1{font-size:clamp(48px,7vw,82px);line-height:.9;letter-spacing:-2.8px;margin:0 0 18px;max-width:760px}
+.banking-v1-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:790px;margin:0 0 20px}
+.banking-v1-actions{display:flex;flex-wrap:wrap;gap:9px}
+.banking-v1-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
+.banking-v1-btn.primary{background:var(--text);color:var(--paper)}
+.banking-v1-btn.primary:hover{background:var(--red);border-color:var(--red)}
+.banking-v1-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}
+.banking-v1-btn.secondary:hover{border-color:var(--red);color:var(--red)}
+.banking-v1-hero-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);padding:21px;display:flex;flex-direction:column;justify-content:space-between;min-height:250px}
+.banking-v1-hero-card .ledger-mark{width:62px;height:62px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:28px;margin-bottom:22px;background:var(--paper)}
+.banking-v1-hero-card .mini-kicker{font:900 9px Arial,sans-serif;letter-spacing:1.15px;color:var(--gold);text-transform:uppercase}
+.banking-v1-hero-card h2{font-size:25px;line-height:1.03;margin:7px 0 9px}
+.banking-v1-hero-card p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.58;margin:0}
+.banking-v1-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
+.banking-v1-metric{background:var(--card);padding:17px 17px 15px;min-height:112px;position:relative;overflow:hidden}
+.banking-v1-metric:after{content:"";position:absolute;right:-25px;bottom:-25px;width:78px;height:78px;border:1px solid color-mix(in srgb,var(--gold) 27%,transparent);border-radius:50%}
+.banking-v1-metric .code{font:900 10px Arial,sans-serif;color:var(--gold);letter-spacing:1px}
+.banking-v1-metric h3{font-size:19px;line-height:1.05;margin:8px 0 6px}
+.banking-v1-metric p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.45;margin:0;max-width:260px}
+.banking-v1-section{padding:42px 0 0}
+.banking-v1-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
+.banking-v1-head .eyebrow{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:3px}
+.banking-v1-head h2{font-size:34px;line-height:1.02;margin:0}
+.banking-v1-head p{max-width:450px;margin:0;font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;text-align:right}
+.banking-v1-journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);background:var(--line)}
+.banking-v1-step{background:var(--paper2);padding:20px 17px;min-height:154px;position:relative}
+.banking-v1-step:not(:last-child):before{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:var(--paper);font:900 13px Arial,sans-serif;z-index:2}
+.banking-v1-step .no{font:900 10px Arial,sans-serif;color:var(--red);letter-spacing:1px}
+.banking-v1-step h3{font-size:18px;line-height:1.06;margin:9px 0 7px}
+.banking-v1-step p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
+.banking-v1-frameworks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.banking-v1-law{display:grid;grid-template-columns:72px minmax(0,1fr);gap:15px;border:1px solid var(--line);background:var(--card);padding:19px;min-height:175px;box-shadow:0 5px 16px rgba(0,0,0,.03)}
+.banking-v1-law .year{font:900 13px Arial,sans-serif;color:var(--gold);letter-spacing:.8px;padding-top:2px}
+.banking-v1-law .tag{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.05px;text-transform:uppercase;margin-bottom:5px}
+.banking-v1-law h3{font-size:21px;line-height:1.05;margin:0 0 7px}
+.banking-v1-law p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.banking-v1-law a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
+.banking-v1-timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.banking-v1-timeline-item{padding:19px 15px;min-height:160px;position:relative;border-right:1px solid var(--line);background:var(--card)}
+.banking-v1-timeline-item:last-child{border-right:0}
+.banking-v1-timeline-item:before{content:"";position:absolute;left:15px;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--red)}
+.banking-v1-timeline-item .year{font:900 11px Arial,sans-serif;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
+.banking-v1-timeline-item h3{font-size:19px;line-height:1.05;margin:0 0 7px}
+.banking-v1-timeline-item p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
+.banking-v1-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.banking-v1-tool{border:1px solid var(--line);background:var(--paper2);padding:18px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between}
+.banking-v1-tool .icon{font-size:24px;line-height:1;margin-bottom:12px}
+.banking-v1-tool .kicker{font:900 9px Arial,sans-serif;letter-spacing:1.1px;color:var(--red);text-transform:uppercase}
+.banking-v1-tool h3{font-size:19px;line-height:1.05;margin:5px 0 6px}
+.banking-v1-tool p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.banking-v1-tool a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
+.banking-v1-latest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.banking-v1-latest .story-card{background:var(--card);border:1px solid var(--line);padding:0 0 15px;box-shadow:0 8px 22px rgba(0,0,0,.045);transition:transform .18s ease,box-shadow .18s ease}
+.banking-v1-latest .story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.banking-v1-latest .story-card .story-image{aspect-ratio:16/9;margin:0}
+.banking-v1-latest .story-card .story-meta,.banking-v1-latest .story-card h3,.banking-v1-latest .story-card p{margin-left:15px;margin-right:15px}
+.banking-v1-latest .story-card h3{font-size:20px;line-height:1.08;margin-top:7px}
+.banking-v1-latest .story-card p{font-size:11px;line-height:1.45;color:var(--muted)}
+.banking-v1-empty{border:1px dashed var(--line);padding:26px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted);line-height:1.55}
+.banking-v1-sources{display:flex;flex-wrap:wrap;gap:8px}
+.banking-v1-sources a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);background:var(--card);font:900 9px Arial,sans-serif;color:var(--text);text-transform:uppercase;letter-spacing:.35px}
+.banking-v1-sources a:hover{color:var(--red);border-color:var(--red)}
+.banking-v1-note{margin-top:24px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}
+.banking-v1-note strong{color:var(--text)}
+@media(max-width:1050px){.banking-v1-hero{grid-template-columns:1fr}.banking-v1-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-step:nth-child(2):before,.banking-v1-step:nth-child(4):before{display:none}.banking-v1-frameworks{grid-template-columns:1fr}.banking-v1-timeline{grid-template-columns:repeat(3,minmax(0,1fr))}.banking-v1-timeline-item:nth-child(3){border-right:0}.banking-v1-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-latest{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.banking-v1{width:min(var(--max),calc(100% - 28px));padding-top:18px}.banking-v1-hero{padding:22px}.banking-v1-hero h1{font-size:54px;letter-spacing:-1.8px}.banking-v1-lead{font-size:14px}.banking-v1-metrics,.banking-v1-journey,.banking-v1-frameworks,.banking-v1-timeline,.banking-v1-tools,.banking-v1-latest{grid-template-columns:1fr}.banking-v1-head{align-items:flex-start;flex-direction:column}.banking-v1-head h2{font-size:29px}.banking-v1-head p{text-align:left}.banking-v1-step:not(:last-child):before{display:none}.banking-v1-timeline-item{border-right:0;border-bottom:1px solid var(--line)}.banking-v1-timeline-item:last-child{border-bottom:0}.banking-v1-timeline-item:before{top:-5px;left:15px}}
+@media(prefers-reduced-motion:reduce){.banking-v1-latest .story-card{transition:none}}
+</style>"""
+
+
 def guide_markup(key):
     g=GUIDES[key]
     timeline=''.join(f'<div class="courts-v2-timeline-item"><div class="courts-v2-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
     laws=''.join(f'<article class="courts-v2-law"><div class="law-type">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
     flow=''.join(f'<article class="courts-v2-journey-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The applicable forum and procedure depend on the dispute, statute and jurisdiction.</p></article>' for i,x in enumerate(g['flow']))
     sources=''.join(f'<a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(t)} ↗</a>' for t,u in g['sources'])
+
+    if key == 'banking-law':
+        law_years={'RBI Act, 1934':'1934','Banking Regulation Act, 1949':'1949','SARFAESI Act, 2002':'2002','Recovery of Debts and Bankruptcy Act, 1993':'1993','IBC, 2016':'2016'}
+        laws_v1=''.join(f'<article class="banking-v1-law"><div class="year">{H.escape(law_years.get(t,''))}</div><div><div class="tag">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></div></article>' for t,d,u in g['laws'])
+        timeline_v1=''.join(f'<article class="banking-v1-timeline-item"><div class="year">{H.escape(y)}</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></article>' for y,t,d in g['history'])
+        flow_v1=''.join(f'<article class="banking-v1-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The applicable forum and procedure depend on the dispute, statute and jurisdiction.</p></article>' for i,x in enumerate(g['flow']))
+        return f'''<main class="banking-v1">
+<div class="banking-v1-crumb">Lex Talk Legal / Banking, Credit &amp; Recovery</div>
+<section class="banking-v1-hero">
+  <div>
+    <div class="banking-v1-kicker">BANKING, CREDIT &amp; RECOVERY</div>
+    <h1>Banking Law</h1>
+    <p class="banking-v1-lead">{H.escape(g['intro'])}</p>
+    <div class="banking-v1-actions">
+      <a class="banking-v1-btn primary" href="#journey">Explore the Recovery Map ↓</a>
+      <a class="banking-v1-btn secondary" href="/category/drt-drat/">DRT / DRAT ↗</a>
+      <a class="banking-v1-btn secondary" href="/auctions/">Bank Auctions ↗</a>
+    </div>
+  </div>
+  <aside class="banking-v1-hero-card">
+    <div>
+      <div class="ledger-mark">₹</div>
+      <div class="mini-kicker">THE BANKING LAW DESK</div>
+      <h2>From credit to recovery, follow the legal framework.</h2>
+      <p>Use this page as a structured starting point for banking regulation, security enforcement, debt-recovery forums, insolvency and practical legal resources.</p>
+    </div>
+    <div class="mini-kicker">Law · Context · Clarity.</div>
+  </aside>
+</section>
+<section class="banking-v1-metrics" aria-label="Banking law areas">
+  <article class="banking-v1-metric"><div class="code">01 / REGULATION</div><h3>Banking Regulation</h3><p>Core statutory and regulatory structures governing banking activity.</p></article>
+  <article class="banking-v1-metric"><div class="code">02 / CREDIT</div><h3>Loans &amp; Credit</h3><p>Credit facilities, default triggers, restructuring and related legal issues.</p></article>
+  <article class="banking-v1-metric"><div class="code">03 / RECOVERY</div><h3>Security Enforcement</h3><p>SARFAESI, recovery proceedings and specialised tribunal pathways.</p></article>
+  <article class="banking-v1-metric"><div class="code">04 / INSOLVENCY</div><h3>IBC &amp; Resolution</h3><p>Insolvency resolution and liquidation within the applicable framework.</p></article>
+</section>
+<section id="journey" class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">A PRACTICAL VIEW</div><h2>The banking recovery journey</h2></div><p>A matter can move through different legal routes depending on the facts, statute, security, debtor category, forum and procedural stage.</p></div>
+  <div class="banking-v1-journey">{flow_v1}</div>
+</section>
+<section class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">KEY STATUTES</div><h2>Five legal frameworks</h2></div><p>The core statutes mapped in this section, presented as a reference-first dashboard with official source links.</p></div>
+  <div class="banking-v1-frameworks">{laws_v1}</div>
+</section>
+<section class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">QUICK TIMELINE</div><h2>How the framework evolved</h2></div><p>Key milestones from the existing Banking Law explainer, arranged as an editorial timeline.</p></div>
+  <div class="banking-v1-timeline">{timeline_v1}</div>
+</section>
+<section class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">LEGAL UTILITIES</div><h2>Where should you go next?</h2></div><p>Open the relevant Lex Talk Legal section or verify details through the official portal before relying on them.</p></div>
+  <div class="banking-v1-tools">
+    <article class="banking-v1-tool"><div><div class="icon">⚖</div><div class="kicker">TRIBUNALS</div><h3>DRT / DRAT</h3><p>Explore the specialised debt-recovery tribunal section.</p></div><a href="/category/drt-drat/">Explore DRT / DRAT ↗</a></article>
+    <article class="banking-v1-tool"><div><div class="icon">🏦</div><div class="kicker">ASSET SALES</div><h3>Auctions</h3><p>Find publicly notified bank, FI and authority auction information.</p></div><a href="/auctions/">Open Auction Desk ↗</a></article>
+    <article class="banking-v1-tool"><div><div class="icon">⌕</div><div class="kicker">CASE SERVICE</div><h3>Case Status</h3><p>Use official court and tribunal portals for current case information.</p></div><a href="/case-status/">Check Case Status ↗</a></article>
+    <article class="banking-v1-tool"><div><div class="icon">🎥</div><div class="kicker">HEARINGS</div><h3>Courtrooms / VC</h3><p>Open public courtroom and virtual-hearing destinations.</p></div><a href="/courtrooms/">Open Courtrooms ↗</a></article>
+  </div>
+</section>
+<section id="latest" class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">NEWS DESK</div><h2>Latest Banking Law Stories</h2></div><p>Current banking-law coverage appears here when synced content carries a relevant label or matches the section.</p></div>
+  <div class="banking-v1-latest" id="latest-guide-banking-law"></div>
+</section>
+<section class="banking-v1-section">
+  <div class="banking-v1-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official portals to verify statutes, regulatory positions, tribunal information and current developments.</p></div>
+  <div class="banking-v1-sources">{sources}</div>
+  <div class="banking-v1-note"><strong>Editorial note:</strong> This page is for general legal education and information. Statutes, rules, notifications, regulatory directions and case law may change. Readers should verify the current position from the concerned official source.</div>
+</section>
+</main>'''
     if key == 'courts':
         return f'''<main class="courts-v2">
 <div class="courts-v2-crumb">Lex Talk Legal / Indian Judiciary Explained</div>
@@ -420,6 +563,7 @@ def category_matches(a, key):
 
 def write_category_pages(arts):
     for key,(name,_) in CATEGORY_MAP.items():
+        extra_css=''
         if key in GUIDES:
             g=GUIDES[key]
             items=[a for a in arts if category_matches(a,key)]
@@ -427,15 +571,22 @@ def write_category_pages(arts):
             content=guide_markup(key)
             if key == "courts":
                 content=content.replace('<div class="courts-v2-latest" id="latest-guide-courts"></div>', f'<div class="courts-v2-latest">{cards}</div>')
+                extra_css=COURTS_PAGE_CSS
+            elif key == "banking-law":
+                if not items:
+                    cards='<div class="banking-v1-empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
+                content=content.replace('<div class="banking-v1-latest" id="latest-guide-banking-law"></div>', f'<div class="banking-v1-latest">{cards}</div>')
+                extra_css=BANKING_PAGE_CSS
             else:
                 content=content.replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
+                extra_css=''
             desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
         else:
             items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
             content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
             desc=f'Lex Talk Legal — {name} news, updates and explainers.'
-        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content,COURTS_PAGE_CSS if key == "courts" else ""),encoding='utf8')
+        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content,extra_css),encoding='utf8')
 
 def write_videos_page(videos):
     cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
