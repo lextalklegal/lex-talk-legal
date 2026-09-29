@@ -1,22 +1,17 @@
 name: Update Auction Listings
 
 on:
-  push:
-    paths:
-      - "data/auctions.json"
-      - "scripts/build_auctions.py"
-      - "templates/auctions.html"
   workflow_dispatch:
-
 permissions:
   contents: write
 
 concurrency:
-  group: lex-talk-legal-auctions-update
-  cancel-in-progress: true
+  group: lex-talk-legal-auction-update
+  cancel-in-progress: false
 
 jobs:
   rebuild:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -24,15 +19,33 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install beautifulsoup4
+      - name: Update manual auction data
+        env:
+          AUCTION_ACTION: ${{ inputs.action }}
+          AUCTION_ID: ${{ inputs.id }}
+          AUCTION_TITLE: ${{ inputs.title }}
+          AUCTION_INSTITUTION: ${{ inputs.institution }}
+          AUCTION_PROPERTY_TYPE: ${{ inputs.property_type }}
+          AUCTION_LOCATION: ${{ inputs.location }}
+          AUCTION_AUCTION_DATE: ${{ inputs.auction_date }}
+          AUCTION_INSPECTION_DATE: ${{ inputs.inspection_date }}
+          AUCTION_RESERVE_PRICE: ${{ inputs.reserve_price }}
+          AUCTION_EMD: ${{ inputs.emd }}
+          AUCTION_OFFICIAL_URL: ${{ inputs.official_url }}
+          AUCTION_NOTICE_URL: ${{ inputs.notice_url }}
+          AUCTION_STATUS: ${{ inputs.status }}
+          AUCTION_VERIFIED_ON: ${{ inputs.verified_on }}
+        run: python scripts/manage_auction.py
       - name: Rebuild Auctions from local data
         run: python scripts/build_auctions.py
-      - name: Commit Auctions only
+      - name: Validate manual desk
+        run: python scripts/smoke_test.py
+      - name: Commit auction data and page
         shell: bash
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add auctions/index.html
+          git add data/auctions.json auctions/index.html
           if git diff --cached --quiet; then
             echo "No auction changes."
           else
