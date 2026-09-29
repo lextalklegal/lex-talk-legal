@@ -2,13 +2,68 @@ name: Update Courtroom VC Links
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: "What should happen to the VC entry?"
+        required: true
+        type: choice
+        options:
+          - add_or_update
+          - replace_url
+          - remove_url
+        default: add_or_update
+      section:
+        description: "VC section"
+        required: true
+        type: choice
+        options:
+          - supreme_court
+          - high_court
+          - delhi_district
+          - drt
+          - drat
+          - nclt
+          - nclat
+      court_name:
+        description: "Court/bench name (for non-Supreme Court sections)"
+        required: false
+        type: string
+      label:
+        description: "Display label"
+        required: false
+        default: "Join VC"
+        type: string
+      url:
+        description: "Current/new VC URL (required for add_or_update and replace_url)"
+        required: false
+        type: string
+      old_url:
+        description: "Existing VC URL to replace/remove"
+        required: false
+        type: string
+      meeting_id:
+        description: "Meeting ID (if any)"
+        required: false
+        type: string
+      password:
+        description: "Password (if any)"
+        required: false
+        type: string
+      verified_on:
+        description: "Verified date (YYYY-MM-DD)"
+        required: false
+        type: string
+      notes:
+        description: "Notes"
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
   group: lex-talk-legal-vc-update
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   rebuild:
@@ -16,18 +71,41 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install beautifulsoup4
+
+      - name: Validate scripts
+        run: |
+          python -m py_compile scripts/manage_vc.py scripts/build_vc.py scripts/smoke_test.py
+
+      - name: Update manual VC data
+        env:
+          VC_ACTION: ${{ inputs.action }}
+          VC_SECTION: ${{ inputs.section }}
+          VC_COURT_NAME: ${{ inputs.court_name }}
+          VC_LABEL: ${{ inputs.label }}
+          VC_URL: ${{ inputs.url }}
+          VC_OLD_URL: ${{ inputs.old_url }}
+          VC_MEETING_ID: ${{ inputs.meeting_id }}
+          VC_PASSWORD: ${{ inputs.password }}
+          VC_VERIFIED_ON: ${{ inputs.verified_on }}
+          VC_NOTES: ${{ inputs.notes }}
+        run: python scripts/manage_vc.py
+
       - name: Rebuild Courtrooms from local data
         run: python scripts/build_vc.py
-      - name: Commit Courtrooms only
+
+      - name: Validate manual desk
+        run: python scripts/smoke_test.py
+
+      - name: Commit VC data and page
         shell: bash
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add courtrooms/index.html
+          git add data/vc_links.json courtrooms/index.html
           if git diff --cached --quiet; then
             echo "No VC changes."
           else
