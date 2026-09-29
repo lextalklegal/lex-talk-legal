@@ -398,6 +398,98 @@ BANKING_PAGE_CSS = """<style id="banking-page-v1">
 </style>"""
 
 
+DRA_PAGE_CSS = '''<style id="dra-page-v1">
+.dra-v1{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 74px}
+.dra-v1 *{box-sizing:border-box}
+.dra-v1-crumb{font:800 10px Arial,sans-serif;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.dra-v1-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:22px;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 72%);box-shadow:var(--shadow)}
+.dra-v1-hero:before{content:"";position:absolute;width:340px;height:340px;right:-130px;top:-140px;border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);border-radius:50%;box-shadow:0 0 0 24px color-mix(in srgb,var(--gold) 7%,transparent),0 0 0 48px color-mix(in srgb,var(--red) 4%,transparent);pointer-events:none}
+.dra-v1-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
+.dra-v1-hero h1{font-size:clamp(54px,7vw,86px);line-height:.88;letter-spacing:-3px;margin:0 0 17px}
+.dra-v1-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:790px;margin:0 0 20px}
+.dra-v1-actions{display:flex;flex-wrap:wrap;gap:9px}
+.dra-v1-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
+.dra-v1-btn.primary{background:var(--text);color:var(--paper)}
+.dra-v1-btn.primary:hover{background:var(--red);border-color:var(--red)}
+.dra-v1-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}
+.dra-v1-btn.secondary:hover{border-color:var(--red);color:var(--red)}
+.dra-v1-hero-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:258px}
+.dra-v1-mark{width:64px;height:64px;border:1px solid var(--gold);border-radius:16px;display:grid;place-items:center;color:var(--gold);font-size:30px;margin-bottom:24px;background:var(--paper);box-shadow:inset 0 0 0 6px color-mix(in srgb,var(--gold) 4%,transparent)}
+.dra-v1-mini{font:900 9px Arial,sans-serif;letter-spacing:1.15px;color:var(--gold);text-transform:uppercase}
+.dra-v1-hero-card h2{font-size:25px;line-height:1.03;margin:7px 0 9px}
+.dra-v1-hero-card p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.58;margin:0}
+.dra-v1-focus{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
+.dra-v1-focus-card{position:relative;background:var(--card);padding:18px;min-height:132px;overflow:hidden}
+.dra-v1-focus-card:after{content:"";position:absolute;right:-23px;bottom:-23px;width:72px;height:72px;border:1px solid color-mix(in srgb,var(--gold) 24%,transparent);border-radius:50%}
+.dra-v1-focus-card .code{font:900 10px Arial,sans-serif;color:var(--gold);letter-spacing:1px}
+.dra-v1-focus-card h3{font-size:20px;line-height:1.04;margin:8px 0 6px}
+.dra-v1-focus-card p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.48;margin:0}
+.dra-v1-section{padding-top:44px}
+.dra-v1-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
+.dra-v1-head .eyebrow{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:3px}
+.dra-v1-head h2{font-size:34px;line-height:1.02;margin:0}
+.dra-v1-head p{max-width:470px;margin:0;font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;text-align:right}
+.dra-v1-compass{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dra-v1-compass-card{border:1px solid var(--line);background:var(--card);padding:21px;min-height:175px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:15px;box-shadow:0 5px 16px rgba(0,0,0,.03)}
+.dra-v1-compass-card .ico{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold);font-size:20px;background:var(--paper)}
+.dra-v1-compass-card .tag{font:900 9px Arial,sans-serif;letter-spacing:1.05px;color:var(--red);text-transform:uppercase}
+.dra-v1-compass-card h3{font-size:21px;line-height:1.05;margin:6px 0 7px}
+.dra-v1-compass-card p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0}
+.dra-v1-do-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.dra-v1-do{background:var(--card);padding:22px}
+.dra-v1-do.do{border-top:4px solid var(--gold)}
+.dra-v1-do.dont{border-top:4px solid var(--red)}
+.dra-v1-do .eyebrow{font:900 9px Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:5px}
+.dra-v1-do.do .eyebrow{color:var(--gold)}
+.dra-v1-do h3{font-size:26px;margin:0 0 12px}
+.dra-v1-do ul{margin:0;padding-left:18px;color:var(--muted);font:12px Arial,sans-serif;line-height:1.65}
+.dra-v1-do li{margin-bottom:5px}
+.dra-v1-journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);background:var(--line)}
+.dra-v1-step{position:relative;background:var(--paper2);padding:20px 17px;min-height:168px}
+.dra-v1-step:not(:last-child):before{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:var(--paper);font:900 13px Arial,sans-serif;z-index:2}
+.dra-v1-step .no{font:900 10px Arial,sans-serif;color:var(--red);letter-spacing:1px}
+.dra-v1-step h3{font-size:18px;line-height:1.06;margin:9px 0 7px}
+.dra-v1-step p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
+.dra-v1-timeline{position:relative;padding-left:28px}
+.dra-v1-timeline:before{content:"";position:absolute;left:8px;top:4px;bottom:4px;width:1px;background:var(--line)}
+.dra-v1-timeline-item{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;padding:0 0 21px}
+.dra-v1-timeline-item:last-child{padding-bottom:0}
+.dra-v1-timeline-item:before{content:"";position:absolute;left:-25px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--paper);border:2px solid var(--red)}
+.dra-v1-year{font:900 11px Arial,sans-serif;color:var(--gold);letter-spacing:1px;text-transform:uppercase;padding-top:2px}
+.dra-v1-timeline-item h3{font-size:21px;line-height:1.05;margin:0 0 5px}
+.dra-v1-timeline-item p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0;max-width:860px}
+.dra-v1-laws{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.dra-v1-law{border:1px solid var(--line);background:var(--card);padding:20px;min-height:180px;display:flex;flex-direction:column;box-shadow:0 5px 16px rgba(0,0,0,.03)}
+.dra-v1-law .tag{font:900 9px Arial,sans-serif;letter-spacing:1.05px;color:var(--red);text-transform:uppercase}
+.dra-v1-law h3{font-size:21px;line-height:1.05;margin:7px 0 8px}
+.dra-v1-law p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0 0 15px}
+.dra-v1-law a{margin-top:auto;font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
+.dra-v1-resources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.dra-v1-resource{border:1px solid var(--line);background:var(--paper2);padding:18px;min-height:154px;display:flex;flex-direction:column;justify-content:space-between}
+.dra-v1-resource .icon{font-size:24px;margin-bottom:10px}
+.dra-v1-resource .tag{font:900 9px Arial,sans-serif;letter-spacing:1.1px;color:var(--red);text-transform:uppercase}
+.dra-v1-resource h3{font-size:19px;line-height:1.05;margin:5px 0 6px}
+.dra-v1-resource p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.dra-v1-resource a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
+.dra-v1-latest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.dra-v1-latest .story-card{background:var(--card);border:1px solid var(--line);padding:0 0 15px;box-shadow:0 8px 22px rgba(0,0,0,.045);transition:transform .18s ease,box-shadow .18s ease}
+.dra-v1-latest .story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.dra-v1-latest .story-card .story-image{aspect-ratio:16/9;margin:0}
+.dra-v1-latest .story-card .story-meta,.dra-v1-latest .story-card h3,.dra-v1-latest .story-card p{margin-left:15px;margin-right:15px}
+.dra-v1-latest .story-card h3{font-size:20px;line-height:1.08;margin-top:7px}
+.dra-v1-latest .story-card p{font-size:11px;line-height:1.45;color:var(--muted)}
+.dra-v1-empty{border:1px dashed var(--line);padding:28px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted);line-height:1.55}
+.dra-v1-sources{display:flex;flex-wrap:wrap;gap:8px}
+.dra-v1-sources a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);background:var(--card);font:900 9px Arial,sans-serif;color:var(--text);text-transform:uppercase;letter-spacing:.35px}
+.dra-v1-sources a:hover{color:var(--red);border-color:var(--red)}
+.dra-v1-note{margin-top:24px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}
+.dra-v1-note strong{color:var(--text)}
+@media(max-width:1050px){.dra-v1-hero{grid-template-columns:1fr}.dra-v1-focus{grid-template-columns:repeat(2,minmax(0,1fr))}.dra-v1-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.dra-v1-step:nth-child(2):before,.dra-v1-step:nth-child(4):before{display:none}.dra-v1-laws{grid-template-columns:1fr}.dra-v1-resources{grid-template-columns:1fr 1fr}.dra-v1-latest{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.dra-v1{width:min(var(--max),calc(100% - 28px));padding-top:18px}.dra-v1-hero{padding:22px}.dra-v1-hero h1{font-size:56px;letter-spacing:-2px}.dra-v1-lead{font-size:14px}.dra-v1-focus,.dra-v1-compass,.dra-v1-do-grid,.dra-v1-journey,.dra-v1-laws,.dra-v1-resources,.dra-v1-latest{grid-template-columns:1fr}.dra-v1-head{align-items:flex-start;flex-direction:column}.dra-v1-head h2{font-size:29px}.dra-v1-head p{text-align:left}.dra-v1-step:not(:last-child):before{display:none}.dra-v1-timeline{padding-left:23px}.dra-v1-timeline-item{grid-template-columns:1fr;gap:4px}.dra-v1-timeline-item:before{left:-20px}.dra-v1-compass-card{grid-template-columns:42px 1fr}}
+@media(prefers-reduced-motion:reduce){.dra-v1-latest .story-card{transition:none}}
+</style>'''
+
+
 def guide_markup(key):
     g=GUIDES[key]
     timeline=''.join(f'<div class="courts-v2-timeline-item"><div class="courts-v2-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
@@ -468,6 +560,86 @@ def guide_markup(key):
   <div class="banking-v1-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official portals to verify statutes, regulatory positions, tribunal information and current developments.</p></div>
   <div class="banking-v1-sources">{sources}</div>
   <div class="banking-v1-note"><strong>Editorial note:</strong> This page is for general legal education and information. Statutes, rules, notifications, regulatory directions and case law may change. Readers should verify the current position from the concerned official source.</div>
+</section>
+</main>'''
+    if key == 'dra':
+        timeline_dra=''.join(f'<div class="dra-v1-timeline-item"><div class="dra-v1-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
+        laws_dra=''.join(f'<article class="dra-v1-law"><div class="tag">LEGAL / REGULATORY FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
+        flow_dra=''.join(f'<article class="dra-v1-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The process should remain within the authority given by the regulated entity and the applicable legal / regulatory framework.</p></article>' for i,x in enumerate(g['flow']))
+        sources_dra=''.join(f'<a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(t)} ↗</a>' for t,u in g['sources'])
+        return f'''<main class="dra-v1">
+<div class="dra-v1-crumb">Lex Talk Legal / Debt Recovery Agent Awareness</div>
+<section class="dra-v1-hero">
+  <div>
+    <div class="dra-v1-kicker">DEBT RECOVERY AGENT AWARENESS</div>
+    <h1>DRA</h1>
+    <p class="dra-v1-lead">{H.escape(g['intro'])}</p>
+    <div class="dra-v1-actions">
+      <a class="dra-v1-btn primary" href="#journey">Explore the DRA Journey ↓</a>
+      <a class="dra-v1-btn secondary" href="#framework">RBI &amp; Legal Framework ↗</a>
+      <a class="dra-v1-btn secondary" href="#latest">Latest DRA Stories ↓</a>
+    </div>
+  </div>
+  <aside class="dra-v1-hero-card">
+    <div>
+      <div class="dra-v1-mark">✓</div>
+      <div class="dra-v1-mini">THE DRA COMPLIANCE DESK</div>
+      <h2>Recovery work begins with authority, identity and responsible conduct.</h2>
+      <p>This guide focuses on role boundaries, borrower interaction, confidentiality, communication, documentation and escalation within the applicable regulatory framework.</p>
+    </div>
+    <div class="dra-v1-mini">Law · Context · Clarity.</div>
+  </aside>
+</section>
+<section class="dra-v1-focus" aria-label="DRA focus areas">
+  <article class="dra-v1-focus-card"><div class="code">01 / ROLE</div><h3>Authority &amp; Identity</h3><p>Work within the assignment or authorisation provided by the regulated entity and identify yourself appropriately.</p></article>
+  <article class="dra-v1-focus-card"><div class="code">02 / CONDUCT</div><h3>Respectful Communication</h3><p>Communication should remain fair, lawful and consistent with the applicable recovery-agent directions.</p></article>
+  <article class="dra-v1-focus-card"><div class="code">03 / PRIVACY</div><h3>Confidentiality</h3><p>Borrower information and interactions should be handled with appropriate confidentiality and privacy awareness.</p></article>
+  <article class="dra-v1-focus-card"><div class="code">04 / RECORDS</div><h3>Documentation &amp; Escalation</h3><p>Maintain proper records, receipts and escalation channels rather than relying on informal pressure.</p></article>
+</section>
+<section class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">COMPLIANCE COMPASS</div><h2>The four essentials</h2></div><p>A concise view of the practices that shape a responsible recovery interaction, based on the existing DRA awareness material.</p></div>
+  <div class="dra-v1-compass">
+    <article class="dra-v1-compass-card"><div class="ico">01</div><div><div class="tag">AUTHORISATION</div><h3>Know the assignment</h3><p>Understand the scope of the recovery assignment and remain within the authority delegated by the regulated entity.</p></div></article>
+    <article class="dra-v1-compass-card"><div class="ico">02</div><div><div class="tag">COMMUNICATION</div><h3>Identify &amp; communicate clearly</h3><p>Use proper identification and clear, lawful communication when interacting with a borrower.</p></div></article>
+    <article class="dra-v1-compass-card"><div class="ico">03</div><div><div class="tag">CONFIDENTIALITY</div><h3>Protect borrower information</h3><p>Respect customer confidentiality and avoid conduct that intrudes on privacy or dignity.</p></div></article>
+    <article class="dra-v1-compass-card"><div class="ico">04</div><div><div class="tag">AUDITABILITY</div><h3>Document and escalate</h3><p>Use records, receipts and formal escalation channels so the recovery process remains traceable.</p></div></article>
+  </div>
+</section>
+<section class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">FIELD CONDUCT</div><h2>What responsible recovery looks like</h2></div><p>The following is a practical awareness summary of the conduct principles reflected in the current DRA material.</p></div>
+  <div class="dra-v1-do-grid">
+    <article class="dra-v1-do do"><div class="eyebrow">DO</div><h3>Use a documented process</h3><ul><li>Carry appropriate authorisation and identification.</li><li>Communicate fairly and lawfully.</li><li>Protect customer confidentiality.</li><li>Maintain records and receipts.</li><li>Use the regulated entity&#39;s grievance / escalation mechanism.</li></ul></article>
+    <article class="dra-v1-do dont"><div class="eyebrow">AVOID</div><h3>Prohibited or inappropriate conduct</h3><ul><li>Intimidation or harassment.</li><li>Unwarranted intrusion into privacy.</li><li>Inappropriate communications.</li><li>Recovery calls before 8:00 a.m. or after 7:00 p.m. for overdue-loan recovery, as stated in the cited RBI directions.</li></ul></article>
+  </div>
+</section>
+<section id="journey" class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">A PRACTICAL VIEW</div><h2>The DRA interaction journey</h2></div><p>The sequence can vary by assignment and facts, but the process should stay within the applicable authority and regulatory framework.</p></div>
+  <div class="dra-v1-journey">{flow_dra}</div>
+</section>
+<section class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">QUICK TIMELINE</div><h2>How the guidance evolved</h2></div><p>Key milestones retained from the existing DRA explainer, presented as an editorial timeline.</p></div>
+  <div class="dra-v1-timeline">{timeline_dra}</div>
+</section>
+<section id="framework" class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">LEGAL &amp; REGULATORY FRAMEWORK</div><h2>Know the governing references</h2></div><p>Start with the official RBI and India Code material before relying on any general summary.</p></div>
+  <div class="dra-v1-laws">{laws_dra}</div>
+</section>
+<section class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">PRACTICAL RESOURCES</div><h2>Where to go next</h2></div><p>Use these destinations for current regulatory references, legal texts and grievance information.</p></div>
+  <div class="dra-v1-resources">
+    <article class="dra-v1-resource"><div><div class="icon">⚖</div><div class="tag">RECOVERY AGENTS</div><h3>RBI directions</h3><p>Review the regulator&#39;s current recovery-agent directions and related guidance.</p></div><a href="https://www.rbi.org.in/" target="_blank" rel="noopener noreferrer">Open RBI ↗</a></article>
+    <article class="dra-v1-resource"><div><div class="icon">▣</div><div class="tag">PRIMARY TEXTS</div><h3>India Code</h3><p>Check the statutory text and related central legislation from the official portal.</p></div><a href="https://indiacode.gov.in/" target="_blank" rel="noopener noreferrer">Open India Code ↗</a></article>
+    <article class="dra-v1-resource"><div><div class="icon">⌁</div><div class="tag">BORROWER GRIEVANCE</div><h3>RBI Complaint Management</h3><p>Use the applicable complaint and escalation channels where eligible.</p></div><a href="https://cms.rbi.org.in/" target="_blank" rel="noopener noreferrer">Open CMS ↗</a></article>
+  </div>
+</section>
+<section id="latest" class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">NEWS DESK</div><h2>Latest DRA Stories</h2></div><p>Current DRA coverage appears here when synced content carries a relevant label or matches the section.</p></div>
+  <div class="dra-v1-latest" id="latest-guide-dra"></div>
+</section>
+<section class="dra-v1-section">
+  <div class="dra-v1-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official portals to verify the current regulatory position and available grievance channels.</p></div>
+  <div class="dra-v1-sources">{sources_dra}</div>
+  <div class="dra-v1-note"><strong>Editorial note:</strong> This page is for general legal education and information. RBI directions, statutes, notifications and other regulatory requirements may change; readers should verify the current position from the relevant official source.</div>
 </section>
 </main>'''
     if key == 'courts':
@@ -577,6 +749,11 @@ def write_category_pages(arts):
                     cards='<div class="banking-v1-empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
                 content=content.replace('<div class="banking-v1-latest" id="latest-guide-banking-law"></div>', f'<div class="banking-v1-latest">{cards}</div>')
                 extra_css=BANKING_PAGE_CSS
+            elif key == "dra":
+                if not items:
+                    cards='<div class="dra-v1-empty">No DRA stories are published in this section yet. Publish a Blogger post with the appropriate DRA label and the next automated sync will update this section.</div>'
+                content=content.replace('<div class="dra-v1-latest" id="latest-guide-dra"></div>', f'<div class="dra-v1-latest">{cards}</div>')
+                extra_css=DRA_PAGE_CSS
             else:
                 content=content.replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
                 extra_css=''
