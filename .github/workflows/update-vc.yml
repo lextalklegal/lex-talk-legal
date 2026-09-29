@@ -1,0 +1,41 @@
+name: Update Courtroom VC Links
+
+on:
+  push:
+    paths:
+      - "data/vc_links.json"
+      - "scripts/build_vc.py"
+      - "templates/courtrooms.html"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lex-talk-legal-vc-update
+  cancel-in-progress: true
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install beautifulsoup4
+      - name: Rebuild Courtrooms from local data
+        run: python scripts/build_vc.py
+      - name: Commit Courtrooms only
+        shell: bash
+        run: |
+          git config user.name "Lex Talk Legal Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add courtrooms/index.html
+          if git diff --cached --quiet; then
+            echo "No VC changes."
+          else
+            git commit -m "chore: update manual courtroom VC data"
+            git push
+          fi
