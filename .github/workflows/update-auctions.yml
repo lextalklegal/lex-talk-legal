@@ -2,13 +2,75 @@ name: Update Auction Listings
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: "What should happen to the auction listing?"
+        required: true
+        type: choice
+        options:
+          - add_or_update
+          - remove
+        default: add_or_update
+      id:
+        description: "Stable unique auction ID"
+        required: true
+        type: string
+      title:
+        description: "Auction/property title"
+        required: false
+        type: string
+      institution:
+        description: "Bank / financial institution / authority"
+        required: false
+        type: string
+      property_type:
+        description: "Property type"
+        required: false
+        type: string
+      location:
+        description: "Location"
+        required: false
+        type: string
+      auction_date:
+        description: "Auction date"
+        required: false
+        type: string
+      inspection_date:
+        description: "Inspection date"
+        required: false
+        type: string
+      reserve_price:
+        description: "Reserve price"
+        required: false
+        type: string
+      emd:
+        description: "EMD"
+        required: false
+        type: string
+      official_url:
+        description: "Official source URL"
+        required: false
+        type: string
+      notice_url:
+        description: "Auction notice/document URL"
+        required: false
+        type: string
+      status:
+        description: "Listing status"
+        required: false
+        default: "active"
+        type: string
+      verified_on:
+        description: "Verified date (YYYY-MM-DD)"
+        required: false
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: lex-talk-legal-auctions-update
-  cancel-in-progress: true
+  group: lex-talk-legal-auction-update
+  cancel-in-progress: false
 
 jobs:
   rebuild:
@@ -16,18 +78,45 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install beautifulsoup4
+
+      - name: Validate scripts
+        run: |
+          python -m py_compile scripts/manage_auction.py scripts/build_auctions.py scripts/smoke_test.py
+
+      - name: Update manual auction data
+        env:
+          AUCTION_ACTION: ${{ inputs.action }}
+          AUCTION_ID: ${{ inputs.id }}
+          AUCTION_TITLE: ${{ inputs.title }}
+          AUCTION_INSTITUTION: ${{ inputs.institution }}
+          AUCTION_PROPERTY_TYPE: ${{ inputs.property_type }}
+          AUCTION_LOCATION: ${{ inputs.location }}
+          AUCTION_AUCTION_DATE: ${{ inputs.auction_date }}
+          AUCTION_INSPECTION_DATE: ${{ inputs.inspection_date }}
+          AUCTION_RESERVE_PRICE: ${{ inputs.reserve_price }}
+          AUCTION_EMD: ${{ inputs.emd }}
+          AUCTION_OFFICIAL_URL: ${{ inputs.official_url }}
+          AUCTION_NOTICE_URL: ${{ inputs.notice_url }}
+          AUCTION_STATUS: ${{ inputs.status }}
+          AUCTION_VERIFIED_ON: ${{ inputs.verified_on }}
+        run: python scripts/manage_auction.py
+
       - name: Rebuild Auctions from local data
         run: python scripts/build_auctions.py
-      - name: Commit Auctions only
+
+      - name: Validate manual desk
+        run: python scripts/smoke_test.py
+
+      - name: Commit auction data and page
         shell: bash
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add auctions/index.html
+          git add data/auctions.json auctions/index.html
           if git diff --cached --quiet; then
             echo "No auction changes."
           else
