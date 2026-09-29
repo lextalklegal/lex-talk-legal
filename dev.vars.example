@@ -1,4 +1,0 @@
-# Local-only example. Never commit real secrets here.
-ADMIN_EMAILS=admin@example.com
-RATE_LIMIT_SALT=replace-with-a-long-random-value
-TURNSTILE_SECRET=optional
