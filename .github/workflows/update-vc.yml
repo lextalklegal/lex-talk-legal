@@ -4,23 +4,23 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "Choose whether to rebuild the existing base or modify a VC entry"
+        description: "VC action"
         required: true
         type: choice
         options:
           - rebuild_existing
-          - add_or_update
-          - replace_url
           - update_details
+          - replace_url
+          - add_or_update
           - remove_url
         default: rebuild_existing
       section:
-        description: "Section for a NEW entry only"
+        description: "Section for add_or_update"
         required: false
         type: choice
         options:
           - supreme_court
-          - high_courts
+          - high_court
           - delhi_district
           - drt
           - drat
@@ -28,7 +28,7 @@ on:
           - nclat
         default: supreme_court
       court_name:
-        description: "Court/bench name for a NEW entry"
+        description: "Court / Bench name for add_or_update"
         required: false
         type: string
       label:
@@ -37,11 +37,11 @@ on:
         default: "Join VC"
         type: string
       url:
-        description: "New VC URL (only for add/replace)"
+        description: "New VC URL for add_or_update or replace_url"
         required: false
         type: string
       old_url:
-        description: "Existing VC URL to replace/update/remove"
+        description: "Existing VC URL for update_details / replace_url / remove_url"
         required: false
         type: string
       meeting_id:
@@ -70,20 +70,20 @@ concurrency:
 
 jobs:
   rebuild:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
       - name: Validate scripts
-        run: |
-          python -m py_compile scripts/manage_vc.py scripts/build_vc.py scripts/smoke_test.py
+        run: python -m py_compile scripts/manage_vc.py scripts/build_vc.py scripts/smoke_test.py
 
-      - name: Apply manual VC change
+      - name: Apply VC data action
         env:
           VC_ACTION: ${{ inputs.action }}
           VC_SECTION: ${{ inputs.section }}
@@ -97,10 +97,10 @@ jobs:
           VC_NOTES: ${{ inputs.notes }}
         run: python scripts/manage_vc.py
 
-      - name: Rebuild Courtrooms from local base data
+      - name: Rebuild Courtrooms from local VC data
         run: python scripts/build_vc.py
 
-      - name: Validate manual desk
+      - name: Validate Courtrooms build
         run: python scripts/smoke_test.py
 
       - name: Commit only VC changes
