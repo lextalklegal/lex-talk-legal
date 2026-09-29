@@ -1,3 +1,16 @@
+(function(){
+  try{
+    const u=new URL(location.href);
+    if(u.pathname==='/__legacy-bridge/'){
+      const raw=u.searchParams.get('__to')||'/';
+      const target=new URL(raw,u.origin);
+      if(target.origin===u.origin){
+        const clean=target.pathname+(target.search||'')+(target.hash||'');
+        history.replaceState(null,'',clean||'/');
+      }
+    }
+  }catch(_){}
+})();
 /* Lex Talk Legal — shared publication controls */
 (function(){
   const root=document.documentElement;

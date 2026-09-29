@@ -1099,10 +1099,10 @@ Sitemap: https://lextalk.legal/sitemap.xml
         });
       }
 
-      if (/^\/admin(?:\/|$)/.test(url.pathname)) {
+      if (/^\\/admin(?:\\/|$)/.test(url.pathname)) {
         return Response.redirect(new URL('/', request.url), 302);
       }
-      if (/^\/advocates(?:\/|$)/.test(url.pathname)) {
+      if (/^\\/advocates(?:\\/|$)/.test(url.pathname)) {
         return Response.redirect(new URL('/team.html', request.url), 301);
       }
       return await env.ASSETS.fetch(request);
