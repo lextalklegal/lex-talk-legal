@@ -320,174 +320,45 @@ COURTS_PAGE_CSS = '''<style id="courts-page-v2">
 @media(prefers-reduced-motion:reduce){.courts-v2-stat,.courts-v2-latest .story-card{transition:none}}
 </style>'''
 
-
-BANKING_PAGE_CSS = """<style id="banking-page-v1">
-.banking-v1{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 72px}
-.banking-v1 *{box-sizing:border-box}
-.banking-v1-crumb{font:800 10px Arial,sans-serif;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
-.banking-v1-hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);gap:22px;align-items:stretch;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 68%);box-shadow:var(--shadow);position:relative;overflow:hidden}
-.banking-v1-hero:before{content:"";position:absolute;width:360px;height:360px;right:-145px;top:-150px;border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);border-radius:50%;box-shadow:0 0 0 24px color-mix(in srgb,var(--gold) 8%,transparent),0 0 0 50px color-mix(in srgb,var(--gold) 5%,transparent),0 0 0 76px color-mix(in srgb,var(--red) 4%,transparent);pointer-events:none}
-.banking-v1-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
-.banking-v1-hero h1{font-size:clamp(48px,7vw,82px);line-height:.9;letter-spacing:-2.8px;margin:0 0 18px;max-width:760px}
-.banking-v1-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:790px;margin:0 0 20px}
-.banking-v1-actions{display:flex;flex-wrap:wrap;gap:9px}
-.banking-v1-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
-.banking-v1-btn.primary{background:var(--text);color:var(--paper)}
-.banking-v1-btn.primary:hover{background:var(--red);border-color:var(--red)}
-.banking-v1-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}
-.banking-v1-btn.secondary:hover{border-color:var(--red);color:var(--red)}
-.banking-v1-hero-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);padding:21px;display:flex;flex-direction:column;justify-content:space-between;min-height:250px}
-.banking-v1-hero-card .ledger-mark{width:62px;height:62px;border:1px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:28px;margin-bottom:22px;background:var(--paper)}
-.banking-v1-hero-card .mini-kicker{font:900 9px Arial,sans-serif;letter-spacing:1.15px;color:var(--gold);text-transform:uppercase}
-.banking-v1-hero-card h2{font-size:25px;line-height:1.03;margin:7px 0 9px}
-.banking-v1-hero-card p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.58;margin:0}
-.banking-v1-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
-.banking-v1-metric{background:var(--card);padding:17px 17px 15px;min-height:112px;position:relative;overflow:hidden}
-.banking-v1-metric:after{content:"";position:absolute;right:-25px;bottom:-25px;width:78px;height:78px;border:1px solid color-mix(in srgb,var(--gold) 27%,transparent);border-radius:50%}
-.banking-v1-metric .code{font:900 10px Arial,sans-serif;color:var(--gold);letter-spacing:1px}
-.banking-v1-metric h3{font-size:19px;line-height:1.05;margin:8px 0 6px}
-.banking-v1-metric p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.45;margin:0;max-width:260px}
-.banking-v1-section{padding:42px 0 0}
-.banking-v1-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
-.banking-v1-head .eyebrow{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:3px}
-.banking-v1-head h2{font-size:34px;line-height:1.02;margin:0}
-.banking-v1-head p{max-width:450px;margin:0;font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;text-align:right}
-.banking-v1-journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);background:var(--line)}
-.banking-v1-step{background:var(--paper2);padding:20px 17px;min-height:154px;position:relative}
-.banking-v1-step:not(:last-child):before{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:var(--paper);font:900 13px Arial,sans-serif;z-index:2}
-.banking-v1-step .no{font:900 10px Arial,sans-serif;color:var(--red);letter-spacing:1px}
-.banking-v1-step h3{font-size:18px;line-height:1.06;margin:9px 0 7px}
-.banking-v1-step p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
-.banking-v1-frameworks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.banking-v1-law{display:grid;grid-template-columns:72px minmax(0,1fr);gap:15px;border:1px solid var(--line);background:var(--card);padding:19px;min-height:175px;box-shadow:0 5px 16px rgba(0,0,0,.03)}
-.banking-v1-law .year{font:900 13px Arial,sans-serif;color:var(--gold);letter-spacing:.8px;padding-top:2px}
-.banking-v1-law .tag{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.05px;text-transform:uppercase;margin-bottom:5px}
-.banking-v1-law h3{font-size:21px;line-height:1.05;margin:0 0 7px}
-.banking-v1-law p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
-.banking-v1-law a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
-.banking-v1-timeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.banking-v1-timeline-item{padding:19px 15px;min-height:160px;position:relative;border-right:1px solid var(--line);background:var(--card)}
-.banking-v1-timeline-item:last-child{border-right:0}
-.banking-v1-timeline-item:before{content:"";position:absolute;left:15px;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--red)}
-.banking-v1-timeline-item .year{font:900 11px Arial,sans-serif;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}
-.banking-v1-timeline-item h3{font-size:19px;line-height:1.05;margin:0 0 7px}
-.banking-v1-timeline-item p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
-.banking-v1-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.banking-v1-tool{border:1px solid var(--line);background:var(--paper2);padding:18px;min-height:160px;display:flex;flex-direction:column;justify-content:space-between}
-.banking-v1-tool .icon{font-size:24px;line-height:1;margin-bottom:12px}
-.banking-v1-tool .kicker{font:900 9px Arial,sans-serif;letter-spacing:1.1px;color:var(--red);text-transform:uppercase}
-.banking-v1-tool h3{font-size:19px;line-height:1.05;margin:5px 0 6px}
-.banking-v1-tool p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
-.banking-v1-tool a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
-.banking-v1-latest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.banking-v1-latest .story-card{background:var(--card);border:1px solid var(--line);padding:0 0 15px;box-shadow:0 8px 22px rgba(0,0,0,.045);transition:transform .18s ease,box-shadow .18s ease}
-.banking-v1-latest .story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.banking-v1-latest .story-card .story-image{aspect-ratio:16/9;margin:0}
-.banking-v1-latest .story-card .story-meta,.banking-v1-latest .story-card h3,.banking-v1-latest .story-card p{margin-left:15px;margin-right:15px}
-.banking-v1-latest .story-card h3{font-size:20px;line-height:1.08;margin-top:7px}
-.banking-v1-latest .story-card p{font-size:11px;line-height:1.45;color:var(--muted)}
-.banking-v1-empty{border:1px dashed var(--line);padding:26px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted);line-height:1.55}
-.banking-v1-sources{display:flex;flex-wrap:wrap;gap:8px}
-.banking-v1-sources a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);background:var(--card);font:900 9px Arial,sans-serif;color:var(--text);text-transform:uppercase;letter-spacing:.35px}
-.banking-v1-sources a:hover{color:var(--red);border-color:var(--red)}
-.banking-v1-note{margin-top:24px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}
-.banking-v1-note strong{color:var(--text)}
-@media(max-width:1050px){.banking-v1-hero{grid-template-columns:1fr}.banking-v1-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-step:nth-child(2):before,.banking-v1-step:nth-child(4):before{display:none}.banking-v1-frameworks{grid-template-columns:1fr}.banking-v1-timeline{grid-template-columns:repeat(3,minmax(0,1fr))}.banking-v1-timeline-item:nth-child(3){border-right:0}.banking-v1-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.banking-v1-latest{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.banking-v1{width:min(var(--max),calc(100% - 28px));padding-top:18px}.banking-v1-hero{padding:22px}.banking-v1-hero h1{font-size:54px;letter-spacing:-1.8px}.banking-v1-lead{font-size:14px}.banking-v1-metrics,.banking-v1-journey,.banking-v1-frameworks,.banking-v1-timeline,.banking-v1-tools,.banking-v1-latest{grid-template-columns:1fr}.banking-v1-head{align-items:flex-start;flex-direction:column}.banking-v1-head h2{font-size:29px}.banking-v1-head p{text-align:left}.banking-v1-step:not(:last-child):before{display:none}.banking-v1-timeline-item{border-right:0;border-bottom:1px solid var(--line)}.banking-v1-timeline-item:last-child{border-bottom:0}.banking-v1-timeline-item:before{top:-5px;left:15px}}
-@media(prefers-reduced-motion:reduce){.banking-v1-latest .story-card{transition:none}}
-</style>"""
-
-
-DRA_PAGE_CSS = '''<style id="dra-page-v1">
-.dra-v1{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 74px}
-.dra-v1 *{box-sizing:border-box}
-.dra-v1-crumb{font:800 10px Arial,sans-serif;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
-.dra-v1-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:22px;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 72%);box-shadow:var(--shadow)}
-.dra-v1-hero:before{content:"";position:absolute;width:340px;height:340px;right:-130px;top:-140px;border:1px solid color-mix(in srgb,var(--gold) 42%,transparent);border-radius:50%;box-shadow:0 0 0 24px color-mix(in srgb,var(--gold) 7%,transparent),0 0 0 48px color-mix(in srgb,var(--red) 4%,transparent);pointer-events:none}
-.dra-v1-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;color:var(--red);text-transform:uppercase;margin-bottom:8px}
-.dra-v1-hero h1{font-size:clamp(54px,7vw,86px);line-height:.88;letter-spacing:-3px;margin:0 0 17px}
-.dra-v1-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:790px;margin:0 0 20px}
-.dra-v1-actions{display:flex;flex-wrap:wrap;gap:9px}
-.dra-v1-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
-.dra-v1-btn.primary{background:var(--text);color:var(--paper)}
-.dra-v1-btn.primary:hover{background:var(--red);border-color:var(--red)}
-.dra-v1-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}
-.dra-v1-btn.secondary:hover{border-color:var(--red);color:var(--red)}
-.dra-v1-hero-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:258px}
-.dra-v1-mark{width:64px;height:64px;border:1px solid var(--gold);border-radius:16px;display:grid;place-items:center;color:var(--gold);font-size:30px;margin-bottom:24px;background:var(--paper);box-shadow:inset 0 0 0 6px color-mix(in srgb,var(--gold) 4%,transparent)}
-.dra-v1-mini{font:900 9px Arial,sans-serif;letter-spacing:1.15px;color:var(--gold);text-transform:uppercase}
-.dra-v1-hero-card h2{font-size:25px;line-height:1.03;margin:7px 0 9px}
-.dra-v1-hero-card p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.58;margin:0}
-.dra-v1-focus{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:18px}
-.dra-v1-focus-card{position:relative;background:var(--card);padding:18px;min-height:132px;overflow:hidden}
-.dra-v1-focus-card:after{content:"";position:absolute;right:-23px;bottom:-23px;width:72px;height:72px;border:1px solid color-mix(in srgb,var(--gold) 24%,transparent);border-radius:50%}
-.dra-v1-focus-card .code{font:900 10px Arial,sans-serif;color:var(--gold);letter-spacing:1px}
-.dra-v1-focus-card h3{font-size:20px;line-height:1.04;margin:8px 0 6px}
-.dra-v1-focus-card p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.48;margin:0}
-.dra-v1-section{padding-top:44px}
-.dra-v1-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
-.dra-v1-head .eyebrow{font:900 9px Arial,sans-serif;color:var(--red);letter-spacing:1.3px;text-transform:uppercase;margin-bottom:3px}
-.dra-v1-head h2{font-size:34px;line-height:1.02;margin:0}
-.dra-v1-head p{max-width:470px;margin:0;font:11px Arial,sans-serif;color:var(--muted);line-height:1.5;text-align:right}
-.dra-v1-compass{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.dra-v1-compass-card{border:1px solid var(--line);background:var(--card);padding:21px;min-height:175px;display:grid;grid-template-columns:48px minmax(0,1fr);gap:15px;box-shadow:0 5px 16px rgba(0,0,0,.03)}
-.dra-v1-compass-card .ico{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--gold);color:var(--gold);font-size:20px;background:var(--paper)}
-.dra-v1-compass-card .tag{font:900 9px Arial,sans-serif;letter-spacing:1.05px;color:var(--red);text-transform:uppercase}
-.dra-v1-compass-card h3{font-size:21px;line-height:1.05;margin:6px 0 7px}
-.dra-v1-compass-card p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0}
-.dra-v1-do-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
-.dra-v1-do{background:var(--card);padding:22px}
-.dra-v1-do.do{border-top:4px solid var(--gold)}
-.dra-v1-do.dont{border-top:4px solid var(--red)}
-.dra-v1-do .eyebrow{font:900 9px Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:5px}
-.dra-v1-do.do .eyebrow{color:var(--gold)}
-.dra-v1-do h3{font-size:26px;margin:0 0 12px}
-.dra-v1-do ul{margin:0;padding-left:18px;color:var(--muted);font:12px Arial,sans-serif;line-height:1.65}
-.dra-v1-do li{margin-bottom:5px}
-.dra-v1-journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);background:var(--line)}
-.dra-v1-step{position:relative;background:var(--paper2);padding:20px 17px;min-height:168px}
-.dra-v1-step:not(:last-child):before{content:"→";position:absolute;right:-12px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--text);color:var(--paper);font:900 13px Arial,sans-serif;z-index:2}
-.dra-v1-step .no{font:900 10px Arial,sans-serif;color:var(--red);letter-spacing:1px}
-.dra-v1-step h3{font-size:18px;line-height:1.06;margin:9px 0 7px}
-.dra-v1-step p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0}
-.dra-v1-timeline{position:relative;padding-left:28px}
-.dra-v1-timeline:before{content:"";position:absolute;left:8px;top:4px;bottom:4px;width:1px;background:var(--line)}
-.dra-v1-timeline-item{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:18px;padding:0 0 21px}
-.dra-v1-timeline-item:last-child{padding-bottom:0}
-.dra-v1-timeline-item:before{content:"";position:absolute;left:-25px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--paper);border:2px solid var(--red)}
-.dra-v1-year{font:900 11px Arial,sans-serif;color:var(--gold);letter-spacing:1px;text-transform:uppercase;padding-top:2px}
-.dra-v1-timeline-item h3{font-size:21px;line-height:1.05;margin:0 0 5px}
-.dra-v1-timeline-item p{font:12px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0;max-width:860px}
-.dra-v1-laws{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.dra-v1-law{border:1px solid var(--line);background:var(--card);padding:20px;min-height:180px;display:flex;flex-direction:column;box-shadow:0 5px 16px rgba(0,0,0,.03)}
-.dra-v1-law .tag{font:900 9px Arial,sans-serif;letter-spacing:1.05px;color:var(--red);text-transform:uppercase}
-.dra-v1-law h3{font-size:21px;line-height:1.05;margin:7px 0 8px}
-.dra-v1-law p{font:11px Arial,sans-serif;color:var(--muted);line-height:1.55;margin:0 0 15px}
-.dra-v1-law a{margin-top:auto;font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
-.dra-v1-resources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.dra-v1-resource{border:1px solid var(--line);background:var(--paper2);padding:18px;min-height:154px;display:flex;flex-direction:column;justify-content:space-between}
-.dra-v1-resource .icon{font-size:24px;margin-bottom:10px}
-.dra-v1-resource .tag{font:900 9px Arial,sans-serif;letter-spacing:1.1px;color:var(--red);text-transform:uppercase}
-.dra-v1-resource h3{font-size:19px;line-height:1.05;margin:5px 0 6px}
-.dra-v1-resource p{font:10px Arial,sans-serif;color:var(--muted);line-height:1.5;margin:0 0 14px}
-.dra-v1-resource a{font:900 9px Arial,sans-serif;letter-spacing:.5px;color:var(--red);text-transform:uppercase}
-.dra-v1-latest{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
-.dra-v1-latest .story-card{background:var(--card);border:1px solid var(--line);padding:0 0 15px;box-shadow:0 8px 22px rgba(0,0,0,.045);transition:transform .18s ease,box-shadow .18s ease}
-.dra-v1-latest .story-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
-.dra-v1-latest .story-card .story-image{aspect-ratio:16/9;margin:0}
-.dra-v1-latest .story-card .story-meta,.dra-v1-latest .story-card h3,.dra-v1-latest .story-card p{margin-left:15px;margin-right:15px}
-.dra-v1-latest .story-card h3{font-size:20px;line-height:1.08;margin-top:7px}
-.dra-v1-latest .story-card p{font-size:11px;line-height:1.45;color:var(--muted)}
-.dra-v1-empty{border:1px dashed var(--line);padding:28px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted);line-height:1.55}
-.dra-v1-sources{display:flex;flex-wrap:wrap;gap:8px}
-.dra-v1-sources a{display:inline-flex;padding:9px 12px;border:1px solid var(--line);background:var(--card);font:900 9px Arial,sans-serif;color:var(--text);text-transform:uppercase;letter-spacing:.35px}
-.dra-v1-sources a:hover{color:var(--red);border-color:var(--red)}
-.dra-v1-note{margin-top:24px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}
-.dra-v1-note strong{color:var(--text)}
-@media(max-width:1050px){.dra-v1-hero{grid-template-columns:1fr}.dra-v1-focus{grid-template-columns:repeat(2,minmax(0,1fr))}.dra-v1-journey{grid-template-columns:repeat(2,minmax(0,1fr))}.dra-v1-step:nth-child(2):before,.dra-v1-step:nth-child(4):before{display:none}.dra-v1-laws{grid-template-columns:1fr}.dra-v1-resources{grid-template-columns:1fr 1fr}.dra-v1-latest{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.dra-v1{width:min(var(--max),calc(100% - 28px));padding-top:18px}.dra-v1-hero{padding:22px}.dra-v1-hero h1{font-size:56px;letter-spacing:-2px}.dra-v1-lead{font-size:14px}.dra-v1-focus,.dra-v1-compass,.dra-v1-do-grid,.dra-v1-journey,.dra-v1-laws,.dra-v1-resources,.dra-v1-latest{grid-template-columns:1fr}.dra-v1-head{align-items:flex-start;flex-direction:column}.dra-v1-head h2{font-size:29px}.dra-v1-head p{text-align:left}.dra-v1-step:not(:last-child):before{display:none}.dra-v1-timeline{padding-left:23px}.dra-v1-timeline-item{grid-template-columns:1fr;gap:4px}.dra-v1-timeline-item:before{left:-20px}.dra-v1-compass-card{grid-template-columns:42px 1fr}}
-@media(prefers-reduced-motion:reduce){.dra-v1-latest .story-card{transition:none}}
+VIDEOS_PAGE_CSS = '''<style id="videos-page-v2">
+.videos-v2{width:min(var(--max),calc(100% - 42px));margin:0 auto;padding:28px 0 72px;color:var(--text)}
+.videos-v2 *{box-sizing:border-box}.videos-v2 a{text-decoration:none}
+.videos-v2-hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:22px;padding:30px;border:1px solid var(--line);background:linear-gradient(135deg,var(--paper2) 0%,var(--paper) 72%);box-shadow:var(--shadow)}
+.videos-v2-hero:before{content:"";position:absolute;right:-90px;top:-110px;width:330px;height:330px;border:1px solid color-mix(in srgb,var(--red) 26%,transparent);border-radius:50%;box-shadow:0 0 0 30px color-mix(in srgb,var(--gold) 7%,transparent),0 0 0 60px color-mix(in srgb,var(--gold) 4%,transparent);pointer-events:none}
+.videos-v2-kicker{font:900 10px Arial,sans-serif;letter-spacing:1.7px;text-transform:uppercase;color:var(--red);margin-bottom:9px}
+.videos-v2-hero h1{font-size:clamp(48px,7vw,82px);line-height:.91;letter-spacing:-2.7px;max-width:820px;margin:0 0 16px}
+.videos-v2-lead{font:16px Arial,sans-serif;line-height:1.65;color:var(--muted);max-width:780px;margin:0 0 20px}
+.videos-v2-actions{display:flex;flex-wrap:wrap;gap:9px}.videos-v2-btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 15px;border:1px solid var(--text);font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase}
+.videos-v2-btn.primary{background:var(--text);color:var(--paper)}.videos-v2-btn.primary:hover{background:var(--red);border-color:var(--red)}
+.videos-v2-btn.secondary{background:var(--card);color:var(--text);border-color:var(--line)}.videos-v2-btn.secondary:hover{color:var(--red);border-color:var(--red)}
+.videos-v2-panel{position:relative;z-index:1;border:1px solid var(--line);background:var(--card);padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:255px}
+.videos-v2-panel .play-mark{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:var(--red);color:#fff;font-size:25px;box-shadow:0 10px 22px rgba(0,0,0,.14);margin-bottom:34px}
+.videos-v2-panel .small{font:900 9px Arial,sans-serif;letter-spacing:1.1px;text-transform:uppercase;color:var(--gold)}
+.videos-v2-panel h2{font-size:24px;line-height:1.05;margin:6px 0 8px}.videos-v2-panel p{font:12px Arial,sans-serif;line-height:1.55;color:var(--muted);margin:0}
+.videos-v2-panel-bottom{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font:900 10px Arial,sans-serif;letter-spacing:.7px;text-transform:uppercase;color:var(--text)}
+.videos-v2-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;border:1px solid var(--line);background:var(--line);margin-top:18px}
+.videos-v2-stat{background:var(--card);padding:15px 17px;min-height:92px}.videos-v2-stat .num{font:900 11px Arial,sans-serif;letter-spacing:1px;color:var(--gold)}.videos-v2-stat h3{font-size:19px;line-height:1.05;margin:6px 0 0}
+.videos-v2-section{padding-top:42px}.videos-v2-head{display:flex;align-items:end;justify-content:space-between;gap:18px;border-bottom:2px solid var(--text);padding-bottom:9px;margin-bottom:18px}
+.videos-v2-head .eyebrow{font:900 9px Arial,sans-serif;letter-spacing:1.3px;color:var(--red);text-transform:uppercase;margin-bottom:3px}.videos-v2-head h2{font-size:34px;line-height:1.02;margin:0}.videos-v2-head p{font:11px Arial,sans-serif;line-height:1.5;color:var(--muted);margin:0;max-width:430px;text-align:right}
+.videos-v2-featured{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(290px,.65fr);gap:20px;border:1px solid var(--line);background:var(--card);overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.04)}
+.videos-v2-feature-media{display:block;background:#111;aspect-ratio:16/9;position:relative;overflow:hidden}.videos-v2-feature-media img{width:100%;height:100%;object-fit:contain;background:#111}
+.videos-v2-feature-badge{position:absolute;left:14px;top:14px;display:inline-flex;align-items:center;padding:7px 10px;background:var(--text);color:var(--paper);font:900 9px Arial,sans-serif;letter-spacing:1px;text-transform:uppercase}
+.videos-v2-feature-play{position:absolute;left:16px;bottom:16px;width:52px;height:38px;border-radius:8px;background:var(--red);color:#fff;display:grid;place-items:center;font-size:19px;box-shadow:0 8px 18px rgba(0,0,0,.25)}
+.videos-v2-feature-copy{padding:23px 22px;display:flex;flex-direction:column;justify-content:center}.videos-v2-feature-copy .meta{font:900 10px Arial,sans-serif;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+.videos-v2-feature-copy h3{font-size:30px;line-height:1.05;margin:8px 0 11px}.videos-v2-feature-copy p{font:12px Arial,sans-serif;line-height:1.55;color:var(--muted);margin:0 0 17px}
+.videos-v2-watch{display:inline-flex;align-items:center;gap:7px;font:900 10px Arial,sans-serif;letter-spacing:.55px;text-transform:uppercase;color:var(--red)}
+.videos-v2-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.videos-v2-card{border:1px solid var(--line);background:var(--card);overflow:hidden;box-shadow:0 7px 19px rgba(0,0,0,.035);transition:transform .18s ease,box-shadow .18s ease}.videos-v2-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.videos-v2-thumb{display:block;aspect-ratio:16/9;background:#111;position:relative;overflow:hidden}.videos-v2-thumb img{width:100%;height:100%;object-fit:contain;background:#111}
+.videos-v2-play{position:absolute;left:11px;bottom:11px;width:39px;height:29px;border-radius:7px;background:var(--red);color:#fff;display:grid;place-items:center;font:800 14px Arial,sans-serif;box-shadow:0 6px 14px rgba(0,0,0,.22)}
+.videos-v2-card-body{padding:13px 14px 15px}.videos-v2-card-date{font:900 9px Arial,sans-serif;letter-spacing:.65px;text-transform:uppercase;color:var(--muted)}.videos-v2-card h3{font-size:19px;line-height:1.12;margin:5px 0 0}
+.videos-v2-more{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-top:19px;padding-top:13px;border-top:1px solid var(--line)}.videos-v2-more p{font:11px Arial,sans-serif;line-height:1.5;color:var(--muted);margin:0}
+.videos-v2-source{margin-top:36px;border-left:4px solid var(--gold);background:var(--paper2);padding:15px 16px;font:11px Arial,sans-serif;line-height:1.55;color:var(--muted)}.videos-v2-source strong{color:var(--text)}
+.videos-v2-empty{border:1px dashed var(--line);padding:28px;background:var(--paper2);font:12px Arial,sans-serif;color:var(--muted)}
+@media(max-width:1050px){.videos-v2-hero{grid-template-columns:1fr}.videos-v2-featured{grid-template-columns:1fr}.videos-v2-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.videos-v2{width:min(var(--max),calc(100% - 28px));padding-top:18px}.videos-v2-hero{padding:22px}.videos-v2-hero h1{font-size:54px;letter-spacing:-1.8px}.videos-v2-lead{font-size:14px}.videos-v2-stats{grid-template-columns:1fr}.videos-v2-head{align-items:flex-start;flex-direction:column}.videos-v2-head h2{font-size:29px}.videos-v2-head p{text-align:left}.videos-v2-grid{grid-template-columns:1fr}.videos-v2-feature-copy h3{font-size:25px}}
+@media(prefers-reduced-motion:reduce){.videos-v2-card{transition:none}}
 </style>'''
+
 
 
 def guide_markup(key):
@@ -496,152 +367,6 @@ def guide_markup(key):
     laws=''.join(f'<article class="courts-v2-law"><div class="law-type">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
     flow=''.join(f'<article class="courts-v2-journey-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The applicable forum and procedure depend on the dispute, statute and jurisdiction.</p></article>' for i,x in enumerate(g['flow']))
     sources=''.join(f'<a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(t)} ↗</a>' for t,u in g['sources'])
-
-    if key == 'banking-law':
-        law_years={'RBI Act, 1934':'1934','Banking Regulation Act, 1949':'1949','SARFAESI Act, 2002':'2002','Recovery of Debts and Bankruptcy Act, 1993':'1993','IBC, 2016':'2016'}
-        laws_v1=''.join(f'<article class="banking-v1-law"><div class="year">{H.escape(law_years.get(t,''))}</div><div><div class="tag">LEGAL FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></div></article>' for t,d,u in g['laws'])
-        timeline_v1=''.join(f'<article class="banking-v1-timeline-item"><div class="year">{H.escape(y)}</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></article>' for y,t,d in g['history'])
-        flow_v1=''.join(f'<article class="banking-v1-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The applicable forum and procedure depend on the dispute, statute and jurisdiction.</p></article>' for i,x in enumerate(g['flow']))
-        return f'''<main class="banking-v1">
-<div class="banking-v1-crumb">Lex Talk Legal / Banking, Credit &amp; Recovery</div>
-<section class="banking-v1-hero">
-  <div>
-    <div class="banking-v1-kicker">BANKING, CREDIT &amp; RECOVERY</div>
-    <h1>Banking Law</h1>
-    <p class="banking-v1-lead">{H.escape(g['intro'])}</p>
-    <div class="banking-v1-actions">
-      <a class="banking-v1-btn primary" href="#journey">Explore the Recovery Map ↓</a>
-      <a class="banking-v1-btn secondary" href="/category/drt-drat/">DRT / DRAT ↗</a>
-      <a class="banking-v1-btn secondary" href="/auctions/">Bank Auctions ↗</a>
-    </div>
-  </div>
-  <aside class="banking-v1-hero-card">
-    <div>
-      <div class="ledger-mark">₹</div>
-      <div class="mini-kicker">THE BANKING LAW DESK</div>
-      <h2>From credit to recovery, follow the legal framework.</h2>
-      <p>Use this page as a structured starting point for banking regulation, security enforcement, debt-recovery forums, insolvency and practical legal resources.</p>
-    </div>
-    <div class="mini-kicker">Law · Context · Clarity.</div>
-  </aside>
-</section>
-<section class="banking-v1-metrics" aria-label="Banking law areas">
-  <article class="banking-v1-metric"><div class="code">01 / REGULATION</div><h3>Banking Regulation</h3><p>Core statutory and regulatory structures governing banking activity.</p></article>
-  <article class="banking-v1-metric"><div class="code">02 / CREDIT</div><h3>Loans &amp; Credit</h3><p>Credit facilities, default triggers, restructuring and related legal issues.</p></article>
-  <article class="banking-v1-metric"><div class="code">03 / RECOVERY</div><h3>Security Enforcement</h3><p>SARFAESI, recovery proceedings and specialised tribunal pathways.</p></article>
-  <article class="banking-v1-metric"><div class="code">04 / INSOLVENCY</div><h3>IBC &amp; Resolution</h3><p>Insolvency resolution and liquidation within the applicable framework.</p></article>
-</section>
-<section id="journey" class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">A PRACTICAL VIEW</div><h2>The banking recovery journey</h2></div><p>A matter can move through different legal routes depending on the facts, statute, security, debtor category, forum and procedural stage.</p></div>
-  <div class="banking-v1-journey">{flow_v1}</div>
-</section>
-<section class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">KEY STATUTES</div><h2>Five legal frameworks</h2></div><p>The core statutes mapped in this section, presented as a reference-first dashboard with official source links.</p></div>
-  <div class="banking-v1-frameworks">{laws_v1}</div>
-</section>
-<section class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">QUICK TIMELINE</div><h2>How the framework evolved</h2></div><p>Key milestones from the existing Banking Law explainer, arranged as an editorial timeline.</p></div>
-  <div class="banking-v1-timeline">{timeline_v1}</div>
-</section>
-<section class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">LEGAL UTILITIES</div><h2>Where should you go next?</h2></div><p>Open the relevant Lex Talk Legal section or verify details through the official portal before relying on them.</p></div>
-  <div class="banking-v1-tools">
-    <article class="banking-v1-tool"><div><div class="icon">⚖</div><div class="kicker">TRIBUNALS</div><h3>DRT / DRAT</h3><p>Explore the specialised debt-recovery tribunal section.</p></div><a href="/category/drt-drat/">Explore DRT / DRAT ↗</a></article>
-    <article class="banking-v1-tool"><div><div class="icon">🏦</div><div class="kicker">ASSET SALES</div><h3>Auctions</h3><p>Find publicly notified bank, FI and authority auction information.</p></div><a href="/auctions/">Open Auction Desk ↗</a></article>
-    <article class="banking-v1-tool"><div><div class="icon">⌕</div><div class="kicker">CASE SERVICE</div><h3>Case Status</h3><p>Use official court and tribunal portals for current case information.</p></div><a href="/case-status/">Check Case Status ↗</a></article>
-    <article class="banking-v1-tool"><div><div class="icon">🎥</div><div class="kicker">HEARINGS</div><h3>Courtrooms / VC</h3><p>Open public courtroom and virtual-hearing destinations.</p></div><a href="/courtrooms/">Open Courtrooms ↗</a></article>
-  </div>
-</section>
-<section id="latest" class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">NEWS DESK</div><h2>Latest Banking Law Stories</h2></div><p>Current banking-law coverage appears here when synced content carries a relevant label or matches the section.</p></div>
-  <div class="banking-v1-latest" id="latest-guide-banking-law"></div>
-</section>
-<section class="banking-v1-section">
-  <div class="banking-v1-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official portals to verify statutes, regulatory positions, tribunal information and current developments.</p></div>
-  <div class="banking-v1-sources">{sources}</div>
-  <div class="banking-v1-note"><strong>Editorial note:</strong> This page is for general legal education and information. Statutes, rules, notifications, regulatory directions and case law may change. Readers should verify the current position from the concerned official source.</div>
-</section>
-</main>'''
-    if key == 'dra':
-        timeline_dra=''.join(f'<div class="dra-v1-timeline-item"><div class="dra-v1-year">{H.escape(y)}</div><div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p></div></div>' for y,t,d in g['history'])
-        laws_dra=''.join(f'<article class="dra-v1-law"><div class="tag">LEGAL / REGULATORY FRAMEWORK</div><h3>{H.escape(t)}</h3><p>{H.escape(d)}</p><a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">Open Official Source ↗</a></article>' for t,d,u in g['laws'])
-        flow_dra=''.join(f'<article class="dra-v1-step"><div class="no">STEP {i+1:02d}</div><h3>{H.escape(x)}</h3><p>The process should remain within the authority given by the regulated entity and the applicable legal / regulatory framework.</p></article>' for i,x in enumerate(g['flow']))
-        sources_dra=''.join(f'<a href="{H.escape(u,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(t)} ↗</a>' for t,u in g['sources'])
-        return f'''<main class="dra-v1">
-<div class="dra-v1-crumb">Lex Talk Legal / Debt Recovery Agent Awareness</div>
-<section class="dra-v1-hero">
-  <div>
-    <div class="dra-v1-kicker">DEBT RECOVERY AGENT AWARENESS</div>
-    <h1>DRA</h1>
-    <p class="dra-v1-lead">{H.escape(g['intro'])}</p>
-    <div class="dra-v1-actions">
-      <a class="dra-v1-btn primary" href="#journey">Explore the DRA Journey ↓</a>
-      <a class="dra-v1-btn secondary" href="#framework">RBI &amp; Legal Framework ↗</a>
-      <a class="dra-v1-btn secondary" href="#latest">Latest DRA Stories ↓</a>
-    </div>
-  </div>
-  <aside class="dra-v1-hero-card">
-    <div>
-      <div class="dra-v1-mark">✓</div>
-      <div class="dra-v1-mini">THE DRA COMPLIANCE DESK</div>
-      <h2>Recovery work begins with authority, identity and responsible conduct.</h2>
-      <p>This guide focuses on role boundaries, borrower interaction, confidentiality, communication, documentation and escalation within the applicable regulatory framework.</p>
-    </div>
-    <div class="dra-v1-mini">Law · Context · Clarity.</div>
-  </aside>
-</section>
-<section class="dra-v1-focus" aria-label="DRA focus areas">
-  <article class="dra-v1-focus-card"><div class="code">01 / ROLE</div><h3>Authority &amp; Identity</h3><p>Work within the assignment or authorisation provided by the regulated entity and identify yourself appropriately.</p></article>
-  <article class="dra-v1-focus-card"><div class="code">02 / CONDUCT</div><h3>Respectful Communication</h3><p>Communication should remain fair, lawful and consistent with the applicable recovery-agent directions.</p></article>
-  <article class="dra-v1-focus-card"><div class="code">03 / PRIVACY</div><h3>Confidentiality</h3><p>Borrower information and interactions should be handled with appropriate confidentiality and privacy awareness.</p></article>
-  <article class="dra-v1-focus-card"><div class="code">04 / RECORDS</div><h3>Documentation &amp; Escalation</h3><p>Maintain proper records, receipts and escalation channels rather than relying on informal pressure.</p></article>
-</section>
-<section class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">COMPLIANCE COMPASS</div><h2>The four essentials</h2></div><p>A concise view of the practices that shape a responsible recovery interaction, based on the existing DRA awareness material.</p></div>
-  <div class="dra-v1-compass">
-    <article class="dra-v1-compass-card"><div class="ico">01</div><div><div class="tag">AUTHORISATION</div><h3>Know the assignment</h3><p>Understand the scope of the recovery assignment and remain within the authority delegated by the regulated entity.</p></div></article>
-    <article class="dra-v1-compass-card"><div class="ico">02</div><div><div class="tag">COMMUNICATION</div><h3>Identify &amp; communicate clearly</h3><p>Use proper identification and clear, lawful communication when interacting with a borrower.</p></div></article>
-    <article class="dra-v1-compass-card"><div class="ico">03</div><div><div class="tag">CONFIDENTIALITY</div><h3>Protect borrower information</h3><p>Respect customer confidentiality and avoid conduct that intrudes on privacy or dignity.</p></div></article>
-    <article class="dra-v1-compass-card"><div class="ico">04</div><div><div class="tag">AUDITABILITY</div><h3>Document and escalate</h3><p>Use records, receipts and formal escalation channels so the recovery process remains traceable.</p></div></article>
-  </div>
-</section>
-<section class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">FIELD CONDUCT</div><h2>What responsible recovery looks like</h2></div><p>The following is a practical awareness summary of the conduct principles reflected in the current DRA material.</p></div>
-  <div class="dra-v1-do-grid">
-    <article class="dra-v1-do do"><div class="eyebrow">DO</div><h3>Use a documented process</h3><ul><li>Carry appropriate authorisation and identification.</li><li>Communicate fairly and lawfully.</li><li>Protect customer confidentiality.</li><li>Maintain records and receipts.</li><li>Use the regulated entity&#39;s grievance / escalation mechanism.</li></ul></article>
-    <article class="dra-v1-do dont"><div class="eyebrow">AVOID</div><h3>Prohibited or inappropriate conduct</h3><ul><li>Intimidation or harassment.</li><li>Unwarranted intrusion into privacy.</li><li>Inappropriate communications.</li><li>Recovery calls before 8:00 a.m. or after 7:00 p.m. for overdue-loan recovery, as stated in the cited RBI directions.</li></ul></article>
-  </div>
-</section>
-<section id="journey" class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">A PRACTICAL VIEW</div><h2>The DRA interaction journey</h2></div><p>The sequence can vary by assignment and facts, but the process should stay within the applicable authority and regulatory framework.</p></div>
-  <div class="dra-v1-journey">{flow_dra}</div>
-</section>
-<section class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">QUICK TIMELINE</div><h2>How the guidance evolved</h2></div><p>Key milestones retained from the existing DRA explainer, presented as an editorial timeline.</p></div>
-  <div class="dra-v1-timeline">{timeline_dra}</div>
-</section>
-<section id="framework" class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">LEGAL &amp; REGULATORY FRAMEWORK</div><h2>Know the governing references</h2></div><p>Start with the official RBI and India Code material before relying on any general summary.</p></div>
-  <div class="dra-v1-laws">{laws_dra}</div>
-</section>
-<section class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">PRACTICAL RESOURCES</div><h2>Where to go next</h2></div><p>Use these destinations for current regulatory references, legal texts and grievance information.</p></div>
-  <div class="dra-v1-resources">
-    <article class="dra-v1-resource"><div><div class="icon">⚖</div><div class="tag">RECOVERY AGENTS</div><h3>RBI directions</h3><p>Review the regulator&#39;s current recovery-agent directions and related guidance.</p></div><a href="https://www.rbi.org.in/" target="_blank" rel="noopener noreferrer">Open RBI ↗</a></article>
-    <article class="dra-v1-resource"><div><div class="icon">▣</div><div class="tag">PRIMARY TEXTS</div><h3>India Code</h3><p>Check the statutory text and related central legislation from the official portal.</p></div><a href="https://indiacode.gov.in/" target="_blank" rel="noopener noreferrer">Open India Code ↗</a></article>
-    <article class="dra-v1-resource"><div><div class="icon">⌁</div><div class="tag">BORROWER GRIEVANCE</div><h3>RBI Complaint Management</h3><p>Use the applicable complaint and escalation channels where eligible.</p></div><a href="https://cms.rbi.org.in/" target="_blank" rel="noopener noreferrer">Open CMS ↗</a></article>
-  </div>
-</section>
-<section id="latest" class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">NEWS DESK</div><h2>Latest DRA Stories</h2></div><p>Current DRA coverage appears here when synced content carries a relevant label or matches the section.</p></div>
-  <div class="dra-v1-latest" id="latest-guide-dra"></div>
-</section>
-<section class="dra-v1-section">
-  <div class="dra-v1-head"><div><div class="eyebrow">OFFICIAL REFERENCES</div><h2>Primary sources</h2></div><p>Use the linked official portals to verify the current regulatory position and available grievance channels.</p></div>
-  <div class="dra-v1-sources">{sources_dra}</div>
-  <div class="dra-v1-note"><strong>Editorial note:</strong> This page is for general legal education and information. RBI directions, statutes, notifications and other regulatory requirements may change; readers should verify the current position from the relevant official source.</div>
-</section>
-</main>'''
     if key == 'courts':
         return f'''<main class="courts-v2">
 <div class="courts-v2-crumb">Lex Talk Legal / Indian Judiciary Explained</div>
@@ -735,7 +460,6 @@ def category_matches(a, key):
 
 def write_category_pages(arts):
     for key,(name,_) in CATEGORY_MAP.items():
-        extra_css=''
         if key in GUIDES:
             g=GUIDES[key]
             items=[a for a in arts if category_matches(a,key)]
@@ -743,32 +467,81 @@ def write_category_pages(arts):
             content=guide_markup(key)
             if key == "courts":
                 content=content.replace('<div class="courts-v2-latest" id="latest-guide-courts"></div>', f'<div class="courts-v2-latest">{cards}</div>')
-                extra_css=COURTS_PAGE_CSS
-            elif key == "banking-law":
-                if not items:
-                    cards='<div class="banking-v1-empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
-                content=content.replace('<div class="banking-v1-latest" id="latest-guide-banking-law"></div>', f'<div class="banking-v1-latest">{cards}</div>')
-                extra_css=BANKING_PAGE_CSS
-            elif key == "dra":
-                if not items:
-                    cards='<div class="dra-v1-empty">No DRA stories are published in this section yet. Publish a Blogger post with the appropriate DRA label and the next automated sync will update this section.</div>'
-                content=content.replace('<div class="dra-v1-latest" id="latest-guide-dra"></div>', f'<div class="dra-v1-latest">{cards}</div>')
-                extra_css=DRA_PAGE_CSS
             else:
                 content=content.replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
-                extra_css=''
             desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
         else:
             items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
             content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
             desc=f'Lex Talk Legal — {name} news, updates and explainers.'
-        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content,extra_css),encoding='utf8')
+        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content,COURTS_PAGE_CSS if key == "courts" else ""),encoding='utf8')
 
 def write_videos_page(videos):
-    cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
-    content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>LATEST VIDEOS</h1><p class="lead">Latest Lex Talk Legal videos are synced automatically from YouTube.</p><div class="yt-grid">{cards}</div></main>'
-    (ROOT/'videos').mkdir(exist_ok=True); (ROOT/'videos/index.html').write_text(page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content),encoding='utf8')
+    videos=videos[:30]
+    if videos:
+        featured=videos[0]
+        f_thumb=H.escape(featured.get('thumbnail',''),quote=True)
+        f_title=H.escape(featured.get('title','Lex Talk Legal'))
+        f_date=H.escape(featured.get('published','')[:10])
+        f_url=H.escape(featured.get('url','https://www.youtube.com/@LexTalkLegal'),quote=True)
+        featured_media=(f'<a class="videos-v2-feature-media" href="{f_url}" target="_blank" rel="noopener noreferrer"><img src="{f_thumb}" alt="{f_title}" loading="eager" decoding="async"><span class="videos-v2-feature-badge">FEATURED VIDEO</span><span class="videos-v2-feature-play" aria-hidden="true">▶</span></a>' if f_thumb else f'<a class="videos-v2-feature-media" href="{f_url}" target="_blank" rel="noopener noreferrer"><div style="height:100%;display:grid;place-items:center;color:#fff;font:900 12px Arial,sans-serif;letter-spacing:1px">LEX TALK LEGAL</div><span class="videos-v2-feature-badge">FEATURED VIDEO</span><span class="videos-v2-feature-play" aria-hidden="true">▶</span></a>')
+        featured_copy=f'<div class="videos-v2-feature-copy"><div class="meta">{f_date} · Latest Upload</div><h3>{f_title}</h3><p>Watch the latest Lex Talk Legal video directly on YouTube.</p><a class="videos-v2-watch" href="{f_url}" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a></div>'
+        feature_html=f'<div class="videos-v2-featured">{featured_media}{featured_copy}</div>'
+        rest=videos[1:]
+    else:
+        feature_html='<div class="videos-v2-empty">No YouTube videos were returned in the latest sync.</div>'
+        rest=[]
+
+    def vcard(v):
+        thumb=H.escape(v.get('thumbnail',''),quote=True)
+        title=H.escape(v.get('title','Lex Talk Legal'))
+        date=H.escape(v.get('published','')[:10])
+        url=H.escape(v.get('url','https://www.youtube.com/@LexTalkLegal'),quote=True)
+        media=f'<img src="{thumb}" alt="{title}" loading="lazy" decoding="async">' if thumb else '<div></div>'
+        return f'<article class="videos-v2-card"><a class="videos-v2-thumb" href="{url}" target="_blank" rel="noopener noreferrer">{media}<span class="videos-v2-play" aria-hidden="true">▶</span></a><div class="videos-v2-card-body"><div class="videos-v2-card-date">{date}</div><h3><a href="{url}" target="_blank" rel="noopener noreferrer">{title}</a></h3></div></article>'
+
+    cards=''.join(vcard(v) for v in rest) if rest else ''
+    count=len(videos)
+    content=f'''<main class="videos-v2">
+<div class="videos-v2-hero">
+  <div>
+    <div class="videos-v2-kicker">LEX TALK LEGAL · VIDEO DESK</div>
+    <h1>Watch.<br>Understand.<br>Stay Informed.</h1>
+    <p class="videos-v2-lead">Explore the latest Lex Talk Legal videos covering legal developments, court updates, practical legal education and explainers. The library is refreshed automatically from the official YouTube channel.</p>
+    <div class="videos-v2-actions">
+      <a class="videos-v2-btn primary" href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">Visit YouTube Channel ↗</a>
+      <a class="videos-v2-btn secondary" href="/">Back to Latest News</a>
+    </div>
+  </div>
+  <aside class="videos-v2-panel">
+    <div>
+      <div class="play-mark">▶</div>
+      <div class="small">THE VIDEO DESK</div>
+      <h2>Legal information, in a format you can watch.</h2>
+      <p>Short updates, explainers and longer-form legal coverage — presented through the Lex Talk Legal video library.</p>
+    </div>
+    <div class="videos-v2-panel-bottom">Law · Courts · Recovery · Careers</div>
+  </aside>
+</div>
+<div class="videos-v2-stats">
+  <div class="videos-v2-stat"><div class="num">01</div><h3>{count} recent videos</h3></div>
+  <div class="videos-v2-stat"><div class="num">02</div><h3>Updated from YouTube</h3></div>
+  <div class="videos-v2-stat"><div class="num">03</div><h3>Open directly on YouTube</h3></div>
+</div>
+<section class="videos-v2-section">
+  <div class="videos-v2-head"><div><div class="eyebrow">LATEST DROP</div><h2>Featured Video</h2></div><p>Start with the latest upload, then browse the video library below.</p></div>
+  {feature_html}
+</section>
+<section class="videos-v2-section" id="latest-videos">
+  <div class="videos-v2-head"><div><div class="eyebrow">VIDEO LIBRARY</div><h2>Latest Videos</h2></div><p>Recent videos appear first. Select any thumbnail or title to watch it on YouTube.</p></div>
+  <div class="videos-v2-grid">{cards if cards else '<div class="videos-v2-empty">The latest video library is currently empty.</div>'}</div>
+  <div class="videos-v2-more"><p>Video listings are automatically refreshed from the Lex Talk Legal YouTube feed.</p><a class="videos-v2-watch" href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">Open YouTube ↗</a></div>
+</section>
+<div class="videos-v2-source"><strong>Editorial note:</strong> Video links open on YouTube. Titles and publication dates displayed on this page are sourced from the current YouTube feed used by Lex Talk Legal. Availability of third-party video content is controlled by YouTube.</div>
+</main>'''
+    (ROOT/'videos').mkdir(exist_ok=True)
+    (ROOT/'videos/index.html').write_text(page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content,VIDEOS_PAGE_CSS),encoding='utf8')
 
 def button(label,url,kind='official'):
     return f'<a class="link-button {kind}" href="{H.escape(url,quote=True)}" target="_blank" rel="noopener">{H.escape(label)}</a>'
