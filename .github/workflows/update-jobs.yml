@@ -2,13 +2,71 @@ name: Update Legal Jobs
 
 on:
   workflow_dispatch:
+    inputs:
+      action:
+        description: "What should happen to the job listing?"
+        required: true
+        type: choice
+        options:
+          - add_or_update
+          - remove
+        default: add_or_update
+      id:
+        description: "Stable unique job ID"
+        required: true
+        type: string
+      title:
+        description: "Job title"
+        required: false
+        type: string
+      organization:
+        description: "Organization / employer"
+        required: false
+        type: string
+      location:
+        description: "Location"
+        required: false
+        type: string
+      employment_type:
+        description: "Employment type"
+        required: false
+        type: string
+      experience:
+        description: "Experience"
+        required: false
+        type: string
+      eligibility:
+        description: "Eligibility"
+        required: false
+        type: string
+      deadline:
+        description: "Application deadline"
+        required: false
+        type: string
+      posted_on:
+        description: "Posted date"
+        required: false
+        type: string
+      apply_url:
+        description: "Application URL"
+        required: false
+        type: string
+      official_url:
+        description: "Official source URL"
+        required: false
+        type: string
+      status:
+        description: "Listing status"
+        required: false
+        default: "active"
+        type: string
 
 permissions:
   contents: write
 
 concurrency:
-  group: lex-talk-legal-jobs-update
-  cancel-in-progress: true
+  group: lex-talk-legal-job-update
+  cancel-in-progress: false
 
 jobs:
   rebuild:
@@ -16,18 +74,44 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install beautifulsoup4
+
+      - name: Validate scripts
+        run: |
+          python -m py_compile scripts/manage_job.py scripts/build_jobs.py scripts/smoke_test.py
+
+      - name: Update manual job data
+        env:
+          JOB_ACTION: ${{ inputs.action }}
+          JOB_ID: ${{ inputs.id }}
+          JOB_TITLE: ${{ inputs.title }}
+          JOB_ORGANIZATION: ${{ inputs.organization }}
+          JOB_LOCATION: ${{ inputs.location }}
+          JOB_EMPLOYMENT_TYPE: ${{ inputs.employment_type }}
+          JOB_EXPERIENCE: ${{ inputs.experience }}
+          JOB_ELIGIBILITY: ${{ inputs.eligibility }}
+          JOB_DEADLINE: ${{ inputs.deadline }}
+          JOB_POSTED_ON: ${{ inputs.posted_on }}
+          JOB_APPLY_URL: ${{ inputs.apply_url }}
+          JOB_OFFICIAL_URL: ${{ inputs.official_url }}
+          JOB_STATUS: ${{ inputs.status }}
+        run: python scripts/manage_job.py
+
       - name: Rebuild Jobs from local data
         run: python scripts/build_jobs.py
-      - name: Commit Jobs only
+
+      - name: Validate manual desk
+        run: python scripts/smoke_test.py
+
+      - name: Commit job data and page
         shell: bash
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add jobs/index.html
+          git add data/jobs.json jobs/index.html
           if git diff --cached --quiet; then
             echo "No job changes."
           else
