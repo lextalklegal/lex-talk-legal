@@ -21,27 +21,66 @@ def safe_url(value):
     value = str(value or "").strip()
     return value if value.startswith(("https://", "http://")) else ""
 
-def vc_card(item, icon="⚖️", title_override=""):
+def platform_name(url):
+    try:
+        host = __import__("urllib.parse", fromlist=["urlparse"]).urlparse(url).netloc.lower()
+    except Exception:
+        host = ""
+    if "zoom" in host: return "Zoom"
+    if "teams.microsoft" in host: return "Microsoft Teams"
+    if "meet.google" in host: return "Google Meet"
+    if "webex" in host: return "Webex"
+    return host.replace("www.", "") or "External VC"
+
+def reference_from_url(url):
+    """Use only explicit room/court references encoded in the supplied URL; never invent an official room number."""
+    u = str(url or "")
+    patterns = [
+        (r"registrarcourt(?:[-_.]?)(\d+)", "Registrar Court No. {:02d}"),
+        (r"courtroom(?:[-_. ]?)(\d+)", "Courtroom No. {:02d}"),
+        (r"courtno[-_. ]?(\d+)", "Court No. {:02d}"),
+        (r"court[-_. ]?(\d+)(?:\D|$)", "Courtroom No. {:02d}"),
+        (r"(?:northwest|north[-_. ]west)(?:[-_. ]?)(\d+)", "North-West VC Room {:02d}"),
+    ]
+    low = u.lower()
+    for pat, label in patterns:
+        m = __import__('re').search(pat, low)
+        if m:
+            num = int(m.group(1))
+            return label.format(num)
+    return ""
+
+def entry_reference(item, url, index):
+    for key in ("courtroom", "room_reference", "room", "court_number", "court_no"):
+        value = str(item.get(key) or "").strip()
+        if value:
+            return value
+    return reference_from_url(url)
+
+def vc_card(item, icon="⚖️", title_override="", index=1, parent_name=""):
     url = safe_url(item.get("url"))
-    label = str(item.get("label") or title_override or "Join VC").strip()
     if not url:
         return ""
-    details = []
-    if item.get("meeting_id"):
-        details.append(f"<div><strong>Meeting ID:</strong> {H.escape(str(item['meeting_id']))}</div>")
-    if item.get("password"):
-        details.append(f"<div><strong>Password:</strong> {H.escape(str(item['password']))}</div>")
-    if item.get("verified_on"):
-        details.append(f"<div><strong>Last verified:</strong> {H.escape(str(item['verified_on']))}</div>")
-    if item.get("notes"):
-        details.append(f"<div>{H.escape(str(item['notes']))}</div>")
-    meta = "".join(details)
-    meta_html = f'<div class="vc-meta">{meta}</div>' if meta else ""
+    label = str(item.get("label") or "Join VC").strip()
+    ref = entry_reference(item, url, index)
+    platform = platform_name(url)
+    meeting = str(item.get("meeting_id") or "Not supplied").strip()
+    password = str(item.get("password") or "Not supplied").strip()
+    verified = str(item.get("verified_on") or "Not supplied").strip()
+    note = str(item.get("notes") or "").strip()
+    badge = f'<div class="courtroom-badge">⌖ {H.escape(ref)}</div>' if ref else '<div class="courtroom-badge missing">⌖ Room / courtroom reference not supplied</div>'
+    note_html = f'<p class="court-card-subtitle">{H.escape(note)}</p>' if note else f'<p class="court-card-subtitle">Public VC destination · {H.escape(platform)}</p>'
     return (
-        f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div>'
-        f'<h3>{H.escape(label)}</h3>{meta_html}'
-        f'<div class="vc-link-grid"><a class="vc-link" href="{H.escape(url, quote=True)}" target="_blank" rel="noopener noreferrer">Join VC ↗</a></div>'
-        f'</div></article>'
+        f'<article class="utility-card court-card">'
+        f'<div class="court-card-kicker">{H.escape(parent_name or "Public VC")}</div>'
+        f'<h3 class="court-card-title">{H.escape(label)}</h3>'
+        f'{badge}{note_html}'
+        f'<div class="courtroom-meta">'
+        f'<div class="courtroom-meta-item"><span>Platform</span><strong>{H.escape(platform)}</strong></div>'
+        f'<div class="courtroom-meta-item"><span>Verified</span><strong>{H.escape(verified)}</strong></div>'
+        f'</div>'
+        f'<div class="vc-link-grid"><a class="vc-link" href="{H.escape(url, quote=True)}" target="_blank" rel="noopener noreferrer"><span>Open VC ↗</span><span class="vc-platform">{H.escape(platform)}</span></a></div>'
+        f'</article>'
     )
 
 def cards_for_list(items, icon="⚖️"):
@@ -51,31 +90,20 @@ def cards_for_map(data, names, icon="🏛️"):
     out = []
     for name in names:
         items = data.get(name, []) if isinstance(data, dict) else []
-        if items:
-            out.append(
-                f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div>'
-                f'<h3>{H.escape(name)}</h3>'
-                f'<p>Manually maintained public VC details. Verify against the concerned court / tribunal cause list before joining.</p>'
-                f'<div class="vc-link-grid">{"".join(_link_chip(x) for x in items if isinstance(x,dict))}</div></div></article>'
-            )
+        valid = [x for x in items if isinstance(x, dict) and safe_url(x.get("url"))]
+        if valid:
+            links = []
+            for i, x in enumerate(valid, 1):
+                url = safe_url(x.get("url")); ref = entry_reference(x, url, i); platform = platform_name(url)
+                title = ref or f"VC Link {i:02d}"
+                links.append(f'<a class="court-group-link" href="{H.escape(url, quote=True)}" target="_blank" rel="noopener noreferrer"><span><strong>{H.escape(title)}</strong><small>{H.escape(platform)} · {H.escape(str(x.get("label") or "Public VC destination"))}</small></span><b>↗</b></a>')
+            out.append(f'<article class="court-group-card"><div class="court-group-header"><h4 class="court-group-name">{H.escape(name)}</h4><span class="court-group-status">{len(valid)} public links</span></div><div class="court-group-links">{"".join(links)}</div></article>')
         else:
-            out.append(
-                f'<article class="utility-card court-card"><div><div class="court-icon">{icon}</div>'
-                f'<h3>{H.escape(name)}</h3><p>VC details have not been entered for this court yet.</p></div></article>'
-            )
+            out.append(f'<article class="court-group-card"><div class="court-group-header"><h4 class="court-group-name">{H.escape(name)}</h4><span class="court-group-status">No entry</span></div><p class="court-card-subtitle">No stored VC destination for this court in the current manual dataset.</p></article>')
     return "".join(out)
 
-def _link_chip(item, index=1):
-    url = safe_url(item.get("url"))
-    if not url:
-        return ""
-    label = item.get("label") or f"Public VC Link {index:02d}"
-    extra=[]
-    if item.get("meeting_id"):
-        extra.append(f' <small style="display:block;color:var(--muted)">ID: {H.escape(str(item["meeting_id"]))}</small>')
-    if item.get("password"):
-        extra.append(f' <small style="display:block;color:var(--muted)">Password: {H.escape(str(item["password"]))}</small>')
-    return f'<a class="vc-link" href="{H.escape(url,quote=True)}" target="_blank" rel="noopener noreferrer">{H.escape(str(label))} ↗{"".join(extra)}</a>'
+def _link_chip(item, index=1, parent_name=""):
+    return vc_card(item, icon="⚖️", index=index, parent_name=parent_name)
 
 def count_items(mapping):
     if not isinstance(mapping, dict):
@@ -98,7 +126,7 @@ def main():
     template = TEMPLATE.read_text(encoding="utf8")
 
     sc_items = [x for x in (data.get("supreme_court", []) or []) if isinstance(x, dict) and safe_url(x.get("url"))]
-    sc = "".join(vc_card({**x, "label": x.get("label") or f"Public VC Link {i:02d}"}, icon="⚖️") for i, x in enumerate(sc_items, 1))
+    sc = "".join(vc_card({**x, "label": x.get("label") or "Join VC"}, icon="⚖️", index=i, parent_name="Supreme Court of India") for i, x in enumerate(sc_items, 1))
 
     high_courts = data.get("high_courts", {}) or {}
     hc = cards_for_map(high_courts, [name for name,_ in site.COURTS["high_courts"]], "🏛️")
@@ -116,7 +144,7 @@ def main():
         for name in names:
             key = f"{prefix} — {name}"
             items = mapping.get(key, mapping.get(name, []))
-            links = "".join(_link_chip(x, i) for i, x in enumerate(items, 1) if isinstance(x, dict))
+            links = "".join(_link_chip(x, i, parent_name=key) for i, x in enumerate(items, 1) if isinstance(x, dict))
             if not links:
                 links = '<span class="vc-empty">No VC entry currently listed.</span>'
             out.append(
