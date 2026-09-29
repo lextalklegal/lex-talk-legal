@@ -10,5 +10,10 @@
   "phone1": "+91-8368268507",
   "phone2": "+91-9318445957",
   "domain": "https://lextalk.legal",
-  "location": "New Delhi, India"
+  "location": "New Delhi, India",
+  "office_email": "office.lextalklegal@gmail.com",
+  "auction_email": "auction@lextalk.legal",
+  "support_email": "support@lextalk.legal",
+  "grievances_email": "grievances@lextalk.legal",
+  "office_address": "C-147, T/F, Okhla Industrial Area Ph-1, New Delhi 110025"
 }

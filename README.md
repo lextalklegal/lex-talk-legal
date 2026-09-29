@@ -1,47 +1,74 @@
-# Lex Talk Legal — Editorial Platform v10
+# Lex Talk Legal — Stable Production Architecture
 
-Lex Talk Legal is a digital legal news, legal education and public-information platform operated as a media initiative of LEXBOTICS AI MEDIA LLP.
+Lex Talk Legal is a digital legal-information and media platform operated as a media initiative of LEXBOTICS AI MEDIA LLP.
 
-## v10 product direction
+## Canonical site
 
-This build is intentionally editorial-first and monetisation-ready. The homepage is a fresh front page, not an archive: it shows one lead story, up to three secondary stories and a small latest-story set. Older articles remain available through category and article pages.
+`https://lextalk.legal`
 
-Primary business/content pillars:
+## Non-negotiable design rule
 
-- Legal news, judgments and practical explainers
-- Bank, financial-institution and authority auction information with an assistance desk
-- Case-information/document-review requests by email; a private upload system can be added only after secure storage, access, retention and deletion controls are configured
-- Factual advocate team page with courts/forums and practice areas
-- YouTube integration and video discovery
-- Search and official legal utilities
+The existing global header, navigation/menu and footer are shared site-wide and must not be changed during page-specific redesigns.
 
-## Monetisation readiness
+Approved page designs are isolated in:
 
-The site includes an AdSense verification/ads.txt foundation and clearly separated advertisement slots. Actual AdSense serving requires Google site review/approval and policy compliance; revenue is not guaranteed from day one.
+- `assets/pages/*.css` — page-specific styling
+- `templates/` — generated page layouts
+- static HTML files — manually maintained pages such as About/Contact
 
-## Content model
+Do not replace the entire `scripts/build_site.py` for a single page redesign.
 
-Blogger remains the editorial publishing source. The scheduled GitHub Action syncs Blogger, YouTube and public court/VC data, rebuilds article/category/video pages and refreshes the homepage. The homepage is capped so older content naturally falls out of the front page.
+## Automated editorial workflow
 
-## Image handling
+`.github/workflows/sync-editorial.yml` runs every 30 minutes and can also be started manually. It fetches only:
 
-Article and homepage images use contained media frames with a blurred backdrop so the full source image can remain visible without forced cropping or zooming. Article generation removes copies of the lead image from the article body to prevent duplication.
+- Blogger editorial posts
+- YouTube feed
 
-## Theme
+It rebuilds only editorial outputs: article pages, editorial categories, Videos, homepage content selection and sitemap.
 
-The website has a light default theme with a manual light/dark toggle. The v10 theme preference uses a new localStorage key so older versions cannot force the new site into a stale theme state.
+It does **not** query OneCourt, auction portals, job portals, or other manual directories. It does not rebuild About, Contact, Team, Case Status, Courtrooms, Auctions, Jobs, policy pages, or Cloudflare configuration.
 
-## Team photographs
+## Manual desks
 
-Add official team photographs under `assets/team/` and set the corresponding `photo` field in `data/team.json`. Do not add unverified images or professional claims.
+### Courtrooms / VC
+Edit `data/vc_links.json` and commit. `update-vc.yml` rebuilds only `/courtrooms/`.
 
-## Cloudflare
+Each VC entry may contain `label`, `url`, `meeting_id`, `password`, `verified_on`, and `notes`.
 
-The repository is prepared for Cloudflare Workers + Static Assets using `src/index.js` and `wrangler.jsonc`. No public advocate directory or profile-approval database is included in v10; that earlier concept has been removed.
+### Auctions
+Edit `data/auctions.json` and commit. `update-auctions.yml` rebuilds only `/auctions/`.
 
-## Build reliability
-The sync workflow runs a Python syntax check and regression smoke test before contacting Blogger, YouTube or court/VC sources. This prevents a broken generator from silently publishing a partial site update.
+### Legal Jobs
+Edit `data/jobs.json` and commit. `update-jobs.yml` rebuilds only `/jobs/`.
 
+See `MANUAL-DATA-GUIDE.md` for exact examples.
 
-## Cloudflare deployment
-Production deployment is handled by `.github/workflows/deploy-worker.yml` using GitHub Actions secrets. Credentials are intentionally not stored in the repository.
+## Deployment
+
+`.github/workflows/deploy-worker.yml` is the only deployment workflow. It runs automatically after pushes to `main` and can be started manually.
+
+Required repository secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
+
+## Asset safety
+
+`.assetsignore` excludes source code, build scripts, templates, private/manual datasets, `node_modules` and Wrangler/build artefacts from public static-asset upload.
+
+## Deliberately retained future modules
+
+The repository still contains an inactive professional-profile/admin scaffold (`admin/`, `advocates/`, `functions/`, `db/schema.sql`, `dev.vars.example`). These are excluded from the Worker asset upload and can be removed later if the Advocate Panel project is permanently abandoned.
+
+## Safe cleanup already performed
+
+- removed duplicate root `build_site.py`
+- removed obsolete `court-data.json`
+- removed obsolete README/VC fix notes
+- removed generated Python caches
+- removed unused logo SVG
+- removed empty `data/team.json` and its asset note
+- removed stale OneCourt scrape junk entries from VC data
+
+See `ARCHITECTURE-REPAIR-2026-09-29.md` for the rationale and workflow design.

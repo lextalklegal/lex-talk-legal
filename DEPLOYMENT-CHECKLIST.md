@@ -1,32 +1,29 @@
-# Lex Talk Legal — Cloudflare Deployment Checklist
+# Lex Talk Legal — Deployment Checklist
 
-## Required GitHub Actions secrets
-
-Create these repository secrets:
+## GitHub Actions secrets
 
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
 
-Do **not** put the token in source code, `wrangler.jsonc`, a `.env` file, or any committed file.
+Never commit or paste the token into source code.
 
-## Token scope
+## Production deployment
 
-Use a dedicated Cloudflare API token with the minimum permissions required to deploy the existing `lex-talk-legal` Worker. Cloudflare recommends limiting CI/CD tokens to the account/resources actually used by the deployment.
+1. Commit changes to `main`.
+2. `Deploy Lex Talk Legal Worker` runs automatically.
+3. Check the latest Worker deployment in Cloudflare.
+4. Verify `https://lextalk.legal`.
 
-## Deployment flow
+## Editorial sync
 
-1. Push/commit to `main`.
-2. `Deploy Lex Talk Legal Worker` runs.
-3. Wrangler deploys the Worker and the static assets defined in `wrangler.jsonc`.
-4. Check the deployment under Cloudflare Workers > `lex-talk-legal` > Deployments.
-5. Verify:
-   - `https://lextalk.legal`
-   - `https://lex-talk-legal.office-lextalklegal.workers.dev`
+`sync-editorial.yml` syncs Blogger and YouTube only. It does not run Playwright or query OneCourt.
 
-## Existing custom domain
+## Manual desks
 
-The `lextalk.legal` custom domain is expected to already be attached to the production Worker. Do not recreate the custom domain during routine content deployments.
+- VC: edit `data/vc_links.json`; `update-vc.yml` rebuilds only Courtrooms.
+- Auctions: edit `data/auctions.json`; `update-auctions.yml` rebuilds only Auctions.
+- Jobs: edit `data/jobs.json`; `update-jobs.yml` rebuilds only the Jobs Board.
 
-## Important security note
+## Design safety
 
-If a Cloudflare API token or R2 access credential is ever pasted into chat, source code, GitHub, or another exposed location, revoke/rotate it and create a replacement. Never commit credentials to the repository.
+Approved page-specific CSS and templates are source-controlled. Do not replace the whole `scripts/build_site.py` for a single page change.
