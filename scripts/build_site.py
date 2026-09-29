@@ -129,7 +129,8 @@ def write_category_pages(arts):
             desc = f'Lex Talk Legal — {name} news, updates and explainers.'
         p = ROOT / 'category' / key / 'index.html'
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(page_shell((name, f'/category/{key}/'), desc, content), encoding='utf8')
+        updated_at = latest_source_timestamp(items) or existing_footer_stamp(p)
+        p.write_text(page_shell((name, f'/category/{key}/'), desc, content, updated_at=updated_at), encoding='utf8')
 
 def write_videos_page(videos):
     videos = videos[:30]
@@ -164,7 +165,7 @@ def write_videos_page(videos):
     content = template.replace('{{FEATURED_HTML}}', feature_html).replace('{{VIDEO_GRID}}', grid).replace('{{VIDEO_COUNT}}', str(len(videos)))
     (ROOT / 'videos').mkdir(exist_ok=True)
     (ROOT / 'videos/index.html').write_text(
-        page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content),
+        page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content, updated_at=latest_source_timestamp(videos) or existing_footer_stamp(ROOT / 'videos/index.html')),
         encoding='utf8'
     )
 
@@ -257,13 +258,6 @@ def blogger():
     return normalize_articles(out)
 
 def youtube():
-    # Deterministic local builds/tests should never require YouTube network access.
-    if os.getenv('LOCAL_BUILD') == '1':
-        try:
-            data = json.loads((ROOT/'data/youtube.json').read_text(encoding='utf8'))
-            return data if isinstance(data, list) else []
-        except Exception:
-            return []
     channel_id=CHANNEL_ID
     try:
         if not channel_id:
@@ -317,13 +311,67 @@ def page_style_head(canonical):
     css_file = PAGE_STYLE_MAP.get(canonical)
     return f'<link rel="stylesheet" href="/assets/pages/{css_file}">' if css_file else ''
 
-def page_shell(title,description,content,extra_head=""):
+def _parse_stamp(value):
+    """Return (display_string, epoch) for a content timestamp."""
+    if value is None or value == "":
+        return BUILD_TIME, BUILD_EPOCH
+    if isinstance(value, (int, float)):
+        from datetime import datetime as _dt
+        dt = _dt.fromtimestamp(float(value), tz=ZoneInfo("Asia/Kolkata"))
+        return dt.strftime('%d %B %Y, %H:%M:%S'), int(dt.timestamp())
+    text = str(value).strip()
+    # ISO timestamps from Blogger / YouTube.
+    try:
+        from datetime import datetime as _dt
+        parsed = text.replace('Z', '+00:00')
+        dt = _dt.fromisoformat(parsed)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=ZoneInfo('Asia/Kolkata'))
+        dt = dt.astimezone(ZoneInfo('Asia/Kolkata'))
+        return dt.strftime('%d %B %Y, %H:%M:%S'), int(dt.timestamp())
+    except Exception:
+        pass
+    # Already formatted footer text.
+    try:
+        from datetime import datetime as _dt
+        dt = _dt.strptime(text.replace(' IST',''), '%d %B %Y, %H:%M:%S').replace(tzinfo=ZoneInfo('Asia/Kolkata'))
+        return dt.strftime('%d %B %Y, %H:%M:%S'), int(dt.timestamp())
+    except Exception:
+        return BUILD_TIME, BUILD_EPOCH
+
+
+def latest_source_timestamp(items):
+    values=[]
+    for item in items or []:
+        for key in ('updated','published','posted_on','verified_on'):
+            v=str(item.get(key,'')).strip()
+            if v:
+                values.append(v)
+                break
+    if not values:
+        return None
+    return max(values)
+
+
+def existing_footer_stamp(path):
+    """Keep an existing footer timestamp for empty/manual-content fallback pages."""
+    try:
+        text=Path(path).read_text(encoding='utf8')
+        m=re.search(r'data-built-at="([^"]+)"', text)
+        if m:
+            return m.group(1).replace(' IST','')
+    except Exception:
+        pass
+    return None
+
+def page_shell(title,description,content,extra_head="",updated_at=None):
     t=title[0] if isinstance(title,tuple) else title
     canonical=title[1] if isinstance(title,tuple) else '/'
     robots='index,follow,max-image-preview:large'
     nav=nav_html()
     schema={"@context":"https://schema.org","@type":"WebSite","name":"Lex Talk Legal","url":SITE_URL+"/","description":"Law Simplified for Everyone.","publisher":{"@type":"Organization","name":"LEXBOTICS AI MEDIA LLP","url":SITE_URL+"/"}}
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
+    footer_time, footer_epoch = _parse_stamp(updated_at)
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="{H.escape(description,quote=True)}"><meta name="robots" content="{robots}">
 <link rel="canonical" href="{SITE_URL}{H.escape(canonical,quote=True)}">
@@ -334,7 +382,7 @@ def page_shell(title,description,content,extra_head=""):
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
 <nav class="nav"><div class="wrap nav-inner">{nav}</div></nav>
 {content}
-<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{BUILD_TIME} IST" data-built-epoch="{BUILD_EPOCH}">Content last updated: {BUILD_TIME} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
+<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{footer_time} IST" data-built-epoch="{footer_epoch}">Content last updated: {footer_time} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
 
 def article(a):
     image=a.get('image','')
@@ -353,7 +401,7 @@ def article(a):
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
     desc=a.get('excerpt','')
     body=f'''<main class="article-wrap"><div class="utility-kicker">{H.escape(a.get('category','Legal News'))}</div><div class="story-meta">{H.escape(a.get('published','')[:10])}</div><h1>{H.escape(a.get('title',''))}</h1><div class="article-meta">Lex Talk Legal · Educational &amp; informational coverage <span>·</span> <a href="{H.escape(a.get('source_url',''),quote=True)}" target="_blank" rel="noopener noreferrer">Original source</a></div>{hero}<div class="article-body">{body_html}</div><div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div><div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal does not represent that linked third-party content is error-free or current in every respect.</div></main>'''
-    return page_shell((a.get('title',''),a.get('url','')),desc,body).replace('</head>','<script type="application/ld+json">'+schema_json+'</script></head>')
+    return page_shell((a.get('title',''),a.get('url','')),desc,body,updated_at=latest_source_timestamp([a])).replace('</head>','<script type="application/ld+json">'+schema_json+'</script></head>')
 
 
 def media_html(url, cls='story-image', alt=''):
@@ -409,7 +457,8 @@ def sync_homepage(arts,videos):
             source_dates.append(raw)
     updated = max(source_dates) if source_dates else 'Latest available feed'
     content=f'''<main class="home home-v9"><section class="home-breaking"><div class="wrap ticker-inner"><span class="breaking">LATEST</span><span class="tick">Court updates · Judgments · Banking &amp; Recovery · Auctions · Legal Careers · Practical Legal Awareness</span></div></section><div class="wrap"><section class="home-front section"><div class="home-front-grid"><div>{lead_html}</div><div class="home-secondary-list">{secondary}</div></div><div class="front-fresh">Front page selection: the latest {len(pool) if pool else 0} recent stories are prioritised here; older stories remain available in their sections.</div></section><div class="home-ad ad-wrap"><div class="ad-slot"><span>ADVERTISEMENT</span></div></div><section class="section home-news-section"><div class="home-main-grid"><div><div class="section-head"><div><span class="section-kicker">NEWS DESK</span><h2>Latest Legal News</h2></div><p>Updated {H.escape(updated)}</p></div><div class="home-latest-grid">{latest_html}</div><div class="section-more"><a class="text-link" href="/search.html">View more legal news ↗</a></div></div><aside class="home-quick-rail"><div class="quick-rail-sticky"><div class="quick-rail-title"><span>QUICK DESK</span><strong>Useful links</strong></div><a class="quick-card" href="/auctions/"><span class="quick-icon">🏦</span><span><b>Today’s Auctions</b><small>Bank · FI · Authority</small></span><em>↗</em></a><a class="quick-card" href="/courtrooms/"><span class="quick-icon">⚖</span><span><b>Courtrooms / VC</b><small>Public hearing links</small></span><em>↗</em></a><a class="quick-card" href="/case-status/"><span class="quick-icon">⌕</span><span><b>Case Status</b><small>Official court portals</small></span><em>↗</em></a><a class="quick-card" href="/category/legal-careers/"><span class="quick-icon">▣</span><span><b>Latest Jobs</b><small>Legal careers &amp; opportunities</small></span><em>↗</em></a><div class="ad-slot rail-ad">ADVERTISEMENT</div></div></aside></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">AUCTION DESK</span><h2>Bank, FI &amp; Authority Auctions</h2></div><a class="text-link" href="/auctions/">Open Auction Desk ↗</a></div><div class="auction-home-grid"><article><div class="auction-home-icon">🏦</div><h3>Bank Auctions</h3><p>Residential, commercial and industrial assets notified for public sale.</p></article><article><div class="auction-home-icon">🏢</div><h3>Financial Institution Auctions</h3><p>Publicly notified assets and participation information.</p></article><article><div class="auction-home-icon">🏛</div><h3>Authority Auctions</h3><p>Government and institutional auction notices and updates.</p></article></div><div class="auction-disclaimer">Always read and independently verify the issuing authority’s original auction notice, bidder eligibility, EMD, title/possession position, dues and sale conditions.</div></section><section class="section"><div class="home-service-grid"><article class="home-service case-info"><span class="section-kicker">CASE INFORMATION DESK</span><h2>Have a case file you need to understand?</h2><p>Send a brief description or email relevant documents for consideration. Any review, advice, representation or professional routing is subject to separate consideration and acceptance.</p><div class="service-actions"><a class="primary-btn" href="/case-help.html">Case Information Desk ↗</a><a class="ghost-btn dark-ghost" href="mailto:office.lextalklegal@gmail.com?subject=Case%20Information%20Request">Email the Office</a></div></article><article class="home-service team-info"><span class="section-kicker">OUR ADVOCATE TEAM</span><h2>Courts, Forums &amp; Practice Areas</h2><p>Meet the advocates associated with the platform and view factual information about identified courts/forums and practice areas.</p><div class="team-mini-row"><span>COURTS</span><span>DRT / DRAT</span><span>BANKING &amp; RECOVERY</span><span>CIVIL &amp; COMMERCIAL</span></div><div class="service-actions"><a class="text-link" href="/team.html">Meet the Team ↗</a></div></article></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">EXPLAINED</span><h2>Legal Concepts, Simply Explained</h2></div><a class="text-link" href="/category/explained/">Explore explainers ↗</a></div><div class="explainer-home-grid"><a href="/category/explained/"><span>01</span><b>Understand a Court Order</b><small>Observations, directions &amp; operative portions</small></a><a href="/category/banking-law/"><span>02</span><b>SARFAESI &amp; Recovery</b><small>Process, notices, possession &amp; remedies</small></a><a href="/category/legal-careers/"><span>03</span><b>AIBE &amp; Legal Careers</b><small>Exams, enrolment &amp; practical guidance</small></a></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">WATCH</span><h2>Latest on YouTube</h2></div><a class="text-link" href="/videos/">View all videos ↗</a></div><div class="video-grid home-video-grid">{vid_html}</div></section></div></main><section class="newsletter home-newsletter"><div class="wrap newsletter-inner"><div><span class="section-kicker">THE LEGAL BRIEF</span><h2>Stay updated with important legal developments</h2><p>Selected court updates, judgments, explainers and career information.</p></div><form class="newsletter-form" onsubmit="event.preventDefault();alert('Newsletter signup will be connected to the selected mailing provider before public launch.');"><input type="email" required placeholder="Your email address" aria-label="Your email address"><button class="primary-btn" type="submit">Subscribe</button></form></div></section>'''
-    (ROOT/'index.html').write_text(page_shell(('Lex Talk Legal','/'),'Fresh legal news, court updates, judgments, legal education and practical legal awareness.',content),encoding='utf8')
+    latest_pool = list(arts or []) + list(videos or [])
+    (ROOT/'index.html').write_text(page_shell(('Lex Talk Legal','/'),'Fresh legal news, court updates, judgments, legal education and practical legal awareness.',content,updated_at=latest_source_timestamp(latest_pool) or existing_footer_stamp(ROOT/'index.html')),encoding='utf8')
 
 
 
