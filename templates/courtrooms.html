@@ -1,90 +1,205 @@
-<main class="courtrooms-page directory-page">
-  <section class="courtrooms-hero">
-    <div class="courtrooms-hero-copy">
-      <div class="courtrooms-kicker">LEGAL UTILITY · COURTROOM ACCESS</div>
-      <h1>Courtrooms &amp; Virtual Hearings</h1>
-      <p class="courtrooms-hero-lead">A structured directory of public courtroom and virtual-hearing destinations, organised by forum, court, bench and available courtroom / room reference.</p>
-      <div class="courtrooms-hero-actions">
-        <a class="courtrooms-primary" href="#directory">Browse Courtrooms ↓</a>
-        <a class="courtrooms-secondary" href="/case-status/">Open Case Status ↗</a>
+<main class="courtrooms-page courtroom-hub">
+  <section class="cr-hero">
+    <div class="cr-hero-copy">
+      <div class="cr-kicker">LEGAL UTILITY · VIRTUAL HEARINGS</div>
+      <h1>Find your courtroom.<br><em>Join with confidence.</em></h1>
+      <p class="cr-lead">One place for public virtual-hearing destinations across courts and tribunals. Choose the forum, select the court or bench, review the available room details, then open the official VC link.</p>
+      <div class="cr-hero-actions">
+        <a class="cr-primary" href="#court-finder">Find a Court ↓</a>
+        <a class="cr-secondary" href="/case-status/">Check Case Status ↗</a>
       </div>
     </div>
-    <div class="courtrooms-hero-panel">
-      <div class="courtrooms-emblem">⚖</div>
-      <div class="courtrooms-hero-panel-title">LEX TALK LEGAL</div>
-      <div class="courtrooms-hero-panel-sub">Law Simplified for Everyone.</div>
-      <div class="courtrooms-hero-panel-note">Public information directory</div>
+    <div class="cr-hero-card" aria-label="Courtrooms quick guide">
+      <div class="cr-hero-mark">⚖</div>
+      <div class="cr-hero-card-kicker">LEX TALK LEGAL</div>
+      <strong>Law Simplified for Everyone.</strong>
+      <span>Public VC directory · manually maintained</span>
     </div>
   </section>
 
-  <section class="courtrooms-stats" aria-label="Directory overview">
-    <div class="courtrooms-stat"><span class="courtrooms-stat-value">{{TOTAL_LINKS}}</span><span class="courtrooms-stat-label">Stored VC links</span></div>
-    <div class="courtrooms-stat"><span class="courtrooms-stat-value">{{TOTAL_SECTIONS}}</span><span class="courtrooms-stat-label">Forum sections</span></div>
-    <div class="courtrooms-stat"><span class="courtrooms-stat-value">{{LOCATIONS}}</span><span class="courtrooms-stat-label">Courts / benches / desks</span></div>
-    <div class="courtrooms-stat"><span class="courtrooms-stat-value">Manual</span><span class="courtrooms-stat-label">Update model</span></div>
-  </section>
-
-  <section class="courtrooms-notice-grid">
-    <article class="courtrooms-notice courtrooms-notice-important">
-      <div class="courtrooms-notice-icon">!</div>
-      <div><strong>Verify before you join</strong><p>VC destinations can change. Confirm the current cause list, hearing date and VC instructions of the concerned court or tribunal before joining.</p></div>
+  <section class="cr-alerts">
+    <article class="cr-alert cr-alert-warning">
+      <div class="cr-alert-icon">!</div>
+      <div>
+        <strong>Verify before you join</strong>
+        <p>VC destinations, courtroom assignments and hearing arrangements can change. Always check the current cause list or official instructions of the concerned court / tribunal before joining.</p>
+      </div>
     </article>
-    <article class="courtrooms-notice">
-      <div class="courtrooms-notice-icon">⌖</div>
-      <div><strong>Room references matter</strong><p>Where the supplied source identifies a courtroom, room or bench number, it is shown separately from the Join VC action. Where it is not supplied, we do not invent one.</p></div>
+    <article class="cr-alert">
+      <div class="cr-alert-icon">↗</div>
+      <div>
+        <strong>You will leave Lex Talk Legal</strong>
+        <p>Each VC button opens an external court / meeting destination. A confirmation screen appears first so you can review the court and room details before leaving this site.</p>
+      </div>
     </article>
   </section>
 
-  <section class="courtrooms-howto" aria-label="How to use this directory">
-    <div class="courtrooms-section-label">HOW IT WORKS</div>
-    <div class="courtrooms-howto-grid">
-      <div class="courtrooms-step"><span>01</span><h2>Choose the forum</h2><p>Start with Supreme Court, High Court, District Court, DRT/DRAT, NCLT or NCLAT.</p></div>
-      <div class="courtrooms-step"><span>02</span><h2>Identify the room</h2><p>Look for the published courtroom / VC room reference, bench name or court number shown on the entry.</p></div>
-      <div class="courtrooms-step"><span>03</span><h2>Verify &amp; join</h2><p>Check the day's cause list and then open the supplied external VC destination.</p></div>
+  <section class="cr-howto" aria-label="How to use Courtrooms">
+    <div class="cr-section-head compact">
+      <div><div class="cr-kicker">SIMPLE FLOW</div><h2>Three steps to the right hearing room</h2></div>
+    </div>
+    <div class="cr-howto-grid">
+      <article><span>01</span><strong>Choose your forum</strong><p>Start with Supreme Court, High Court, Delhi District, DRT / DRAT, NCLT or NCLAT.</p></article>
+      <article><span>02</span><strong>Open your court</strong><p>Pick the exact court, bench or district. Only that court's VC entries are then shown.</p></article>
+      <article><span>03</span><strong>Review &amp; join</strong><p>Check the room, platform and available meeting details, then confirm before opening the external link.</p></article>
     </div>
   </section>
 
-  <section id="directory" class="courtrooms-directory-shell">
-    <div class="courtrooms-directory-head">
-      <div><div class="courtrooms-section-label">DIRECTORY</div><h2>Find the court, bench or courtroom</h2><p>Search by court name, bench, courtroom number, room reference, platform or VC label.</p></div>
-      <div class="courtrooms-search-wrap"><label for="courtroomSearch">Search directory</label><input id="courtroomSearch" type="search" placeholder="e.g. Supreme Court, Courtroom 01, Saket, DRT Delhi…" autocomplete="off"></div>
+  <section id="court-finder" class="cr-finder">
+    <div class="cr-finder-head">
+      <div>
+        <div class="cr-kicker">COURT FINDER</div>
+        <h2>Choose your court</h2>
+        <p>Search by forum, court name, bench, district, courtroom reference or platform.</p>
+      </div>
+      <div class="cr-finder-tools">
+        <label for="courtSearch">Search</label>
+        <div class="cr-search-box"><span>⌕</span><input id="courtSearch" type="search" placeholder="e.g. Delhi High Court, Saket, DRT Delhi…" autocomplete="off"></div>
+      </div>
     </div>
-    <div class="courtrooms-filter-row" role="tablist" aria-label="Filter directory sections">
-      <button type="button" class="courtrooms-filter active" data-filter="all">All</button><button type="button" class="courtrooms-filter" data-filter="supreme">Supreme Court</button><button type="button" class="courtrooms-filter" data-filter="high">High Courts</button><button type="button" class="courtrooms-filter" data-filter="delhi">Delhi District</button><button type="button" class="courtrooms-filter" data-filter="drt">DRT</button><button type="button" class="courtrooms-filter" data-filter="drat">DRAT</button><button type="button" class="courtrooms-filter" data-filter="nclt">NCLT</button><button type="button" class="courtrooms-filter" data-filter="nclat">NCLAT</button>
-    </div>
-    <div class="courtrooms-reference-legend" aria-label="Room reference legend">
-      <span><b>COURT / ROOM</b> = reference supported by stored data</span>
-      <span><b>VC LINK</b> = no official room number stored</span>
-      <span><b>VERIFY</b> = check the current cause list before joining</span>
-    </div>
-    <div id="courtroomEmpty" class="courtrooms-empty-state" hidden>No matching court, bench, courtroom or VC entry found. Try a different name or room reference.</div>
 
-    <section class="courtrooms-section courtrooms-section-supreme" data-section="supreme">
-      <div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">01 · HIGHEST COURT</span><h3>Supreme Court of India</h3></div><span class="courtrooms-count">{{SC_COUNT}} links</span></div>
-      <div class="courtrooms-card-grid">{{SC_CARDS}}</div>
-    </section>
-    <section class="courtrooms-section courtrooms-section-high" data-section="high">
-      <div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">02 · CONSTITUTIONAL COURTS</span><h3>High Courts</h3></div><span class="courtrooms-count">{{HC_COUNT}} courts · {{HC_LINKS}} links</span></div>
-      <div class="courtrooms-card-grid">{{HC_CARDS}}</div>
-    </section>
-    <section class="courtrooms-section courtrooms-section-delhi" data-section="delhi">
-      <div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">03 · DISTRICT JUDICIARY</span><h3>Delhi District Courts</h3></div><span class="courtrooms-count">{{DELHI_COUNT}} desks · {{DELHI_LINKS}} links</span></div>
-      <div class="courtrooms-card-grid">{{DELHI_CARDS}}</div>
-    </section>
-    <section class="courtrooms-section courtrooms-section-drt" data-section="drt"><div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">04 · DEBT RECOVERY</span><h3>Debt Recovery Tribunals (DRT)</h3></div><span class="courtrooms-count">{{DRT_COUNT}} desks</span></div><div class="courtrooms-card-grid">{{DRT_CARDS}}</div></section>
-    <section class="courtrooms-section courtrooms-section-drat" data-section="drat"><div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">05 · APPELLATE RECOVERY</span><h3>Debt Recovery Appellate Tribunals (DRAT)</h3></div><span class="courtrooms-count">{{DRAT_COUNT}} desks</span></div><div class="courtrooms-card-grid">{{DRAT_CARDS}}</div></section>
-    <section class="courtrooms-section courtrooms-section-nclt" data-section="nclt"><div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">06 · INSOLVENCY / COMPANY LAW</span><h3>NCLT</h3></div><span class="courtrooms-count">{{NCLT_COUNT}} benches · {{NCLT_LINKS}} links</span></div><div class="courtrooms-card-grid">{{NCLT_CARDS}}</div></section>
-    <section class="courtrooms-section courtrooms-section-nclat" data-section="nclat"><div class="courtrooms-section-head"><div><span class="courtrooms-section-eyebrow">07 · APPELLATE COMPANY LAW</span><h3>NCLAT</h3></div><span class="courtrooms-count">{{NCLAT_COUNT}} benches · {{NCLAT_LINKS}} links</span></div><div class="courtrooms-card-grid">{{NCLAT_CARDS}}</div></section>
+    <div class="cr-forum-tabs" role="tablist" aria-label="Choose forum">
+      <button class="cr-tab active" type="button" data-forum="all">All</button>
+      <button class="cr-tab" type="button" data-forum="supreme">Supreme Court</button>
+      <button class="cr-tab" type="button" data-forum="high">High Courts</button>
+      <button class="cr-tab" type="button" data-forum="delhi">Delhi District</button>
+      <button class="cr-tab" type="button" data-forum="drt">DRT</button>
+      <button class="cr-tab" type="button" data-forum="drat">DRAT</button>
+      <button class="cr-tab" type="button" data-forum="nclt">NCLT</button>
+      <button class="cr-tab" type="button" data-forum="nclat">NCLAT</button>
+    </div>
+
+    <div class="cr-directory-layout">
+      <div class="cr-court-list-wrap">
+        <div class="cr-list-meta"><strong id="courtResultCount">All courts</strong><span>Select a court to view its VC links</span></div>
+        <div id="courtList" class="cr-court-list">{{COURT_BLOCKS}}</div>
+        <div id="courtEmpty" class="cr-empty" hidden>No matching court or bench found. Try a broader search.</div>
+      </div>
+
+      <aside class="cr-detail-pane" id="courtDetail" aria-live="polite">
+        <div class="cr-detail-placeholder" id="detailPlaceholder">
+          <div class="cr-detail-icon">⚖</div>
+          <div class="cr-kicker">COURTROOM DIRECTORY</div>
+          <h3>Select a court or bench</h3>
+          <p>Its available public VC destinations, courtroom references and meeting details will appear here.</p>
+        </div>
+        <div id="detailContent" hidden></div>
+      </aside>
+    </div>
   </section>
 
-  <section class="courtrooms-utility-strip"><a href="/case-status/"><span class="utility-icon">⌘</span><span><strong>Case Status</strong><small>Open official case-status portals</small></span><b>↗</b></a><a href="/category/courts/"><span class="utility-icon">⚖</span><span><strong>Courts Desk</strong><small>Read court updates and judgments</small></span><b>↗</b></a><a href="/contact.html"><span class="utility-icon">✉</span><span><strong>Report a change</strong><small>Contact the appropriate desk</small></span><b>↗</b></a></section>
-  <section class="courtrooms-editorial-note"><div class="courtrooms-section-label">EDITORIAL NOTE</div><p>Lex Talk Legal maintains this as an informational utility. Courtroom numbers, room references, meeting credentials and VC destinations are displayed only when supported by the stored source data; where the source does not provide a room number, the page does not invent one. Availability and hearing arrangements remain subject to the concerned court or tribunal and its current cause list.</p></section>
+  <section class="cr-guidance">
+    <div>
+      <div class="cr-kicker">BEFORE JOINING</div>
+      <h2>A quick checklist for litigants &amp; legal professionals</h2>
+    </div>
+    <div class="cr-checklist">
+      <div><span>✓</span><p>Confirm your hearing date and courtroom against the current cause list.</p></div>
+      <div><span>✓</span><p>Keep the case number / party details ready before joining where required.</p></div>
+      <div><span>✓</span><p>Use the supplied meeting ID / password only where it is specifically published.</p></div>
+      <div><span>✓</span><p>Follow the concerned court or tribunal's virtual-hearing rules and directions.</p></div>
+    </div>
+  </section>
+
+  <section class="cr-utility-strip">
+    <a href="/case-status/"><span class="cr-u-icon">⌘</span><span><strong>Case Status</strong><small>Find official case-status portals</small></span><b>↗</b></a>
+    <a href="/category/courts/"><span class="cr-u-icon">⚖</span><span><strong>Courts Desk</strong><small>Read judgments and court updates</small></span><b>↗</b></a>
+    <a href="/contact.html"><span class="cr-u-icon">✉</span><span><strong>Report a change</strong><small>Tell the appropriate Lex Talk Legal desk</small></span><b>↗</b></a>
+  </section>
+
+  <section class="cr-note">
+    <div class="cr-kicker">EDITORIAL NOTE</div>
+    <p>Lex Talk Legal maintains this page as an informational utility. Courtroom / room references, meeting credentials and VC destinations are displayed only when supported by the stored source data. Availability and hearing arrangements remain subject to the concerned court or tribunal and its current cause list.</p>
+  </section>
+
+  <div class="cr-modal-backdrop" id="vcModal" hidden>
+    <div class="cr-modal" role="dialog" aria-modal="true" aria-labelledby="vcModalTitle">
+      <button class="cr-modal-close" id="vcModalClose" type="button" aria-label="Close">×</button>
+      <div class="cr-modal-top">
+        <div class="cr-modal-kicker" id="vcModalForum">COURT / TRIBUNAL</div>
+        <h2 id="vcModalTitle">Join VC hearing link</h2>
+        <div class="cr-modal-ref" id="vcModalRef"></div>
+      </div>
+      <div class="cr-modal-body">
+        <div class="cr-confirm-copy"><span>•</span><p>By clicking <strong>Join VC hearing link</strong>, I confirm that I am an advocate, a litigant, or a person joining this virtual court hearing for a legitimate reason, and that I will abide by all applicable laws, court rules and directions.</p></div>
+        <div class="cr-info-copy"><span>•</span><p>This is for information purpose only. It may have errors or may not be up to date. Always verify against the official cause list before joining.</p></div>
+        <label class="cr-check-row"><input id="vcConfirm" type="checkbox"><span>I have read the above and want to continue.</span></label>
+      </div>
+      <div class="cr-modal-actions">
+        <button class="cr-cancel" id="vcModalCancel" type="button">Cancel</button>
+        <button class="cr-join" id="vcModalJoin" type="button" disabled><span>●</span> Join VC hearing link</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     (() => {
-      const search = document.getElementById('courtroomSearch'); const buttons=[...document.querySelectorAll('.courtrooms-filter')]; const sections=[...document.querySelectorAll('.courtrooms-section[data-section]')]; const empty=document.getElementById('courtroomEmpty'); let activeFilter='all';
-      const apply=()=>{const q=(search.value||'').trim().toLowerCase(); let any=false; sections.forEach(section=>{const sectionMatch=activeFilter==='all'||section.dataset.section===activeFilter; let visible=0; section.querySelectorAll('.court-card').forEach(card=>{const show=sectionMatch&&(!q||card.textContent.toLowerCase().includes(q)); card.hidden=!show; if(show)visible++;}); section.hidden=!(sectionMatch&&visible>0); if(sectionMatch&&visible>0)any=true;}); empty.hidden=any;};
-      buttons.forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.filter; buttons.forEach(b=>b.classList.toggle('active',b===btn)); apply();})); search.addEventListener('input',apply); apply();
+      const cards = [...document.querySelectorAll('.cr-court-card')];
+      const tabs = [...document.querySelectorAll('.cr-tab')];
+      const search = document.getElementById('courtSearch');
+      const empty = document.getElementById('courtEmpty');
+      const count = document.getElementById('courtResultCount');
+      const placeholder = document.getElementById('detailPlaceholder');
+      const detail = document.getElementById('detailContent');
+      const modal = document.getElementById('vcModal');
+      const modalClose = document.getElementById('vcModalClose');
+      const modalCancel = document.getElementById('vcModalCancel');
+      const modalJoin = document.getElementById('vcModalJoin');
+      const confirmBox = document.getElementById('vcConfirm');
+      const modalForum = document.getElementById('vcModalForum');
+      const modalTitle = document.getElementById('vcModalTitle');
+      const modalRef = document.getElementById('vcModalRef');
+      let activeForum = 'all';
+      let activeCard = null;
+      let pendingUrl = '';
+
+      function applyFilters(){
+        const q = (search.value || '').trim().toLowerCase();
+        let visible = 0;
+        cards.forEach(card => {
+          const forumOk = activeForum === 'all' || card.dataset.forum === activeForum;
+          const qOk = !q || card.dataset.search.includes(q);
+          const show = forumOk && qOk;
+          card.hidden = !show;
+          if(show) visible++;
+        });
+        empty.hidden = visible !== 0;
+        count.textContent = q ? `${visible} matching court${visible === 1 ? '' : 's'}` : (activeForum === 'all' ? 'All courts' : tabs.find(t => t.classList.contains('active'))?.textContent || 'Courts');
+        if(activeCard && activeCard.hidden){
+          activeCard.classList.remove('selected');
+          activeCard = null;
+          showPlaceholder();
+        }
+      }
+      function showPlaceholder(){ placeholder.hidden = false; detail.hidden = true; detail.innerHTML=''; }
+      function openCourt(card){
+        cards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected'); activeCard = card;
+        placeholder.hidden = true; detail.hidden = false;
+        detail.innerHTML = card.dataset.detail;
+        detail.querySelectorAll('[data-vc-url]').forEach(link => link.addEventListener('click', e => {
+          e.preventDefault();
+          pendingUrl = link.dataset.vcUrl;
+          modalForum.textContent = card.dataset.forumLabel || 'COURT / TRIBUNAL';
+          modalTitle.textContent = card.dataset.courtName;
+          modalRef.textContent = link.dataset.vcRef || 'Public VC destination';
+          confirmBox.checked = false; modalJoin.disabled = true;
+          modal.hidden = false; document.body.classList.add('cr-modal-open');
+        }));
+        detail.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async() => {
+          try { await navigator.clipboard.writeText(btn.dataset.copy); btn.textContent='Copied'; setTimeout(()=>btn.textContent='Copy',1200); } catch(e) {}
+        }));
+      }
+      tabs.forEach(tab => tab.addEventListener('click', () => { activeForum=tab.dataset.forum; tabs.forEach(t=>t.classList.toggle('active',t===tab)); applyFilters(); }));
+      search.addEventListener('input', applyFilters);
+      cards.forEach(card => card.querySelector('.cr-view-court').addEventListener('click', () => openCourt(card)));
+      function closeModal(){ modal.hidden=true; document.body.classList.remove('cr-modal-open'); pendingUrl=''; confirmBox.checked=false; modalJoin.disabled=true; }
+      confirmBox.addEventListener('change', () => modalJoin.disabled = !confirmBox.checked);
+      modalJoin.addEventListener('click', () => { if(confirmBox.checked && pendingUrl) window.location.assign(pendingUrl); });
+      modalClose.addEventListener('click', closeModal); modalCancel.addEventListener('click', closeModal);
+      modal.addEventListener('click', e => { if(e.target === modal) closeModal(); });
+      document.addEventListener('keydown', e => { if(e.key==='Escape' && !modal.hidden) closeModal(); });
+      applyFilters();
     })();
   </script>
 </main>
