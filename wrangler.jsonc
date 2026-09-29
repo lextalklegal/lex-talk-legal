@@ -1,0 +1,9 @@
+{
+  "$schema":"https://unpkg.com/wrangler@latest/config-schema.json",
+  "name":"lex-talk-legal",
+  "main":"src/index.js",
+  "compatibility_date":"2026-09-28",
+  "workers_dev":true,
+  "assets":{"directory":".","binding":"ASSETS"},
+  "vars":{"SITE_URL":"https://lextalk.legal"}
+}
