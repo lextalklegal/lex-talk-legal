@@ -1,74 +1,110 @@
 # Lex Talk Legal — Stable Production Architecture
 
-Lex Talk Legal is a digital legal-information and media platform operated as a media initiative of LEXBOTICS AI MEDIA LLP.
+Lex Talk Legal is a digital legal-information and media platform, a media initiative of LEXBOTICS AI MEDIA LLP.
 
 ## Canonical site
 
-`https://lextalk.legal`
+https://lextalk.legal
 
 ## Non-negotiable design rule
 
 The existing global header, navigation/menu and footer are shared site-wide and must not be changed during page-specific redesigns.
 
 Approved page designs are isolated in:
-
-- `assets/pages/*.css` — page-specific styling
+- `assets/pages/*.css` — page-specific CSS
 - `templates/` — generated page layouts
-- static HTML files — manually maintained pages such as About/Contact
+- static HTML files — manually maintained pages such as About and Contact
 
-Do not replace the entire `scripts/build_site.py` for a single page redesign.
+For a single-page redesign, change only that page's HTML/template and page CSS. Do not replace the entire build system.
 
-## Automated editorial workflow
+## Data ownership and workflows
 
-`.github/workflows/sync-editorial.yml` runs every 30 minutes and can also be started manually. It fetches only:
+### Editorial sync — automatic
+`.github/workflows/sync-editorial.yml` runs every 30 minutes and can also be started manually.
 
+It fetches only:
 - Blogger editorial posts
 - YouTube feed
 
-It rebuilds only editorial outputs: article pages, editorial categories, Videos, homepage content selection and sitemap.
+It rebuilds only:
+- article pages
+- editorial category pages
+- Videos page
+- homepage content selection
+- sitemap
 
-It does **not** query OneCourt, auction portals, job portals, or other manual directories. It does not rebuild About, Contact, Team, Case Status, Courtrooms, Auctions, Jobs, policy pages, or Cloudflare configuration.
+It does not fetch or scrape OneCourt, auction portals, job portals, or other manual desks.
 
-## Manual desks
+### Courtrooms / VC — manual
+Source of truth: `data/vc_links.json`
 
-### Courtrooms / VC
-Edit `data/vc_links.json` and commit. `update-vc.yml` rebuilds only `/courtrooms/`.
+Use `.github/workflows/update-vc.yml` from **Actions → Run workflow** to add/update/replace/remove one VC entry. The manual workflow is intentionally on-demand; it does not poll or scrape anything. Inputs support:
+- section
+- court/bench
+- VC URL
+- display label
+- meeting ID (optional)
+- password (optional)
+- verification date
+- notes
 
-Each VC entry may contain `label`, `url`, `meeting_id`, `password`, `verified_on`, and `notes`.
+The workflow rebuilds only `/courtrooms/` and commits the changed data + generated page.
 
-### Auctions
-Edit `data/auctions.json` and commit. `update-auctions.yml` rebuilds only `/auctions/`.
+There is no OneCourt or Playwright dependency.
 
-### Legal Jobs
-Edit `data/jobs.json` and commit. `update-jobs.yml` rebuilds only `/jobs/`.
+### Auctions — manual
+Source of truth: `data/auctions.json`
 
-See `MANUAL-DATA-GUIDE.md` for exact examples.
+Use `.github/workflows/update-auctions.yml` to add/update/remove one listing. The workflow is intentionally on-demand. It rebuilds only `/auctions/`.
+
+### Legal jobs — manual
+Source of truth: `data/jobs.json`
+
+Use `.github/workflows/update-jobs.yml` to add/update/remove one listing. The workflow is intentionally on-demand. It rebuilds only `/jobs/`.
 
 ## Deployment
 
-`.github/workflows/deploy-worker.yml` is the only deployment workflow. It runs automatically after pushes to `main` and can be started manually.
+`.github/workflows/deploy-worker.yml` is the only workflow that calls Wrangler.
+
+It runs automatically after pushes to `main` and can also be started manually.
 
 Required repository secrets:
-
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
 
 ## Asset safety
 
-`.assetsignore` excludes source code, build scripts, templates, private/manual datasets, `node_modules` and Wrangler/build artefacts from public static-asset upload.
+`.assetsignore` excludes:
+- source code
+- GitHub workflow files
+- Python/build scripts
+- templates
+- manual/private datasets
+- `node_modules`
+- Wrangler/build artifacts
+- local configuration examples
 
-## Deliberately retained future modules
+Only public runtime assets are intended for the Worker asset bundle.
 
-The repository still contains an inactive professional-profile/admin scaffold (`admin/`, `advocates/`, `functions/`, `db/schema.sql`, `dev.vars.example`). These are excluded from the Worker asset upload and can be removed later if the Advocate Panel project is permanently abandoned.
+## Current approved page designs
 
-## Safe cleanup already performed
+- About
+- Courts
+- Banking Law
+- DRA
+- Videos
+- Contact
 
-- removed duplicate root `build_site.py`
-- removed obsolete `court-data.json`
-- removed obsolete README/VC fix notes
-- removed generated Python caches
-- removed unused logo SVG
-- removed empty `data/team.json` and its asset note
-- removed stale OneCourt scrape junk entries from VC data
+Header, navigation/menu and footer remain shared and unchanged.
 
-See `ARCHITECTURE-REPAIR-2026-09-29.md` for the rationale and workflow design.
+## Future design workflow
+
+For each new page:
+1. review the current page
+2. redesign the main content only
+3. add or update that page's CSS
+4. test the page
+5. commit
+6. move to the next page
+
+Manual desks and editorial sync are intentionally separated so content updates do not unexpectedly overwrite unrelated page designs.

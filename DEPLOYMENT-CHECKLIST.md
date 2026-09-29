@@ -1,29 +1,29 @@
 # Lex Talk Legal — Deployment Checklist
 
-## GitHub Actions secrets
+## Before deployment
+- `scripts/build_site.py` compiles
+- `scripts/smoke_test.py` passes
+- Required page-specific CSS exists
+- Header/menu/footer are unchanged
 
+## GitHub Actions
+- `deploy-worker.yml` is the only workflow using Wrangler
+- `sync-editorial.yml` handles Blogger + YouTube only
+- `update-vc.yml` handles manual VC data only
+- `update-auctions.yml` handles manual auction data only
+- `update-jobs.yml` handles manual job data only
+
+## Secrets
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
 
-Never commit or paste the token into source code.
+Never commit the API token.
 
-## Production deployment
-
-1. Commit changes to `main`.
-2. `Deploy Lex Talk Legal Worker` runs automatically.
-3. Check the latest Worker deployment in Cloudflare.
-4. Verify `https://lextalk.legal`.
-
-## Editorial sync
-
-`sync-editorial.yml` syncs Blogger and YouTube only. It does not run Playwright or query OneCourt.
-
-## Manual desks
-
-- VC: edit `data/vc_links.json`; `update-vc.yml` rebuilds only Courtrooms.
-- Auctions: edit `data/auctions.json`; `update-auctions.yml` rebuilds only Auctions.
-- Jobs: edit `data/jobs.json`; `update-jobs.yml` rebuilds only the Jobs Board.
-
-## Design safety
-
-Approved page-specific CSS and templates are source-controlled. Do not replace the whole `scripts/build_site.py` for a single page change.
+## Production
+Verify:
+- `https://lextalk.legal/`
+- `https://www.lextalk.legal/`
+- important redesigned pages
+- `https://lextalk.legal/robots.txt`
+- `https://lextalk.legal/sitemap.xml`
+- `https://lextalk.legal/ads.txt`

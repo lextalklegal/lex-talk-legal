@@ -257,6 +257,13 @@ def blogger():
     return normalize_articles(out)
 
 def youtube():
+    # Deterministic local builds/tests should never require YouTube network access.
+    if os.getenv('LOCAL_BUILD') == '1':
+        try:
+            data = json.loads((ROOT/'data/youtube.json').read_text(encoding='utf8'))
+            return data if isinstance(data, list) else []
+        except Exception:
+            return []
     channel_id=CHANNEL_ID
     try:
         if not channel_id:

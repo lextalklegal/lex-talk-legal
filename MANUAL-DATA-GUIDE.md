@@ -1,78 +1,79 @@
-# Lex Talk Legal — Manual Desk Data
+# Lex Talk Legal — Manual Desk Guide
 
-These datasets are intentionally maintained manually. They are not fetched from OneCourt, auction portals, job portals, or other third-party sites by the scheduled editorial sync.
+These datasets are intentionally maintained manually. The scheduled editorial sync does not fetch OneCourt, auction portals, job portals, or other third-party directories.
 
-## 1. VC links — data/vc_links.json
+## 1. Courtrooms / VC
 
-Existing court/tribunal structure is retained. Each VC entry may contain:
-- label
-- url
-- meeting_id (optional)
-- password (optional)
-- verified_on (optional)
-- notes (optional)
+Source:
+`data/vc_links.json`
 
-Example:
-{
-  "label": "Court No. 12",
-  "url": "https://example.com/meeting",
-  "meeting_id": "123 456 789",
-  "password": "optional",
-  "verified_on": "2026-09-29",
-  "notes": "Verify against today's cause list."
-}
+Recommended entry fields:
+- `label`
+- `url`
+- `meeting_id` (optional)
+- `password` (optional)
+- `verified_on` (optional)
+- `notes` (optional)
 
-To update: edit `data/vc_links.json` and commit. The VC workflow rebuilds only the Courtrooms page.
+### Easier method
+Go to:
+**GitHub → Actions → Update Courtroom VC Links → Run workflow**
 
-## 2. Auctions — data/auctions.json
+Choose the section and enter the court/bench, VC URL and optional meeting details.
 
-Use one object per listing:
-{
-  "id": "auction-001",
-  "title": "Property title",
-  "institution": "Bank / FI / Authority",
-  "property_type": "Residential / Commercial / Industrial",
-  "location": "City, State",
-  "auction_date": "2026-10-15",
-  "inspection_date": "2026-10-10",
-  "reserve_price": "₹...",
-  "emd": "₹...",
-  "official_url": "https://...",
-  "notice_url": "https://...",
-  "status": "Open",
-  "verified_on": "2026-09-29"
-}
+Actions:
+- `add_or_update` — updates a matching URL or appends it
+- `replace_url` — replace a known old URL with a new one
+- `remove_url` — remove a known old URL
 
-Commit the JSON. The Auctions workflow rebuilds only `/auctions/`.
+The workflow rebuilds only `courtrooms/index.html`.
 
-## 3. Legal jobs — data/jobs.json
+## 2. Auctions
 
-Use one object per opportunity:
-{
-  "id": "job-001",
-  "title": "Legal Associate",
-  "organization": "Organisation name",
-  "location": "New Delhi",
-  "employment_type": "Full-time",
-  "experience": "0-2 years",
-  "eligibility": "LL.B",
-  "deadline": "2026-10-10",
-  "posted_on": "2026-09-29",
-  "apply_url": "https://...",
-  "official_url": "https://...",
-  "status": "Open"
-}
+Source:
+`data/auctions.json`
 
-Commit the JSON. The Jobs workflow rebuilds only `/jobs/`.
+Use:
+**GitHub → Actions → Update Auction Listings → Run workflow**
 
-## Workflow principle
+Required:
+- unique ID
 
-Editorial sync: Blogger + YouTube only.
+Optional fields include title, institution, property type, location, auction date, inspection date, reserve price, EMD, official source, notice URL, status and verification date.
 
-VC workflow: local `data/vc_links.json` only. No OneCourt / Playwright.
+The workflow rebuilds only `auctions/index.html`.
 
-Auctions workflow: local `data/auctions.json` only.
+## 3. Legal Jobs
 
-Jobs workflow: local `data/jobs.json` only.
+Source:
+`data/jobs.json`
 
-Deployment: a successful commit to `main` triggers the deployment workflow.
+Use:
+**GitHub → Actions → Update Legal Jobs → Run workflow**
+
+Required:
+- unique ID
+
+Optional fields include title, organisation, location, employment type, experience, eligibility, deadline, posted date, apply URL, official source and status.
+
+The workflow rebuilds only `jobs/index.html`.
+
+## 4. Important rule
+
+Do not place confidential credentials in these JSON files.
+
+VC meeting passwords may be shown on the public Courtrooms page if you explicitly choose to publish them. Only supply credentials intended for public display.
+
+## 5. Design safety
+
+Editorial sync owns article/category/video/homepage outputs.
+
+Manual workflows own their own directory page only.
+
+About, Contact, Team, Case Status, policy pages and the shared header/menu/footer are not rewritten by the editorial sync.
+
+For redesign work, modify only the relevant page template/HTML and its page-specific CSS.
+
+
+## Direct JSON edits
+If you edit one of these JSON files directly in GitHub instead of using the workflow form, run the corresponding manual workflow afterwards. These desks are intentionally not polled automatically.
