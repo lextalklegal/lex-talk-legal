@@ -4,28 +4,31 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: "What should happen to the VC entry?"
+        description: "Choose whether to rebuild the existing base or modify a VC entry"
         required: true
         type: choice
         options:
+          - rebuild_existing
           - add_or_update
           - replace_url
+          - update_details
           - remove_url
-        default: add_or_update
+        default: rebuild_existing
       section:
-        description: "VC section"
-        required: true
+        description: "Section for a NEW entry only"
+        required: false
         type: choice
         options:
           - supreme_court
-          - high_court
+          - high_courts
           - delhi_district
           - drt
           - drat
           - nclt
           - nclat
+        default: supreme_court
       court_name:
-        description: "Court/bench name (for non-Supreme Court sections)"
+        description: "Court/bench name for a NEW entry"
         required: false
         type: string
       label:
@@ -34,19 +37,19 @@ on:
         default: "Join VC"
         type: string
       url:
-        description: "Current/new VC URL (required for add_or_update and replace_url)"
+        description: "New VC URL (only for add/replace)"
         required: false
         type: string
       old_url:
-        description: "Existing VC URL to replace/remove"
+        description: "Existing VC URL to replace/update/remove"
         required: false
         type: string
       meeting_id:
-        description: "Meeting ID (if any)"
+        description: "Meeting ID, if any"
         required: false
         type: string
       password:
-        description: "Password (if any)"
+        description: "Password, if any"
         required: false
         type: string
       verified_on:
@@ -54,7 +57,7 @@ on:
         required: false
         type: string
       notes:
-        description: "Notes"
+        description: "Optional notes"
         required: false
         type: string
 
@@ -70,9 +73,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -80,7 +83,7 @@ jobs:
         run: |
           python -m py_compile scripts/manage_vc.py scripts/build_vc.py scripts/smoke_test.py
 
-      - name: Update manual VC data
+      - name: Apply manual VC change
         env:
           VC_ACTION: ${{ inputs.action }}
           VC_SECTION: ${{ inputs.section }}
@@ -94,13 +97,13 @@ jobs:
           VC_NOTES: ${{ inputs.notes }}
         run: python scripts/manage_vc.py
 
-      - name: Rebuild Courtrooms from local data
+      - name: Rebuild Courtrooms from local base data
         run: python scripts/build_vc.py
 
       - name: Validate manual desk
         run: python scripts/smoke_test.py
 
-      - name: Commit VC data and page
+      - name: Commit only VC changes
         shell: bash
         run: |
           git config user.name "Lex Talk Legal Bot"
