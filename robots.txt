@@ -3,3 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 Sitemap: https://lextalk.legal/sitemap.xml
+Sitemap: https://lextalk.legal/news-sitemap.xml
