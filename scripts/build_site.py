@@ -269,18 +269,29 @@ def category_matches(a, key):
 
 def write_category_pages(arts):
     for key,(name,_) in CATEGORY_MAP.items():
-        if key in GUIDES:
+        items=[a for a in arts if category_matches(a,key)]
+        if key in CATEGORY_TEMPLATE_MAP:
+            template_path=CATEGORY_TEMPLATE_MAP[key]
+            template=template_path.read_text(encoding='utf8')
+            if items:
+                cards=''.join(article_card(a) for a in items[:CATEGORY_TEMPLATE_LIMIT])
+            else:
+                empty_class=CATEGORY_TEMPLATE_EMPTY_CLASS.get(key, 'empty')
+                cards=f'<div class="{empty_class}">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next editorial sync will update this section.</div>'
+            content=template.replace('{{LATEST_STORIES}}', cards)
+            desc=f'Lex Talk Legal — {name} news, updates, explainer and official references.'
+        elif key in GUIDES:
             g=GUIDES[key]
-            items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:12]) or '<div class="empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
             content=guide_markup(key).replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
             desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
         else:
-            items=[a for a in arts if category_matches(a,key)]
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
             content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
             desc=f'Lex Talk Legal — {name} news, updates and explainers.'
-        p=ROOT/'category'/key/'index.html'; p.parent.mkdir(parents=True,exist_ok=True); p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
+        p=ROOT/'category'/key/'index.html'
+        p.parent.mkdir(parents=True,exist_ok=True)
+        p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
 
 def write_videos_page(videos):
     cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
@@ -516,6 +527,38 @@ CATEGORY_MAP={
  'dra':('DRA',{'dra','debt recovery agent','debt recovery agents'}),
  'explained':('Explained',{'legal explained','explained','case laws explained','legal explainers'})}
 
+# Page-specific assets are resolved from the canonical path so recurring builds
+# preserve the approved design of each manual/static page.
+PAGE_STYLE_MAP = {
+    '/about.html': 'about.css',
+    '/about': 'about.css',
+    '/contact.html': 'contact.css',
+    '/contact': 'contact.css',
+    '/category/courts/': 'courts.css',
+    '/category/law-policy/': 'law-policy.css',
+    '/category/banking-law/': 'banking-law.css',
+    '/category/dra/': 'dra.css',
+    '/videos/': 'videos.css',
+    '/case-status/': 'case-status.css',
+    '/courtrooms/': 'courtrooms.css',
+}
+
+CATEGORY_TEMPLATE_MAP = {
+    'courts': ROOT / 'templates/category/courts.html',
+    'law-policy': ROOT / 'templates/category/law-policy.html',
+    'banking-law': ROOT / 'templates/category/banking-law.html',
+    'dra': ROOT / 'templates/category/dra.html',
+}
+
+CATEGORY_TEMPLATE_EMPTY_CLASS = {
+    'courts': 'courts-v2-empty',
+    'law-policy': 'lawpolicy-v2-empty',
+    'banking-law': 'banking-v1-empty',
+    'dra': 'dra-v1-empty',
+}
+
+CATEGORY_TEMPLATE_LIMIT = 12
+
 def clean(raw, remove_first_image=False):
     soup=BeautifulSoup(raw or '','html.parser')
     for x in soup(['script','style','iframe','form','object','embed','video']): x.decompose()
@@ -591,24 +634,24 @@ def nav_html():
     mega=mega_menu_html()
     return f'<button class="menu-trigger" id="menuTrigger" type="button" aria-expanded="false" aria-controls="megaMenu" aria-label="Open site menu"><span class="hamburger-lines"><i></i><i></i><i></i></span><span class="menu-trigger-label">MENU</span></button><div class="nav-links">{main}</div><a class="nav-search" href="/search.html" aria-label="Search">⌕ <span>SEARCH</span></a><div class="mega-menu" id="megaMenu" hidden><div class="mega-menu-inner">{mega}</div></div>'
 
-def build_timestamp():
-    return datetime.now(ZoneInfo('Asia/Kolkata')).strftime('%d %B %Y, %H:%M:%S')
-
-BUILD_TIME=build_timestamp()
-BUILD_EPOCH=int(datetime.now(ZoneInfo('Asia/Kolkata')).timestamp())
+BUILD_DT=datetime.now(ZoneInfo('Asia/Kolkata'))
+BUILD_TIME=BUILD_DT.strftime('%d %B %Y, %H:%M:%S')
+BUILD_EPOCH=int(BUILD_DT.timestamp())
 
 def page_shell(title,description,content):
     t=title[0] if isinstance(title,tuple) else title
     canonical=title[1] if isinstance(title,tuple) else '/'
     robots='index,follow,max-image-preview:large'
     nav=nav_html()
+    style_file=PAGE_STYLE_MAP.get(canonical, '')
+    page_css=f'<link rel="stylesheet" href="/assets/pages/{H.escape(style_file,quote=True)}">' if style_file else ''
     schema={"@context":"https://schema.org","@type":"WebSite","name":"Lex Talk Legal","url":SITE_URL+"/","description":"Law Simplified for Everyone.","publisher":{"@type":"Organization","name":"LEXBOTICS AI MEDIA LLP","url":SITE_URL+"/"}}
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="{H.escape(description,quote=True)}"><meta name="robots" content="{robots}">
 <link rel="canonical" href="{SITE_URL}{H.escape(canonical,quote=True)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Lex Talk Legal"><meta property="og:title" content="{H.escape(t,quote=True)}"><meta property="og:description" content="{H.escape(description,quote=True)}"><meta property="og:url" content="{SITE_URL}{H.escape(canonical,quote=True)}"><meta property="og:image" content="{SITE_URL}/assets/LexTalkLegal_Logo-wo-bg.png"><meta name="twitter:card" content="summary_large_image">
-<title>{H.escape(t)} | Lex Talk Legal</title><link rel="stylesheet" href="/assets/site.css"><script type="application/ld+json">{schema_json}</script>
+<title>{H.escape(t)} | Lex Talk Legal</title><link rel="stylesheet" href="/assets/site.css">{page_css}<script type="application/ld+json">{schema_json}</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script></head><body>
 <div class="site-accent"></div><div class="utility-bar"><div class="wrap utility-inner"><div class="utility-left"><span class="live-dot">●</span><span id="dateLabel">--</span><span class="utility-sep">|</span><span id="timeLabel">--:--:-- IST</span></div><div class="utility-actions"><button class="control-btn" id="themeBtn" type="button" aria-label="Switch to dark mode">☾ Dark</button></div></div></div>
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
@@ -686,17 +729,13 @@ def sync_homepage(arts,videos):
 
 
 def refresh_static_pages():
-    preserve={'team.html','case-help.html','auctions/index.html'}
-    for p in sorted(ROOT.rglob('*.html')):
-        rel=p.relative_to(ROOT).as_posix()
-        if rel in preserve or rel.startswith('article/') or rel.startswith('category/') or rel in {'index.html','videos/index.html','courtrooms/index.html','case-status/index.html'}: continue
-        try:s=BeautifulSoup(p.read_text(encoding='utf8'),'html.parser')
-        except Exception:continue
-        main=s.find('main')
-        if not main: continue
-        title=s.title.string.split('|')[0].strip() if s.title and s.title.string else p.stem.replace('-',' ').title()
-        desc=s.find('meta',attrs={'name':'description'}); desc=desc.get('content','Lex Talk Legal') if desc else 'Lex Talk Legal'
-        p.write_text(page_shell((title,'/'+rel),desc,str(main)),encoding='utf8')
+    """Compatibility hook for build validation.
+
+    Static/manual pages are intentionally not regenerated here. This keeps
+    independently approved page designs stable during editorial syncs.
+    """
+    return
+
 
 def write_team_page():
     data=[];tp=ROOT/'data/team.json'
@@ -777,8 +816,10 @@ def write_news_sitemap(arts):
 
 def write_sitemap(arts):
     """Write a stable XML sitemap with accurate content-derived lastmod values."""
+    # Use the site's canonical extensionless routes where the platform redirects
+    # the .html asset URL (notably About and Contact).
     static_urls=['/courtrooms/','/case-status/','/videos/','/auctions/','/case-help.html','/team.html','/search.html',
-                 '/about.html','/contact.html','/privacy-policy.html','/terms-of-use.html','/disclaimer.html',
+                 '/about','/contact','/privacy-policy.html','/terms-of-use.html','/disclaimer.html',
                  '/editorial-policy.html','/copyright-policy.html','/corrections-grievance.html','/ai-content-policy.html',
                  '/profile-guidelines.html']
     entries=['<url><loc>'+H.escape(SITE_URL+'/',quote=False)+'</loc></url>']

@@ -45,17 +45,6 @@
     if(tl)tl.textContent=d.toLocaleTimeString('en-IN',{...o,hour12:false})+' IST';
   }
   clock();setInterval(clock,1000);
-  function relativeUpdate(){
-    const el=document.querySelector('[data-built-epoch]');if(!el)return;
-    const epoch=Number(el.getAttribute('data-built-epoch'));if(!Number.isFinite(epoch))return;
-    const now=Date.now(), mins=Math.max(0,Math.floor((now-epoch*1000)/60000));
-    const label=mins<1?'just now':mins<60?mins+' min ago':Math.floor(mins/60)+' hr '+(mins%60)+' min ago';
-    const exact=el.textContent||'';
-    if(!el.dataset.exact)el.dataset.exact=exact;
-    el.textContent='Content last updated: '+label;
-    el.title=el.dataset.exact;
-  }
-  relativeUpdate();setInterval(relativeUpdate,60000);
 })();
 (function(){
   function ensureModal(){
