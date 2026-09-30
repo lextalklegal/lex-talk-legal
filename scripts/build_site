@@ -1,0 +1,29 @@
+*** Begin Patch
+*** Update File: scripts/build_site.py
+@@
+ PAGE_STYLE_MAP = {
+     "/about.html": "about.css",
+     "/about": "about.css",
+     "/contact.html": "contact.css",
+     "/contact": "contact.css",
+     "/category/courts/": "courts.css",
++    "/category/law-policy/": "law-policy.css",
+     "/category/banking-law/": "banking-law.css",
+     "/category/dra/": "dra.css",
+     "/videos/": "videos.css",
+ }
+@@
+     template_map = {
+         'courts': ROOT / 'templates/category/courts.html',
++        'law-policy': ROOT / 'templates/category/law-policy.html',
+         'banking-law': ROOT / 'templates/category/banking-law.html',
+         'dra': ROOT / 'templates/category/dra.html',
+     }
+@@
+                 empty_class = {
+                     'courts': 'courts-v2-empty',
++                    'law-policy': 'lawpolicy-v2-empty',
+                     'banking-law': 'banking-v1-empty',
+                     'dra': 'dra-v1-empty'
+                 }.get(key, 'empty')
+*** End Patch
