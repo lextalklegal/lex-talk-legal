@@ -50,7 +50,7 @@ jobs:
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html sitemap.xml data/articles.json data/youtube.json article category videos
+          git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json article category videos
           if git diff --cached --quiet; then
             echo "No editorial changes."
           else
