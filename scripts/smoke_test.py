@@ -74,3 +74,51 @@ if any(a.get("published") for a in articles if isinstance(a, dict)):
     recent_titles = [str(a.get("title", "")) for a in articles if isinstance(a, dict) and a.get("title")]
     if not recent_titles or not any(title in news_xml for title in recent_titles):
         raise SystemExit("news-sitemap.xml does not contain any current article titles")
+
+
+# Phase 2 article SEO / Google News readiness checks.
+article_files=sorted((root / "article").glob("*.html"))
+if article_files:
+    sample=article_files[0].read_text(encoding="utf-8")
+    for required in (
+        "/assets/pages/article.css",
+        '"@type": "NewsArticle"',
+        '"datePublished"',
+        '"dateModified"',
+        '"@type": "BreadcrumbList"',
+        'Published:',
+        'Lex Talk Legal Editorial Desk',
+    ):
+        if required not in sample:
+            raise SystemExit(f"Phase 2 article SEO marker missing: {required}")
+
+source_keys=[]
+for item in articles:
+    if isinstance(item,dict) and item.get("source_url"):
+        source_keys.append(str(item["source_url"]).split("#")[0].split("?")[0].rstrip("/").lower())
+if len(source_keys) != len(set(source_keys)):
+    raise SystemExit("Duplicate article source URLs remain after editorial dedupe")
+
+article_rows=[a for a in articles if isinstance(a,dict)]
+if len(set(a.get("url") for a in article_rows)) != len(article_rows):
+    raise SystemExit("Duplicate article URLs remain after editorial dedupe")
+
+import re as _re
+locs=_re.findall(r"<loc>(.*?)</loc>", (root/"sitemap.xml").read_text(encoding="utf-8"))
+if len(locs) != len(set(locs)):
+    raise SystemExit("Duplicate URLs remain in sitemap.xml")
+news_locs=_re.findall(r"<loc>(.*?)</loc>", (root/"news-sitemap.xml").read_text(encoding="utf-8"))
+if len(news_locs) != len(set(news_locs)):
+    raise SystemExit("Duplicate URLs remain in news-sitemap.xml")
+
+long_headlines=[str(a.get("title","")) for a in article_rows if len(str(a.get("title","")))>110]
+if long_headlines:
+    print(f"Warning: {len(long_headlines)} current article headline(s) exceed Google News' 110-character best-practice threshold; review them in Blogger.")
+
+redirects=(root/"_redirects").read_text(encoding="utf-8")
+for old_url,new_url in (
+    ("/article/blog00111.html", "/article/delhi-high-court-slaps-1-lakh-costs-on-advocate-for-attending-hearing-from-a-moving-car.html"),
+    ("/article/india-bloc-meet-on-gyanesh-kumar-election-commission-row-sir-controversy-explained.html", "/article/india-block-meet-on-gyanesh-kumar-election-commission-row-sir-controversy-explained.html"),
+):
+    if f"{old_url} {new_url} 301" not in redirects:
+        raise SystemExit(f"Legacy article redirect missing: {old_url}")

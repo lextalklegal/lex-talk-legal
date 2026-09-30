@@ -27,8 +27,8 @@ MORE_NAV = [
 ]
 
 CATEGORY_MAP = {
-    'courts': ('Courts', {'supreme court', 'high court', 'courts', 'judiciary', 'case laws', 'case law'}),
-    'law-policy': ('Law & Policy', {'law & policy', 'law and policy', 'law policy', 'policy', 'legislation'}),
+    'courts': ('Courts', {'supreme court', 'high court', 'courts', 'judiciary', 'case laws', 'case law', 'judgment', 'judgement', 'order'}),
+    'law-policy': ('Law & Policy', {'law & policy', 'law and policy', 'law policy', 'policy', 'legislation', 'election commission', 'electoral', 'elections', 'bill', 'act', 'parliament'}),
     'banking-law': ('Banking Law', {'banking law', 'banking', 'sarfaesi', 'ibc', 'insolvency', 'recovery'}),
     'drt-drat': ('DRT / DRAT', {'drt', 'drat', 'drt / drat', 'sarfaesi'}),
     'legal-careers': ('Legal Careers', {'legal careers', 'aibe', 'bar council', 'cop', 'judiciary careers', 'judiciary'}),
@@ -520,12 +520,17 @@ MEGA_GROUPS=[
 
 CATEGORY_MAP={
  'courts':('Courts',{'supreme court','high court','courts','judiciary','case laws','case law'}),
- 'law-policy':('Law & Policy',{'law & policy','law and policy','law policy','policy','legislation'}),
- 'banking-law':('Banking Law',{'banking law','banking','sarfaesi','ibc','insolvency','recovery'}),
+ 'law-policy':('Law & Policy',{'law & policy','law and policy','law policy','policy','legislation','election commission','electoral','elections','bill','act','parliament','eci','sir','chief election commissioner'}),
+ 'banking-law':('Banking Law',{'banking law','banking','bank','banks','bank strike','banking strike','finance','sarfaesi','ibc','insolvency','recovery'}),
  'drt-drat':('DRT / DRAT',{'drt','drat','drt / drat','sarfaesi'}),
  'legal-careers':('Legal Careers',{'legal careers','aibe','bar council','cop','judiciary careers','judiciary'}),
  'dra':('DRA',{'dra','debt recovery agent','debt recovery agents'}),
  'explained':('Explained',{'legal explained','explained','case laws explained','legal explainers'})}
+
+LEGACY_ARTICLE_REDIRECTS = [
+    ('/article/blog00111.html', '/article/delhi-high-court-slaps-1-lakh-costs-on-advocate-for-attending-hearing-from-a-moving-car.html'),
+    ('/article/india-bloc-meet-on-gyanesh-kumar-election-commission-row-sir-controversy-explained.html', '/article/india-block-meet-on-gyanesh-kumar-election-commission-row-sir-controversy-explained.html'),
+]
 
 # Page-specific assets are resolved from the canonical path so recurring builds
 # preserve the approved design of each manual/static page.
@@ -583,6 +588,89 @@ def normalize_articles(arts):
         x['content']=str(soup).strip()
         out.append(x)
     return out
+
+
+def _normalized_source_url(value):
+    if not value:
+        return ''
+    try:
+        parsed=urllib.parse.urlsplit(str(value).strip())
+        if not parsed.scheme or not parsed.netloc:
+            return str(value).strip().lower().rstrip('/')
+        return urllib.parse.urlunsplit((parsed.scheme.lower(), parsed.netloc.lower(), parsed.path.rstrip('/'), '', ''))
+    except Exception:
+        return str(value).strip().lower().rstrip('/')
+
+
+def dedupe_articles(arts):
+    kept=[]
+    seen={}
+    redirects=[]
+    for a in sorted(arts or [], key=lambda x:x.get('published',''), reverse=True):
+        source_key=_normalized_source_url(a.get('source_url'))
+        title_key=re.sub(r'\s+',' ',str(a.get('title','')).strip().lower())
+        date_key=str(a.get('published',''))[:10]
+        key=('source',source_key) if source_key else ('title-date',title_key,date_key)
+        if key in seen:
+            canonical=seen[key]
+            old=str(a.get('url','')).strip()
+            new=str(canonical.get('url','')).strip()
+            if old and new and old != new:
+                redirects.append((old,new))
+            continue
+        seen[key]=a
+        kept.append(a)
+    return kept, redirects
+
+
+def format_article_datetime(value):
+    dt=_article_datetime(value)
+    if not dt:
+        return str(value or '').strip()
+    return dt.astimezone(ZoneInfo('Asia/Kolkata')).strftime('%d %B %Y, %H:%M:%S IST')
+
+
+def article_category_key(a):
+    preferred=('courts','law-policy','drt-drat','banking-law','legal-careers','dra','explained')
+    for key in preferred:
+        if category_matches(a,key):
+            return key
+    return ''
+
+
+def article_keywords(a, limit=12):
+    text=' '.join([str(a.get('title','')), *[str(x) for x in a.get('labels',[])]])
+    stop={'the','and','for','with','from','what','this','that','into','about','after','before','today','india','2026','news','legal','latest','explained','row','controversy','big','new','are','was','has','have','will','on','in','of','to','a','an'}
+    words=[]
+    for w in re.findall(r'[a-z0-9]{3,}', text.lower()):
+        if w not in stop and w not in words:
+            words.append(w)
+    return words[:limit]
+
+
+def related_articles(current, arts, limit=4):
+    current_url=current.get('url','')
+    current_key=article_category_key(current)
+    current_tokens=set(article_keywords(current, limit=30))
+    scored=[]
+    for other in arts or []:
+        if other.get('url')==current_url:
+            continue
+        score=0
+        if current_key and article_category_key(other)==current_key:
+            score+=6
+        label_overlap={str(x).strip().lower() for x in current.get('labels',[])} & {str(x).strip().lower() for x in other.get('labels',[])}
+        score+=min(3,len(label_overlap)*2)
+        other_tokens=set(article_keywords(other, limit=30))
+        score+=min(5,len(current_tokens & other_tokens))
+        try:
+            published=_article_datetime(other.get('published')) or datetime.min.replace(tzinfo=timezone.utc)
+            recency=published.timestamp()/10**10
+        except Exception:
+            recency=0
+        scored.append((score,recency,other))
+    scored.sort(key=lambda row:(row[0],row[1]),reverse=True)
+    return [row[2] for row in scored[:limit] if row[0]>0]
 
 def blogger():
     if os.getenv('LOCAL_BUILD') == '1':
@@ -659,11 +747,11 @@ def page_shell(title,description,content):
 {content}
 <footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{BUILD_TIME} IST" data-built-epoch="{BUILD_EPOCH}">Content last updated: {BUILD_TIME} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
 
-def article(a):
+def article(a, all_articles=None):
+    all_articles=all_articles or [a]
     image=a.get('image','')
-    hero=f'<div class="article-hero media-frame" style="--media-image:url(&quot;{H.escape(image,quote=True)}&quot;)"><img src="{H.escape(image,quote=True)}" alt="{H.escape(a.get("title",""),quote=True)}" loading="eager" decoding="async"></div>' if image else ''
+    hero=(f'<div class="article-hero media-frame" style="--media-image:url(&quot;{H.escape(image,quote=True)}&quot;)"><img src="{H.escape(image,quote=True)}" alt="{H.escape(a.get("title",""),quote=True)}" loading="eager" decoding="async"></div>' if image else '')
     soup=BeautifulSoup(a.get('content','') or '','html.parser')
-    # Remove every in-body copy of the lead image, not just the first image.
     if image:
         norm=re.sub(r'[?#].*$','',image).rstrip('/')
         for im in soup.find_all('img'):
@@ -671,12 +759,94 @@ def article(a):
             if src==norm or (src and norm and src.endswith(norm.split('/')[-1])):
                 im.decompose()
     body_html=str(soup)
-    schema={'@context':'https://schema.org','@type':'NewsArticle','headline':a.get('title',''),'datePublished':a.get('published',''),'dateModified':a.get('updated') or a.get('published',''),'mainEntityOfPage':{'@type':'WebPage','@id':SITE_URL+a.get('url','')},'author':{'@type':'Organization','name':'Lex Talk Legal Editorial Desk','url':SITE_URL+'/'},'publisher':{'@type':'Organization','name':'LEXBOTICS AI MEDIA LLP','url':SITE_URL+'/'},'description':a.get('excerpt','')}
-    if image:schema['image']=[image]
+
+    published_iso=str(a.get('published','')).strip()
+    updated_iso=str(a.get('updated','')).strip()
+    published_label=format_article_datetime(published_iso)
+    updated_label=format_article_datetime(updated_iso) if updated_iso else ''
+    show_updated=bool(updated_iso and updated_iso != published_iso and updated_label and updated_label != published_label)
+
+    section_key=article_category_key(a)
+    if section_key:
+        section_name=CATEGORY_MAP[section_key][0]
+        section_url=f'/category/{section_key}/'
+    else:
+        section_name='Legal News'
+        section_url='/search.html'
+
+    breadcrumb=(f'<nav class="article-breadcrumbs" aria-label="Breadcrumb">'
+                f'<a href="/">Home</a><span>›</span>'
+                f'<a href="{H.escape(section_url,quote=True)}">{H.escape(section_name)}</a><span>›</span>'
+                f'<span aria-current="page">{H.escape(a.get("title", ""))}</span></nav>')
+
+    related=related_articles(a,all_articles)
+    related_html=''.join(article_card(x,'compact') for x in related)
+    if related and section_key:
+        related_block=(f'<section class="article-related" aria-labelledby="related-title">'
+                       f'<div class="article-related-head"><div><div class="utility-kicker">CONTINUE READING</div><h2 id="related-title">Related Legal Coverage</h2></div>'
+                       f'<a href="{H.escape(section_url,quote=True)}">More {H.escape(section_name)} stories ↗</a></div>'
+                       f'<div class="related-grid">{related_html}</div></section>')
+    else:
+        related_block=''
+
+    schema={
+        '@context':'https://schema.org',
+        '@type':'NewsArticle',
+        'headline':a.get('title',''),
+        'datePublished':published_iso,
+        'dateModified':updated_iso or published_iso,
+        'mainEntityOfPage':{'@type':'WebPage','@id':SITE_URL+a.get('url','')},
+        'author':{'@type':'Organization','name':'Lex Talk Legal Editorial Desk','url':SITE_URL+'/editorial-policy.html'},
+        'publisher':{'@type':'Organization','name':'LEXBOTICS AI MEDIA LLP','url':SITE_URL+'/','logo':{'@type':'ImageObject','url':SITE_URL+LOGO}},
+        'description':a.get('excerpt',''),
+        'inLanguage':'en',
+        'isAccessibleForFree':True,
+        'articleSection':section_name,
+    }
+    keywords=article_keywords(a)
+    if keywords:
+        schema['keywords']=', '.join(keywords)
+    if image:
+        schema['image']=[image]
+
+    breadcrumb_schema={
+        '@context':'https://schema.org',
+        '@type':'BreadcrumbList',
+        'itemListElement':[
+            {'@type':'ListItem','position':1,'name':'Home','item':SITE_URL+'/'},
+            {'@type':'ListItem','position':2,'name':section_name,'item':SITE_URL+section_url},
+            {'@type':'ListItem','position':3,'name':a.get('title',''),'item':SITE_URL+a.get('url','')}
+        ]
+    }
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
+    breadcrumb_json=json.dumps(breadcrumb_schema,ensure_ascii=False).replace('</','<\\/')
     desc=a.get('excerpt','')
-    body=f'''<main class="article-wrap"><div class="utility-kicker">{H.escape(a.get('category','Legal News'))}</div><div class="story-meta">{H.escape(a.get('published','')[:10])}</div><h1>{H.escape(a.get('title',''))}</h1><div class="article-meta">By Lex Talk Legal Editorial Desk <span>·</span> Educational &amp; informational coverage <span>·</span> <a href="{H.escape(a.get('source_url',''),quote=True)}" target="_blank" rel="noopener noreferrer">Original source</a></div>{hero}<div class="article-body">{body_html}</div><div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div><div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal does not represent that linked third-party content is error-free or current in every respect.</div></main>'''
-    return page_shell((a.get('title',''),a.get('url','')),desc,body).replace('</head>','<script type="application/ld+json">'+schema_json+'</script></head>')
+    published_meta=H.escape('Published: '+published_label if published_label else 'Publication date unavailable')
+    updated_meta=H.escape('Updated: '+updated_label) if show_updated else ''
+    updated_html=f'<span>·</span>{updated_meta}' if updated_meta else ''
+
+    body=(f'<main class="article-wrap">{breadcrumb}'
+          f'<div class="utility-kicker">{H.escape(a.get("category", "Legal News"))}</div>'
+          f'<h1>{H.escape(a.get("title", ""))}</h1>'
+          f'<div class="story-meta article-publication-date">{published_meta} {updated_html}</div>'
+          f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> Educational &amp; informational coverage <span>·</span> '
+          f'<a href="{H.escape(a.get("source_url", ""),quote=True)}" target="_blank" rel="noopener noreferrer">Original source ↗</a></div>{hero}'
+          f'<div class="article-body">{body_html}</div>{related_block}'
+          f'<div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div>'
+          f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div></main>')
+
+    html=page_shell((a.get('title',''),a.get('url','')),desc,body)
+    html=html.replace('<meta property="og:type" content="website">','<meta property="og:type" content="article">',1)
+    if image:
+        html=html.replace('<meta property="og:image" content="'+SITE_URL+LOGO+'">','<meta property="og:image" content="'+H.escape(image,quote=True)+'">',1)
+    article_head=(f'<meta property="article:published_time" content="{H.escape(published_iso,quote=True)}">'
+                  f'{("<meta property=\"article:modified_time\" content=\""+H.escape(updated_iso,quote=True)+"\">") if updated_iso else ""}'
+                  f'<meta property="article:section" content="{H.escape(section_name,quote=True)}">'
+                  f'<meta name="author" content="Lex Talk Legal Editorial Desk">'
+                  f'<link rel="stylesheet" href="/assets/pages/article.css">'
+                  f'<script type="application/ld+json">{schema_json}</script>'
+                  f'<script type="application/ld+json">{breadcrumb_json}</script>')
+    return html.replace('</head>',article_head+'</head>',1)
 
 
 def media_html(url, cls='story-image', alt=''):
@@ -854,7 +1024,7 @@ def write_sitemap(arts):
     (ROOT/'sitemap.xml').write_text(xml,encoding='utf8')
 
 
-def write_config():
+def write_config(article_redirects=None):
     (ROOT/'wrangler.jsonc').write_text('''{
   "$schema":"https://unpkg.com/wrangler@latest/config-schema.json",
   "name":"lex-talk-legal",
@@ -898,12 +1068,14 @@ Sitemap: https://lextalk.legal/news-sitemap.xml
 /assets/*
   Cache-Control: public, max-age=86400
 ''',encoding='utf8')
-    (ROOT/'_redirects').write_text('''/admin / 302
-/advocates /team.html 301
-/advocates/ /team.html 301
-/advocates/apply /team.html 301
-/advocates/apply/ /team.html 301
-''',encoding='utf8')
+    redirect_lines=['/admin / 302','/advocates /team.html 301','/advocates/ /team.html 301','/advocates/apply /team.html 301','/advocates/apply/ /team.html 301']
+    existing_pairs={(line.split(' ')[0],line.split(' ')[1]) for line in redirect_lines if len(line.split(' '))>=2}
+    for old_url,new_url in LEGACY_ARTICLE_REDIRECTS + list(article_redirects or []):
+        pair=(old_url,new_url)
+        if old_url and new_url and old_url != new_url and pair not in existing_pairs:
+            redirect_lines.append(f'{old_url} {new_url} 301')
+            existing_pairs.add(pair)
+    (ROOT/'_redirects').write_text('\n'.join(redirect_lines)+'\n',encoding='utf8')
     (ROOT/'.well-known').mkdir(exist_ok=True)
     (ROOT/'.well-known/security.txt').write_text('Contact: mailto:office.lextalklegal@gmail.com\nCanonical: https://lextalk.legal/.well-known/security.txt\nPreferred-Languages: en\n',encoding='utf8')
     (ROOT/'src/index.js').write_text('''export default {
@@ -925,16 +1097,19 @@ def main():
     if not arts:
         try:arts=json.loads(ap.read_text(encoding='utf8'))
         except Exception:arts=[]
-    arts=normalize_articles(arts);arts.sort(key=lambda x:x.get('published',''),reverse=True);ap.parent.mkdir(exist_ok=True);ap.write_text(json.dumps(arts,ensure_ascii=False,indent=2),encoding='utf8')
+    arts=normalize_articles(arts)
+    arts,article_redirects=dedupe_articles(arts)
+    arts.sort(key=lambda x:x.get('published',''),reverse=True)
+    ap.parent.mkdir(exist_ok=True);ap.write_text(json.dumps(arts,ensure_ascii=False,indent=2),encoding='utf8')
     videos=youtube();videos.sort(key=lambda x:x.get('published',''),reverse=True);(ROOT/'data/youtube.json').write_text(json.dumps(videos,ensure_ascii=False,indent=2),encoding='utf8')
     d=ROOT/'article';d.mkdir(exist_ok=True)
     for f in d.glob('*.html'):f.unlink()
-    for a in arts:(d/(slug(a['title'])+'.html')).write_text(article(a),encoding='utf8')
+    for a in arts:(d/(slug(a['title'])+'.html')).write_text(article(a,arts),encoding='utf8')
     write_category_pages(arts);write_videos_page(videos);under_construction_page();
     try:vc=extract_onecourt_vc()
     except Exception as e:print('VC extraction skipped:',e);vc=_load_vc_data()
     write_courtrooms_page(vc);write_case_status_page();
-    write_team_page();write_case_help_page();write_auctions_page();write_search_page();write_config();sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
+    write_team_page();write_case_help_page();write_auctions_page();write_search_page();write_config(article_redirects);sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
     # Rebuild the stable public sitemap. Lastmod is derived from content dates, not build time.
     write_sitemap(arts)
 
