@@ -1,0 +1,42 @@
+name: Lex Talk Legal - PIB Radar
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17,47 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lex-talk-legal-pib-radar
+  cancel-in-progress: true
+
+jobs:
+  radar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Fetch and filter PIB releases
+        run: python scripts/fetch_pib.py
+
+      - name: Commit PIB editorial queue
+        run: |
+          git config user.name "Lex Talk Legal Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/pib_queue.json
+          if git diff --cached --quiet; then
+            echo "No PIB queue changes."
+          else
+            git commit -m "chore: refresh PIB editorial radar"
+            git push
+          fi
