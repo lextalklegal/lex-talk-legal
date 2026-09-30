@@ -107,6 +107,7 @@ def category_matches(a, key):
 def write_category_pages(arts):
     template_map = {
         'courts': ROOT / 'templates/category/courts.html',
+        'law-policy': ROOT / 'templates/category/law-policy.html',
         'banking-law': ROOT / 'templates/category/banking-law.html',
         'dra': ROOT / 'templates/category/dra.html',
     }
@@ -117,6 +118,7 @@ def write_category_pages(arts):
             if not cards:
                 empty_class = {
                     'courts': 'courts-v2-empty',
+                    'law-policy': 'law-policy-v1-empty',
                     'banking-law': 'banking-v1-empty',
                     'dra': 'dra-v1-empty'
                 }.get(key, 'empty')
@@ -299,6 +301,7 @@ PAGE_STYLE_MAP = {
     "/contact.html": "contact.css",
     "/contact": "contact.css",
     "/category/courts/": "courts.css",
+    "/category/law-policy/": "law-policy.css",
     "/category/banking-law/": "banking-law.css",
     "/category/dra/": "dra.css",
     "/videos/": "videos.css",
@@ -465,6 +468,15 @@ def sync_homepage(arts,videos):
 
 
 
+
+
+def refresh_static_pages():
+    """Compatibility hook for the build smoke test.
+
+    Static/manual pages are intentionally not regenerated here. This keeps
+    page-specific designs, including locked header/footer markup, intact.
+    """
+    return
 
 
 def main():
