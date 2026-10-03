@@ -114,11 +114,16 @@ for page in sorted(public_html):
     )
     if not timestamp_match:
         raise SystemExit(f"Unified footer timestamp marker is missing: {page.relative_to(ROOT)}")
-    # The visible footer timestamp is hydrated at runtime from data/site_meta.json.
-    # Do not require the baked HTML fallback to match the current meta file; static
-    # HTML can legitimately be older than the authoritative runtime value.
+    baked_time = str(timestamp_match.group(1)).strip()
+    baked_epoch = str(timestamp_match.group(2)).strip()
+    baked_label = str(timestamp_match.group(3)).strip()
     if "data-built-at=" not in timestamp_match.group(0) or "data-built-epoch=" not in timestamp_match.group(0):
         raise SystemExit(f"Unified footer timestamp attributes are missing: {page.relative_to(ROOT)}")
+    if baked_time != site_timestamp or baked_epoch != site_epoch or baked_label != site_timestamp:
+        raise SystemExit(
+            f"Timestamp inconsistency: {page.relative_to(ROOT)} "
+            f"does not match data/site_meta.json"
+        )
     src_count = text.count('https://www.googletagmanager.com/gtag/js?id=G-3KT3SQPFXD')
     config_count = text.count("gtag('config', 'G-3KT3SQPFXD')")
     if src_count != 1 or config_count != 1:
