@@ -15,6 +15,7 @@
       "Performance analytics & weak-area practice",
       "Practice in 14 languages"
     ],
-    "landing_url": "/aibe-preparation/"
+    "landing_url": "/aibe-preparation/",
+    "ga_event": "sponsor_click"
   }
 }

@@ -26,15 +26,6 @@ MORE_NAV = [
     ('About Lex Talk Legal','/about.html')
 ]
 
-CATEGORY_MAP = {
-    'courts': ('Courts', {'supreme court', 'high court', 'courts', 'judiciary', 'case laws', 'case law', 'judgment', 'judgement', 'order'}),
-    'law-policy': ('Law & Policy', {'law & policy', 'law and policy', 'law policy', 'policy', 'legislation', 'election commission', 'electoral', 'elections', 'bill', 'act', 'parliament'}),
-    'banking-law': ('Banking Law', {'banking law', 'banking', 'sarfaesi', 'ibc', 'insolvency', 'recovery'}),
-    'drt-drat': ('DRT / DRAT', {'drt', 'drat', 'drt / drat', 'sarfaesi'}),
-    'legal-careers': ('Legal Careers', {'legal careers', 'aibe', 'bar council', 'cop', 'judiciary careers', 'judiciary'}),
-    'dra': ('DRA', {'dra', 'debt recovery agent', 'debt recovery agents'}),
-    'explained': ('Explained', {'legal explained', 'explained', 'case laws explained', 'legal explainers'}),
-}
 
 CASE_STATUS_GENERIC_HC = 'https://services.ecourts.gov.in/ecourtindia_v6/?p=casestatus/index&app_token=0dc6256584aa1dfddad859d53710b024acc973edfbbd1d5de5d935778a113e07'
 DRT_EFILING = 'https://efiling.drt.gov.in/'
@@ -44,6 +35,17 @@ ONECOURT_SC_VC = 'https://onecourt.in/Supreme_Court_VC_Hearing_Links.html'
 ONECOURT_NCLT_VC = 'https://onecourt.in/vc-links/nclt/NCLT_VC_Hearing_Links.html'
 ONECOURT_NCLAT_VC = 'https://onecourt.in/vc-links/nclat/NCLAT_VC_Hearing_Links.html'
 VC_DATA_PATH = ROOT / 'data/vc_links.json'
+PARTNER_CAMPAIGN_FILE = ROOT / 'data/partner_campaigns.json'
+SITE_META_FILE = ROOT / 'data/site_meta.json'
+GOOGLE_ANALYTICS_ID = 'G-3KT3SQPFXD'
+GOOGLE_ANALYTICS_SNIPPET = f'''<!-- Google tag (gtag.js) -->
+<script async src=\"https://www.googletagmanager.com/gtag/js?id={GOOGLE_ANALYTICS_ID}\"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+  gtag('config', '{GOOGLE_ANALYTICS_ID}');
+</script>'''
 
 COURTS = {
     'high_courts': [
@@ -248,6 +250,7 @@ def guide_markup(key):
     cta='''<section class="career-contact reveal"><div><div class="utility-kicker">CAREER OPPORTUNITY</div><h2>Want to work with Lex Talk Legal?</h2><p>Send your resume / CV to <strong>office.lextalklegal@gmail.com</strong>. Please mention the role, location preference and a short note about your experience.</p><small>Resume submission is for consideration only and does not create an offer, engagement or guarantee of selection.</small></div><a class="cta-button" href="mailto:office.lextalklegal@gmail.com?subject=Resume%20Submission%20-%20Lex%20Talk%20Legal">Send Resume ↗</a></section>''' if g.get('career_cta') else ''
     return f'''<main class="guide-page">
 <section class="guide-hero"><div><div class="utility-kicker">{H.escape(g['kicker'])}</div><h1>{H.escape(g['name'])}</h1><p>{H.escape(g['intro'])}</p><div class="guide-hero-actions"><a class="cta-button" href="#explainer">Start Explainer ↓</a><a class="ghost-button" href="#latest">Latest {H.escape(g['name'])} Stories</a></div></div><div class="guide-badge"><div class="guide-badge-icon">⚖</div><strong>LEX TALK LEGAL</strong><span>Law Simplified for Everyone</span></div></section>
+{pass_the_bar_promo('legal-careers') if key == 'legal-careers' else ''}
 <section id="explainer" class="guide-section"><div class="section-head"><h2>Animated Explainer</h2><span class="section-tools">Scroll to reveal the legal journey</span></div><div class="flow-track">{flow}</div></section>
 <section class="guide-section"><div class="section-head"><h2>Quick Timeline</h2></div><div class="timeline">{timeline}</div></section>
 <section class="guide-section"><div class="section-head"><h2>Applicable Laws &amp; Framework</h2></div><div class="law-grid">{laws}</div></section>
@@ -258,13 +261,112 @@ def guide_markup(key):
 </main>'''
 
 
+
+def load_partner_campaign(key='pass-the-bar-aibe100'):
+    # Load a manually approved sponsor campaign without network calls.
+    try:
+        data=json.loads(PARTNER_CAMPAIGN_FILE.read_text(encoding='utf8'))
+        campaign=data.get(key,{}) if isinstance(data,dict) else {}
+        return campaign if isinstance(campaign,dict) and campaign.get('active') else {}
+    except Exception:
+        return {}
+
+
+def partner_tracking_url(campaign, placement):
+    base=str(campaign.get('destination','')).strip()
+    if not base:
+        return ''
+    try:
+        parts=urllib.parse.urlsplit(base)
+        query=dict(urllib.parse.parse_qsl(parts.query, keep_blank_values=True))
+        query.update({
+            'utm_source':'lex-talk-legal',
+            'utm_medium':'sponsored_promotion',
+            'utm_campaign':str(campaign.get('campaign','aibe100')),
+            'utm_content':str(placement),
+        })
+        return urllib.parse.urlunsplit((parts.scheme,parts.netloc,parts.path,urllib.parse.urlencode(query),parts.fragment))
+    except Exception:
+        return base
+
+
+def partner_link(campaign, placement, label, css=''):
+    href=partner_tracking_url(campaign, placement)
+    return f'<a class="{H.escape(css)}" href="{H.escape(href,quote=True)}" target="_blank" rel="sponsored noopener noreferrer" data-ga-event="sponsor_click" data-ga-campaign="{H.escape(str(campaign.get('campaign','aibe100')),quote=True)}">{H.escape(label)} ↗</a>'
+
+
+def pass_the_bar_promo(placement='homepage'):
+    campaign=load_partner_campaign()
+    if not campaign:
+        return ''
+    brand=H.escape(str(campaign.get('brand','Pass The Bar')))
+    code=H.escape(str(campaign.get('promo_code','AIBE100')))
+    offer=H.escape(str(campaign.get('offer','Save ₹100')))
+    landing=H.escape(str(campaign.get('landing_url','/aibe-preparation/')),quote=True)
+    features=''.join(f'<li>{H.escape(str(x))}</li>' for x in campaign.get('features',[])[:6])
+    cta=partner_link(campaign, placement, 'Prepare for AIBE with Pass The Bar', 'ltl-sponsor-cta')
+    return f'''<section class="ltl-sponsored-promo ltl-sponsored-{H.escape(placement)}" aria-label="Sponsored promotion">
+  <div class="ltl-sponsor-top"><span>SPONSORED PROMOTION</span><span>AIBE XXII</span></div>
+  <div class="ltl-sponsor-grid">
+    <div class="ltl-sponsor-copy">
+      <div class="ltl-sponsor-kicker">{H.escape(str(campaign.get('label','AIBE XXII PREPARATION')))}</div>
+      <h2>Preparing for AIBE XXII?</h2>
+      <p>Practice with <strong>{brand}</strong> — a preparation platform built around previous AIBE papers, mock tests, Bare Acts, explanations and performance-focused practice.</p>
+      <div class="ltl-sponsor-offer"><span>Promo Code</span><strong>{code}</strong><em>{offer}</em></div>
+      <div class="ltl-sponsor-actions">{cta}<a class="ltl-sponsor-info" href="{landing}">See AIBE preparation details ↗</a></div>
+    </div>
+    <div class="ltl-sponsor-features">
+      <div class="ltl-sponsor-feature-head">WHAT YOU GET</div>
+      <ul>{features}</ul>
+    </div>
+  </div>
+  <div class="ltl-sponsor-note">Sponsored placement. Offer terms are set by {brand}; verify the current offer and applicable terms on the advertiser's website.</div>
+</section>'''
+
+
+def is_aibe_related(article_item):
+    hay=' '.join([
+        str(article_item.get('title','')),
+        str(article_item.get('category','')),
+        ' '.join(str(x) for x in article_item.get('labels',[]))
+    ]).lower()
+    return any(term in hay for term in ('aibe','all india bar examination','certificate of practice'))
+
+
+def _normalise_search_text(value):
+    text = str(value or '').lower().replace('&amp;', '&')
+    text = re.sub(r'[^a-z0-9&/]+', ' ', text)
+    return re.sub(r'\s+', ' ', text).strip()
+
+
+def _term_matches(text, term):
+    term_norm = _normalise_search_text(term)
+    if not term_norm:
+        return False
+    if len(term_norm) <= 4 or ' ' not in term_norm:
+        return re.search(r'(?<![a-z0-9])' + re.escape(term_norm) + r'(?![a-z0-9])', text) is not None
+    return term_norm in text
+
+
 def category_matches(a, key):
-    labels = {str(x).strip().lower() for x in a.get("labels", [])}
-    title = str(a.get("title", "")).lower()
     _, terms = CATEGORY_MAP[key]
-    if labels & {str(t).strip().lower() for t in terms}:
-        return True
-    return any(str(term).strip().lower() in title for term in terms)
+    title = _normalise_search_text(a.get('title', ''))
+    category = _normalise_search_text(a.get('category', ''))
+    labels = [_normalise_search_text(x) for x in a.get('labels', [])]
+    label_blob = ' | '.join(labels)
+    return any(_term_matches(title, term) or _term_matches(category, term) or _term_matches(label_blob, term) for term in terms)
+
+
+def explained_guide_cards():
+    guides=[
+        ('COURTS & JUDGMENTS','Courts','Understand the judicial structure, court process, jurisdiction and official court resources.','/category/courts/'),
+        ('LAW & POLICY','Law & Policy','Follow how Bills, Acts, rules, notifications, policy decisions and judicial interpretation fit together.','/category/law-policy/'),
+        ('BANKING & RECOVERY','Banking & Recovery','Explore banking recovery, SARFAESI, insolvency, debt and related legal frameworks.','/category/banking-law/'),
+        ('DRT / DRAT','DRT / DRAT','Understand the Recovery Tribunal system, procedural stages, appeals and recovery-related concepts.','/category/drt-drat/'),
+        ('LEGAL CAREERS','Legal Careers','Explore advocacy, legal careers, AIBE, enrolment, recruitment and professional pathways.','/category/legal-careers/'),
+        ('DRA','Debt Recovery Agents','Understand the role, conduct, documentation, privacy and compliance framework around recovery agents.','/category/dra/'),
+    ]
+    return ''.join(f'<a class="explained-guide-card" href="{H.escape(url,quote=True)}"><span class="explained-guide-kicker">{H.escape(kicker)}</span><h3>{H.escape(title)}</h3><p>{H.escape(desc)}</p><span class="explained-guide-link">Open guide ↗</span></a>' for kicker,title,desc,url in guides)
 
 
 def write_category_pages(arts):
@@ -279,11 +381,16 @@ def write_category_pages(arts):
                 empty_class=CATEGORY_TEMPLATE_EMPTY_CLASS.get(key, 'empty')
                 cards=f'<div class="{empty_class}">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next editorial sync will update this section.</div>'
             content=template.replace('{{LATEST_STORIES}}', cards)
+            if key == 'explained':
+                content = content.replace('{{EVERGREEN_GUIDES}}', explained_guide_cards())
             desc=f'Lex Talk Legal — {name} news, updates, explainer and official references.'
         elif key in GUIDES:
             g=GUIDES[key]
             cards=''.join(article_card(a) for a in items[:12]) or '<div class="empty">No stories published in this section yet. Publish a Blogger post with the appropriate label and the next automated sync will update this section.</div>'
             content=guide_markup(key).replace(f'<div class="grid" id="latest-guide-{key}"></div>', f'<div class="grid">{cards}</div>')
+            if key == 'legal-careers':
+                career_resources = '''<section class="guide-section"><div class="section-head"><h2>Career Resources</h2><span class="section-tools">Practical desks &amp; preparation resources</span></div><div class="law-grid"><article class="law-card reveal"><div class="law-card-kicker">JOBS DESK</div><h3>Legal Jobs &amp; Internships</h3><p>Browse the manually maintained Legal Jobs Board for vacancies, internships, fellowships and professional opportunities.</p><a class="guide-link" href="/jobs/">Open Jobs Board ↗</a></article><article class="law-card reveal"><div class="law-card-kicker">AIBE</div><h3>AIBE Preparation</h3><p>Explore the current sponsored AIBE preparation campaign, including the advertiser-provided AIBE100 offer.</p><a class="guide-link" href="/aibe-preparation/">Open AIBE Preparation ↗</a></article><article class="law-card reveal"><div class="law-card-kicker">OFFICIAL SOURCE</div><h3>India Code</h3><p>Use the official government database for Acts and other statutory materials.</p><a class="guide-link" href="https://indiacode.gov.in/" target="_blank" rel="noopener noreferrer">Open India Code ↗</a></article></div></section>'''
+                content = content.replace('</main>', career_resources + '</main>', 1)
             desc=f'Lex Talk Legal — {g["name"]}: history, legal framework, practical explainer and latest stories.'
         else:
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
@@ -294,9 +401,23 @@ def write_category_pages(arts):
         p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
 
 def write_videos_page(videos):
+    template_path=ROOT/'templates/videos.html'
+    template=template_path.read_text(encoding='utf8') if template_path.exists() else ''
     cards=''.join(video_card(v) for v in videos[:30]) or '<div class="empty">No YouTube videos were returned in the latest sync.</div>'
-    content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>LATEST VIDEOS</h1><p class="lead">Latest Lex Talk Legal videos are synced automatically from YouTube.</p><div class="yt-grid">{cards}</div></main>'
-    (ROOT/'videos').mkdir(exist_ok=True); (ROOT/'videos/index.html').write_text(page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content),encoding='utf8')
+    if not template:
+        content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>LATEST VIDEOS</h1><p class="lead">Latest Lex Talk Legal videos are synced automatically from YouTube.</p><div class="yt-grid">{cards}</div></main>'
+    else:
+        featured=''
+        if videos:
+            v=videos[0]
+            url=H.escape(v.get('url','https://www.youtube.com/@LexTalkLegal'),quote=True)
+            thumb=H.escape(v.get('thumbnail',''),quote=True)
+            title=H.escape(v.get('title','Lex Talk Legal'))
+            visual=f'<img src="{thumb}" alt="" loading="lazy" decoding="async">' if thumb else '<div></div>'
+            featured=f'<article class="videos-v2-featured"><a href="{url}" target="_blank" rel="noopener noreferrer"><div class="videos-v2-featured-thumb">{visual}<span>▶</span></div></a><div><div class="eyebrow">LATEST UPLOAD</div><h3>{title}</h3><p>Open the latest Lex Talk Legal video directly on YouTube.</p><a class="videos-v2-btn primary" href="{url}" target="_blank" rel="noopener noreferrer">Watch on YouTube ↗</a></div></article>'
+        content=template.replace('{{VIDEO_COUNT}}',str(min(len(videos),30))).replace('{{FEATURED_HTML}}',featured).replace('{{VIDEO_GRID}}',cards)
+    (ROOT/'videos').mkdir(exist_ok=True)
+    (ROOT/'videos/index.html').write_text(page_shell(('Latest Videos','/videos/'),'Latest Lex Talk Legal videos, legal news and explainers.',content),encoding='utf8')
 
 def button(label,url,kind='official'):
     return f'<a class="link-button {kind}" href="{H.escape(url,quote=True)}" target="_blank" rel="noopener">{H.escape(label)}</a>'
@@ -519,13 +640,13 @@ MEGA_GROUPS=[
  ('MEDIA',[('Videos','/videos/'),('YouTube','https://www.youtube.com/@LexTalkLegal'),('Advertise','/advertise.html')])]
 
 CATEGORY_MAP={
- 'courts':('Courts',{'supreme court','high court','courts','judiciary','case laws','case law'}),
- 'law-policy':('Law & Policy',{'law & policy','law and policy','law policy','policy','legislation','election commission','electoral','elections','bill','act','parliament','eci','sir','chief election commissioner'}),
- 'banking-law':('Banking Law',{'banking law','banking','bank','banks','bank strike','banking strike','finance','sarfaesi','ibc','insolvency','recovery'}),
- 'drt-drat':('DRT / DRAT',{'drt','drat','drt / drat','sarfaesi'}),
- 'legal-careers':('Legal Careers',{'legal careers','aibe','bar council','cop','judiciary careers','judiciary'}),
- 'dra':('DRA',{'dra','debt recovery agent','debt recovery agents'}),
- 'explained':('Explained',{'legal explained','explained','case laws explained','legal explainers'})}
+ 'courts':('Courts',{'supreme court','high court','court','courts','judiciary','case law','case laws','judgment','judgement','order','bench','writ petition','petition'}),
+ 'law-policy':('Law & Policy',{'law & policy','law and policy','law policy','policy','legislation','election commission','electoral','elections','bill','act','parliament','eci','sir','chief election commissioner','government policy','ministry','notification','rules'}),
+ 'banking-law':('Banking Law',{'banking law','banking','bank','banks','bank strike','banking strike','finance','financial institution','loan','npa','sarfaesi','ibc','insolvency','recovery','debt'}),
+ 'drt-drat':('DRT / DRAT',{'drt','drat','debt recovery tribunal','debt recovery appellate tribunal','drt / drat','sarfaesi','recovery certificate','section 17 sarfaesi'}),
+ 'legal-careers':('Legal Careers',{'legal careers','aibe','all india bar examination','bar council','certificate of practice','advocate enrolment','advocate enrollment','legal job','law job','internship','judicial service','judiciary careers'}),
+ 'dra':('DRA',{'dra','debt recovery agent','debt recovery agents','recovery agent'}),
+ 'explained':('Explained',{'legal explained','explained','case laws explained','legal explainers','explainer','guide'})}
 
 LEGACY_ARTICLE_REDIRECTS = [
     ('/article/blog00111.html', '/article/delhi-high-court-slaps-1-lakh-costs-on-advocate-for-attending-hearing-from-a-moving-car.html'),
@@ -535,14 +656,19 @@ LEGACY_ARTICLE_REDIRECTS = [
 # Page-specific assets are resolved from the canonical path so recurring builds
 # preserve the approved design of each manual/static page.
 PAGE_STYLE_MAP = {
+    '/': 'home.css',
     '/about.html': 'about.css',
     '/about': 'about.css',
     '/contact.html': 'contact.css',
     '/contact': 'contact.css',
+    '/category/legal-careers/': 'legal-careers.css',
+    '/aibe-preparation/': 'aibe-preparation.css',
+    '/advertise.html': 'advertise.css',
     '/category/courts/': 'courts.css',
     '/category/law-policy/': 'law-policy.css',
     '/category/banking-law/': 'banking-law.css',
     '/category/dra/': 'dra.css',
+    '/category/explained/': 'explained.css',
     '/videos/': 'videos.css',
     '/case-status/': 'case-status.css',
     '/courtrooms/': 'courtrooms.css',
@@ -553,6 +679,7 @@ CATEGORY_TEMPLATE_MAP = {
     'law-policy': ROOT / 'templates/category/law-policy.html',
     'banking-law': ROOT / 'templates/category/banking-law.html',
     'dra': ROOT / 'templates/category/dra.html',
+    'explained': ROOT / 'templates/category/explained.html',
 }
 
 CATEGORY_TEMPLATE_EMPTY_CLASS = {
@@ -560,9 +687,31 @@ CATEGORY_TEMPLATE_EMPTY_CLASS = {
     'law-policy': 'lawpolicy-v2-empty',
     'banking-law': 'banking-v1-empty',
     'dra': 'dra-v1-empty',
+    'explained': 'explained-v1-empty',
 }
 
 CATEGORY_TEMPLATE_LIMIT = 12
+
+# Permanent source-of-truth map. The common editorial builder may update only
+# surfaces explicitly owned by the editorial sync. Manual/workflow-owned pages
+# must never be regenerated here.
+PAGE_OWNERSHIP = {
+    '/': 'editorial sync (scripts/build_site.py)',
+    '/category/courts/': 'editorial sync (templates/category/courts.html)',
+    '/category/law-policy/': 'editorial sync (templates/category/law-policy.html)',
+    '/category/banking-law/': 'editorial sync (templates/category/banking-law.html)',
+    '/category/dra/': 'editorial sync (templates/category/dra.html)',
+    '/category/explained/': 'editorial sync (templates/category/explained.html)',
+    '/category/legal-careers/': 'editorial sync (guide_markup in scripts/build_site.py)',
+    '/videos/': 'editorial sync (templates/videos.html)',
+    '/about.html': 'manual/static',
+    '/contact.html': 'manual/static',
+    '/case-status/': 'manual/static (templates/case-status.html)',
+    '/courtrooms/': 'VC workflow (scripts/build_vc.py)',
+    '/auctions/': 'Auctions workflow (scripts/build_auctions.py)',
+    '/jobs/': 'Jobs workflow (scripts/build_jobs.py)',
+    '/aibe-preparation/': 'manual/static sponsored landing page',
+}
 
 def clean(raw, remove_first_image=False):
     soup=BeautifulSoup(raw or '','html.parser')
@@ -693,6 +842,9 @@ def blogger():
     return normalize_articles(out)
 
 def youtube():
+    if os.getenv('LOCAL_BUILD') == '1':
+        try:return json.loads((ROOT/'data/youtube.json').read_text(encoding='utf8'))
+        except Exception:return []
     channel_id=CHANNEL_ID
     try:
         if not channel_id:
@@ -726,33 +878,22 @@ BUILD_DT=datetime.now(ZoneInfo('Asia/Kolkata'))
 BUILD_TIME=BUILD_DT.strftime('%d %B %Y, %H:%M:%S')
 BUILD_EPOCH=int(BUILD_DT.timestamp())
 
-GOOGLE_ANALYTICS_ID='G-3KT3SQPFXD'
-GOOGLE_ANALYTICS_SNIPPET=f'''<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={GOOGLE_ANALYTICS_ID}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{dataLayer.push(arguments);}}
-  gtag('js', new Date());
-
-  gtag('config', '{GOOGLE_ANALYTICS_ID}');
-</script>
-'''
-
-def page_shell(title,description,content):
+def page_shell(title,description,content,extra_head='',robots_override=None,include_ads=True):
     t=title[0] if isinstance(title,tuple) else title
     canonical=title[1] if isinstance(title,tuple) else '/'
-    robots='index,follow,max-image-preview:large'
+    robots=robots_override or 'index,follow,max-image-preview:large'
     nav=nav_html()
     style_file=PAGE_STYLE_MAP.get(canonical, '')
     page_css=f'<link rel="stylesheet" href="/assets/pages/{H.escape(style_file,quote=True)}">' if style_file else ''
     schema={"@context":"https://schema.org","@type":"WebSite","name":"Lex Talk Legal","url":SITE_URL+"/","description":"Law Simplified for Everyone.","publisher":{"@type":"Organization","name":"LEXBOTICS AI MEDIA LLP","url":SITE_URL+"/"}}
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
-    return f'''<!doctype html><html lang="en"><head>{GOOGLE_ANALYTICS_SNIPPET}<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+{GOOGLE_ANALYTICS_SNIPPET}
 <meta name="description" content="{H.escape(description,quote=True)}"><meta name="robots" content="{robots}">
 <link rel="canonical" href="{SITE_URL}{H.escape(canonical,quote=True)}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="Lex Talk Legal"><meta property="og:title" content="{H.escape(t,quote=True)}"><meta property="og:description" content="{H.escape(description,quote=True)}"><meta property="og:url" content="{SITE_URL}{H.escape(canonical,quote=True)}"><meta property="og:image" content="{SITE_URL}/assets/LexTalkLegal_Logo-wo-bg.png"><meta name="twitter:card" content="summary_large_image">
-<title>{H.escape(t)} | Lex Talk Legal</title><link rel="stylesheet" href="/assets/site.css">{page_css}<script type="application/ld+json">{schema_json}</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421" crossorigin="anonymous"></script></head><body>
+<title>{H.escape(t)} | Lex Talk Legal</title><link rel="stylesheet" href="/assets/site.css">{page_css}{extra_head}<script type="application/ld+json">{schema_json}</script>
+{("<script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3161673810996421\" crossorigin=\"anonymous\"></script>" if include_ads else "")}</head><body>
 <div class="site-accent"></div><div class="utility-bar"><div class="wrap utility-inner"><div class="utility-left"><span class="live-dot">●</span><span id="dateLabel">--</span><span class="utility-sep">|</span><span id="timeLabel">--:--:-- IST</span></div><div class="utility-actions"><button class="control-btn" id="themeBtn" type="button" aria-label="Switch to dark mode">☾ Dark</button></div></div></div>
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
 <nav class="nav"><div class="wrap nav-inner">{nav}</div></nav>
@@ -843,7 +984,7 @@ def article(a, all_articles=None):
           f'<div class="story-meta article-publication-date">{published_meta} {updated_html}</div>'
           f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> Educational &amp; informational coverage <span>·</span> '
           f'<a href="{H.escape(a.get("source_url", ""),quote=True)}" target="_blank" rel="noopener noreferrer">Original source ↗</a></div>{hero}'
-          f'<div class="article-body">{body_html}</div>{related_block}'
+          f'<div class="article-body">{body_html}</div>{pass_the_bar_promo("article-aibe") if is_aibe_related(a) else ""}{related_block}'
           f'<div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div>'
           f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div></main>')
 
@@ -906,7 +1047,7 @@ def sync_homepage(arts,videos):
     latest_html=''.join(article_card(a,'home-latest') for a in latest) or '<div class="empty">No additional recent stories are available right now.</div>'
     vid_html=''.join(video_card(v) for v in vids) or '<div class="empty">No recent YouTube videos are available right now.</div>'
     updated=f'{BUILD_TIME} IST'
-    content=f'''<main class="home home-v9"><section class="home-breaking"><div class="wrap ticker-inner"><span class="breaking">LATEST</span><span class="tick">Court updates · Judgments · Banking &amp; Recovery · Auctions · Legal Careers · Practical Legal Awareness</span></div></section><div class="wrap"><section class="home-front section"><div class="home-front-grid"><div>{lead_html}</div><div class="home-secondary-list">{secondary}</div></div><div class="front-fresh">Front page selection: the latest {len(pool) if pool else 0} recent stories are prioritised here; older stories remain available in their sections.</div></section><div class="home-ad ad-wrap"><div class="ad-slot"><span>ADVERTISEMENT</span></div></div><section class="section home-news-section"><div class="home-main-grid"><div><div class="section-head"><div><span class="section-kicker">NEWS DESK</span><h2>Latest Legal News</h2></div><p>Updated {H.escape(updated)}</p></div><div class="home-latest-grid">{latest_html}</div><div class="section-more"><a class="text-link" href="/search.html">View more legal news ↗</a></div></div><aside class="home-quick-rail"><div class="quick-rail-sticky"><div class="quick-rail-title"><span>QUICK DESK</span><strong>Useful links</strong></div><a class="quick-card" href="/auctions/"><span class="quick-icon">🏦</span><span><b>Today’s Auctions</b><small>Bank · FI · Authority</small></span><em>↗</em></a><a class="quick-card" href="/courtrooms/"><span class="quick-icon">⚖</span><span><b>Courtrooms / VC</b><small>Public hearing links</small></span><em>↗</em></a><a class="quick-card" href="/case-status/"><span class="quick-icon">⌕</span><span><b>Case Status</b><small>Official court portals</small></span><em>↗</em></a><a class="quick-card" href="/category/legal-careers/"><span class="quick-icon">▣</span><span><b>Latest Jobs</b><small>Legal careers &amp; opportunities</small></span><em>↗</em></a><div class="ad-slot rail-ad">ADVERTISEMENT</div></div></aside></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">AUCTION DESK</span><h2>Bank, FI &amp; Authority Auctions</h2></div><a class="text-link" href="/auctions/">Open Auction Desk ↗</a></div><div class="auction-home-grid"><article><div class="auction-home-icon">🏦</div><h3>Bank Auctions</h3><p>Residential, commercial and industrial assets notified for public sale.</p></article><article><div class="auction-home-icon">🏢</div><h3>Financial Institution Auctions</h3><p>Publicly notified assets and participation information.</p></article><article><div class="auction-home-icon">🏛</div><h3>Authority Auctions</h3><p>Government and institutional auction notices and updates.</p></article></div><div class="auction-disclaimer">Always read and independently verify the issuing authority’s original auction notice, bidder eligibility, EMD, title/possession position, dues and sale conditions.</div></section><section class="section"><div class="home-service-grid"><article class="home-service case-info"><span class="section-kicker">CASE INFORMATION DESK</span><h2>Have a case file you need to understand?</h2><p>Send a brief description or email relevant documents for consideration. Any review, advice, representation or professional routing is subject to separate consideration and acceptance.</p><div class="service-actions"><a class="primary-btn" href="/case-help.html">Case Information Desk ↗</a><a class="ghost-btn dark-ghost" href="mailto:office.lextalklegal@gmail.com?subject=Case%20Information%20Request">Email the Office</a></div></article><article class="home-service team-info"><span class="section-kicker">OUR ADVOCATE TEAM</span><h2>Courts, Forums &amp; Practice Areas</h2><p>Meet the advocates associated with the platform and view factual information about identified courts/forums and practice areas.</p><div class="team-mini-row"><span>COURTS</span><span>DRT / DRAT</span><span>BANKING &amp; RECOVERY</span><span>CIVIL &amp; COMMERCIAL</span></div><div class="service-actions"><a class="text-link" href="/team.html">Meet the Team ↗</a></div></article></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">EXPLAINED</span><h2>Legal Concepts, Simply Explained</h2></div><a class="text-link" href="/category/explained/">Explore explainers ↗</a></div><div class="explainer-home-grid"><a href="/category/explained/"><span>01</span><b>Understand a Court Order</b><small>Observations, directions &amp; operative portions</small></a><a href="/category/banking-law/"><span>02</span><b>SARFAESI &amp; Recovery</b><small>Process, notices, possession &amp; remedies</small></a><a href="/category/legal-careers/"><span>03</span><b>AIBE &amp; Legal Careers</b><small>Exams, enrolment &amp; practical guidance</small></a></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">WATCH</span><h2>Latest on YouTube</h2></div><a class="text-link" href="/videos/">View all videos ↗</a></div><div class="video-grid home-video-grid">{vid_html}</div></section></div></main><section class="newsletter home-newsletter"><div class="wrap newsletter-inner"><div><span class="section-kicker">THE LEGAL BRIEF</span><h2>Stay updated with important legal developments</h2><p>Selected court updates, judgments, explainers and career information.</p></div><form class="newsletter-form" onsubmit="event.preventDefault();alert('Newsletter signup will be connected to the selected mailing provider before public launch.');"><input type="email" required placeholder="Your email address" aria-label="Your email address"><button class="primary-btn" type="submit">Subscribe</button></form></div></section>'''
+    content=f'''<main class="home home-v9"><section class="home-breaking"><div class="wrap ticker-inner"><span class="breaking">LATEST</span><span class="tick">Court updates · Judgments · Banking &amp; Recovery · Auctions · Legal Careers · Practical Legal Awareness</span></div></section><div class="wrap"><section class="home-front section"><div class="home-front-grid"><div>{lead_html}</div><div class="home-secondary-list">{secondary}</div></div><div class="front-fresh">Front page selection: the latest {len(pool) if pool else 0} recent stories are prioritised here; older stories remain available in their sections.</div></section><div class="home-ad ad-wrap"><div class="ad-slot"><span>ADVERTISEMENT</span></div></div><div class="wrap">{pass_the_bar_promo("homepage")}</div><section class="section home-news-section"><div class="home-main-grid"><div><div class="section-head"><div><span class="section-kicker">NEWS DESK</span><h2>Latest Legal News</h2></div><p>Updated {H.escape(updated)}</p></div><div class="home-latest-grid">{latest_html}</div><div class="section-more"><a class="text-link" href="/search.html">View more legal news ↗</a></div></div><aside class="home-quick-rail"><div class="quick-rail-sticky"><div class="quick-rail-title"><span>QUICK DESK</span><strong>Useful links</strong></div><a class="quick-card" href="/auctions/"><span class="quick-icon">🏦</span><span><b>Today’s Auctions</b><small>Bank · FI · Authority</small></span><em>↗</em></a><a class="quick-card" href="/courtrooms/"><span class="quick-icon">⚖</span><span><b>Courtrooms / VC</b><small>Public hearing links</small></span><em>↗</em></a><a class="quick-card" href="/case-status/"><span class="quick-icon">⌕</span><span><b>Case Status</b><small>Official court portals</small></span><em>↗</em></a><a class="quick-card" href="/category/legal-careers/"><span class="quick-icon">▣</span><span><b>Latest Jobs</b><small>Legal careers &amp; opportunities</small></span><em>↗</em></a><div class="ad-slot rail-ad">ADVERTISEMENT</div></div></aside></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">AUCTION DESK</span><h2>Bank, FI &amp; Authority Auctions</h2></div><a class="text-link" href="/auctions/">Open Auction Desk ↗</a></div><div class="auction-home-grid"><article><div class="auction-home-icon">🏦</div><h3>Bank Auctions</h3><p>Residential, commercial and industrial assets notified for public sale.</p></article><article><div class="auction-home-icon">🏢</div><h3>Financial Institution Auctions</h3><p>Publicly notified assets and participation information.</p></article><article><div class="auction-home-icon">🏛</div><h3>Authority Auctions</h3><p>Government and institutional auction notices and updates.</p></article></div><div class="auction-disclaimer">Always read and independently verify the issuing authority’s original auction notice, bidder eligibility, EMD, title/possession position, dues and sale conditions.</div></section><section class="section"><div class="home-service-grid"><article class="home-service case-info"><span class="section-kicker">CASE INFORMATION DESK</span><h2>Have a case file you need to understand?</h2><p>Send a brief description or email relevant documents for consideration. Any review, advice, representation or professional routing is subject to separate consideration and acceptance.</p><div class="service-actions"><a class="primary-btn" href="/case-help.html">Case Information Desk ↗</a><a class="ghost-btn dark-ghost" href="mailto:office.lextalklegal@gmail.com?subject=Case%20Information%20Request">Email the Office</a></div></article><article class="home-service team-info"><span class="section-kicker">OUR ADVOCATE TEAM</span><h2>Courts, Forums &amp; Practice Areas</h2><p>Meet the advocates associated with the platform and view factual information about identified courts/forums and practice areas.</p><div class="team-mini-row"><span>COURTS</span><span>DRT / DRAT</span><span>BANKING &amp; RECOVERY</span><span>CIVIL &amp; COMMERCIAL</span></div><div class="service-actions"><a class="text-link" href="/team.html">Meet the Team ↗</a></div></article></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">EXPLAINED</span><h2>Legal Concepts, Simply Explained</h2></div><a class="text-link" href="/category/explained/">Explore explainers ↗</a></div><div class="explainer-home-grid"><a href="/category/explained/"><span>01</span><b>Understand a Court Order</b><small>Observations, directions &amp; operative portions</small></a><a href="/category/banking-law/"><span>02</span><b>SARFAESI &amp; Recovery</b><small>Process, notices, possession &amp; remedies</small></a><a href="/category/legal-careers/"><span>03</span><b>AIBE &amp; Legal Careers</b><small>Exams, enrolment &amp; practical guidance</small></a></div></section><section class="section"><div class="section-head"><div><span class="section-kicker">WATCH</span><h2>Latest on YouTube</h2></div><a class="text-link" href="/videos/">View all videos ↗</a></div><div class="video-grid home-video-grid">{vid_html}</div></section></div></main><section class="newsletter home-newsletter"><div class="wrap newsletter-inner"><div><span class="section-kicker">THE LEGAL BRIEF</span><h2>Stay updated with important legal developments</h2><p>Selected court updates, judgments, explainers and career information.</p></div><form class="newsletter-form" onsubmit="event.preventDefault();alert('Newsletter signup will be connected to the selected mailing provider before public launch.');"><input type="email" required placeholder="Your email address" aria-label="Your email address"><button class="primary-btn" type="submit">Subscribe</button></form></div></section>'''
     (ROOT/'index.html').write_text(page_shell(('Lex Talk Legal','/'),'Fresh legal news, court updates, judgments, legal education and practical legal awareness.',content),encoding='utf8')
 
 
@@ -966,6 +1107,16 @@ def _article_datetime(value):
         return None
 
 
+def write_site_meta():
+    """Publish one site-wide build timestamp used by every public footer."""
+    SITE_META_FILE.parent.mkdir(exist_ok=True)
+    SITE_META_FILE.write_text(json.dumps({
+        'built_at_ist': f'{BUILD_TIME} IST',
+        'built_at_epoch': BUILD_EPOCH,
+        'generated_by': 'Lex Talk Legal editorial build'
+    }, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
+
+
 def write_news_sitemap(arts):
     """Write Google's News sitemap for articles published in the last 48 hours."""
     now=datetime.now(timezone.utc)
@@ -1000,8 +1151,8 @@ def write_sitemap(arts):
     """Write a stable XML sitemap with accurate content-derived lastmod values."""
     # Use the site's canonical extensionless routes where the platform redirects
     # the .html asset URL (notably About and Contact).
-    static_urls=['/courtrooms/','/case-status/','/videos/','/auctions/','/case-help.html','/team.html','/search.html',
-                 '/about','/contact','/privacy-policy.html','/terms-of-use.html','/disclaimer.html',
+    static_urls=['/courtrooms/','/case-status/','/videos/','/auctions/','/jobs/','/case-help.html','/team.html','/search.html',
+                 '/about','/contact','/advertise.html','/privacy-policy.html','/terms-of-use.html','/disclaimer.html',
                  '/editorial-policy.html','/copyright-policy.html','/corrections-grievance.html','/ai-content-policy.html',
                  '/profile-guidelines.html']
     entries=['<url><loc>'+H.escape(SITE_URL+'/',quote=False)+'</loc></url>']
@@ -1046,22 +1197,7 @@ def write_config(article_redirects=None):
   "vars":{"SITE_URL":"https://lextalk.legal"}
 }
 ''',encoding='utf8')
-    (ROOT/'.assetsignore').write_text('''.git
-.github
-src
-db
-admin
-advocates
-functions
-scripts
-*.py
-*.md
-README*.txt
-wrangler.jsonc
-.gitignore
-.assetsignore
-dev.vars*
-''',encoding='utf8')
+    # .assetsignore is repository configuration and is intentionally preserved.
     (ROOT/'robots.txt').write_text('''User-agent: *
 Allow: /
 Disallow: /admin
@@ -1113,15 +1249,12 @@ def main():
     arts,article_redirects=dedupe_articles(arts)
     arts.sort(key=lambda x:x.get('published',''),reverse=True)
     ap.parent.mkdir(exist_ok=True);ap.write_text(json.dumps(arts,ensure_ascii=False,indent=2),encoding='utf8')
+    write_site_meta()
     videos=youtube();videos.sort(key=lambda x:x.get('published',''),reverse=True);(ROOT/'data/youtube.json').write_text(json.dumps(videos,ensure_ascii=False,indent=2),encoding='utf8')
     d=ROOT/'article';d.mkdir(exist_ok=True)
     for f in d.glob('*.html'):f.unlink()
     for a in arts:(d/(slug(a['title'])+'.html')).write_text(article(a,arts),encoding='utf8')
-    write_category_pages(arts);write_videos_page(videos);under_construction_page();
-    try:vc=extract_onecourt_vc()
-    except Exception as e:print('VC extraction skipped:',e);vc=_load_vc_data()
-    write_courtrooms_page(vc);write_case_status_page();
-    write_team_page();write_case_help_page();write_auctions_page();write_search_page();write_config(article_redirects);sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
+    write_category_pages(arts);write_videos_page(videos);write_config(article_redirects);sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
     # Rebuild the stable public sitemap. Lastmod is derived from content dates, not build time.
     write_sitemap(arts)
 

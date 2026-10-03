@@ -45,6 +45,19 @@
     if(tl)tl.textContent=d.toLocaleTimeString('en-IN',{...o,hour12:false})+' IST';
   }
   clock();setInterval(clock,1000);
+  async function hydrateBuildTimestamp(){
+    const els=[...document.querySelectorAll('.updated-line')];
+    if(!els.length)return;
+    try{
+      const r=await fetch('/data/site_meta.json?ts='+Date.now(),{cache:'no-store'});
+      if(!r.ok)return;
+      const data=await r.json();
+      const label=String(data.built_at_ist||'').trim();
+      if(!label)return;
+      els.forEach(el=>{el.textContent='Content last updated: '+label;if(data.built_at_epoch)el.dataset.builtEpoch=String(data.built_at_epoch);});
+    }catch(_){}
+  }
+  hydrateBuildTimestamp();
 })();
 (function(){
   function ensureModal(){
@@ -59,5 +72,21 @@
   document.addEventListener('click',e=>{
     const btn=e.target.closest('.vc-link');if(!btn||!btn.dataset.vcUrl)return;e.preventDefault();
     const bd=ensureModal();bd.querySelector('#vcModalTitle').textContent=btn.dataset.vcTitle||'VC Link';bd.querySelector('#vcModalText').textContent='You are about to open a public virtual-hearing destination in a new tab.';bd.querySelector('#vcModalNote').textContent='Verify the court number, date and current VC details against the concerned court or tribunal cause list before joining.';window.__lexVCUrl=btn.dataset.vcUrl;bd.classList.add('is-open');document.body.classList.add('vc-modal-open');
+  });
+})();
+
+/* Lex Talk Legal — GA4 interaction tracking */
+(function(){
+  function track(name,params){try{if(typeof window.gtag==='function')window.gtag('event',name,params||{});}catch(_){} }
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a'); if(!a)return;
+    const href=a.getAttribute('href')||'';
+    const text=(a.innerText||'').trim().slice(0,100);
+    if(a.dataset.gaEvent){track(a.dataset.gaEvent,{campaign:a.dataset.gaCampaign||undefined,link_url:a.href,link_text:text});return;}
+    if(/passthebar\.org/i.test(href)){track('sponsor_click',{campaign:'aibe100',link_url:a.href,link_text:text});return;}
+    if(/youtube\.com/i.test(href)){track('youtube_click',{link_url:a.href,link_text:text});return;}
+    if(/^mailto:/i.test(href)){track('contact_click',{method:'email',link_text:text});return;}
+    try{if(/(^|\.)wa\.me$/i.test(new URL(href,location.href).hostname)){track('whatsapp_click',{link_url:a.href});return;}}catch(_){}
+    if(a.target==='_blank'&&/^https?:/i.test(href)){track('external_link_click',{link_url:a.href,link_text:text});}
   });
 })();

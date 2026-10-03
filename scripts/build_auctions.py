@@ -44,6 +44,7 @@ def main():
     t=t.replace("{{AUCTION_CARDS}}",cards).replace("{{UPDATED_AT}}",datetime.now(timezone.utc).date().isoformat())
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(site.page_shell(("Auction Desk","/auctions/"),"Lex Talk Legal manually maintained public auction listings.",t),encoding="utf8")
+    site.write_site_meta()
     print(f"Wrote {OUT}")
 if __name__=="__main__":
     main()
