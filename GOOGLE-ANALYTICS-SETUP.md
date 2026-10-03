@@ -1,13 +1,28 @@
 # Google Analytics 4 — Lex Talk Legal
 
-Measurement ID: `G-3KT3SQPFXD`
+## Measurement ID
 
-The Google tag is installed on public static pages and is included in `scripts/build_site.py` so future generated pages receive the same tag automatically.
+`G-3KT3SQPFXD`
 
-## Verify after deployment
-1. Open `https://lextalk.legal/`.
-2. Use Google Tag Assistant to connect to the domain.
-3. Confirm the Google tag ID `G-3KT3SQPFXD` appears.
-4. In Google Analytics, open **Reports → Realtime** and confirm a current user/page view is visible after visiting the site.
+## Current implementation
 
-Do not add a second Google Analytics snippet manually to individual pages. Keep the single measurement ID in `scripts/build_site.py` for generated pages.
+The GA4 Google tag is injected centrally by `scripts/build_site.py` and is present on public HTML pages. Protected/manual HTML pages are also kept covered by the repository smoke test.
+
+## Events currently instrumented
+
+- `sponsor_click` — paid partner / Pass The Bar link
+- `youtube_click` — YouTube destination
+- `contact_click` — mail/contact link
+- `whatsapp_click` — WhatsApp destination
+- `external_link_click` — selected external links opened in a new tab
+
+## Verification
+
+1. Open Google Analytics.
+2. Select the Lex Talk Legal GA4 property.
+3. Open **Reports → Realtime**.
+4. Open `https://lextalk.legal/` in a separate browser tab.
+5. Click a few pages and one external/YouTube link.
+6. Return to Realtime and check that active users/events appear.
+
+Do not add a second GA4 tag manually to the site's HTML. Future site builds should keep the tag through the central page shell and smoke-test protection.

@@ -19,6 +19,11 @@
 
 Never commit the API token.
 
+## Analytics & timestamp
+- Verify GA4 Measurement ID `G-3KT3SQPFXD` is present on public pages.
+- Verify `data/site_meta.json` exists and the footer displays the exact IST timestamp.
+- Do not add a second GA4 tag manually.
+
 ## Production
 Verify:
 - `https://lextalk.legal/`
@@ -26,4 +31,7 @@ Verify:
 - important redesigned pages
 - `https://lextalk.legal/robots.txt`
 - `https://lextalk.legal/sitemap.xml`
+- `https://lextalk.legal/category/explained/`
+- `https://lextalk.legal/jobs/`
+- `https://lextalk.legal/advertise.html`
 - `https://lextalk.legal/ads.txt`

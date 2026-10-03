@@ -21,6 +21,7 @@ Page-specific visual work belongs under:
 | `/category/law-policy/` | `templates/category/law-policy.html` + `assets/pages/law-policy.css` | Editorial Sync | Yes |
 | `/category/banking-law/` | `templates/category/banking-law.html` + `assets/pages/banking-law.css` | Editorial Sync | Yes |
 | `/category/dra/` | `templates/category/dra.html` + `assets/pages/dra.css` | Editorial Sync | Yes |
+| `/category/explained/` | `templates/category/explained.html` + `assets/pages/explained.css` | Editorial Sync | Yes |
 | `/category/legal-careers/` | `guide_markup()` + `assets/pages/legal-careers.css` | Editorial Sync | Yes |
 | `/videos/` | `templates/videos.html` + `assets/pages/videos.css` | Editorial Sync | Yes, template-backed |
 | `/courtrooms/` | `templates/courtrooms.html` + `assets/pages/courtrooms.css` | `scripts/build_vc.py` / Update Courtroom VC Links | Only through VC workflow |
@@ -30,6 +31,7 @@ Page-specific visual work belongs under:
 | `/auctions/` | Existing Auctions page source | `scripts/build_auctions.py` | Only through Auctions workflow |
 | `/jobs/` | Existing Jobs page source | `scripts/build_jobs.py` | Only through Jobs workflow |
 | `/aibe-preparation/` | `templates/aibe-preparation.html` + `assets/pages/aibe-preparation.css` | Manual/static sponsored landing page | No common editorial rebuild |
+| `/advertise.html` | `advertise.html` + `assets/pages/advertise.css` | Manual/static commercial media page | No common editorial rebuild |
 
 ## Permanent rule
 
@@ -61,3 +63,11 @@ The current Pass The Bar campaign is intentionally limited to the homepage, Lega
 `scripts/smoke_test.py` checks approved page classes, page-specific CSS files,
 protected page ownership, template presence, sitemap integrity, key Article SEO markers and sponsored-campaign safeguards.
 A future regression should fail the workflow before it can be committed by the Editorial Sync workflow.
+
+## Unified publication timestamp
+
+All public pages retain their existing footer HTML. `data/site_meta.json` stores the latest editorial-build timestamp, and `assets/site.js` hydrates `.updated-line` from that single value so older manual/static pages display the same exact date/time without rewriting the footer design.
+
+## Analytics coverage lock
+
+`G-3KT3SQPFXD` is injected centrally by `scripts/build_site.py`. `scripts/smoke_test.py` checks every public HTML page for exactly one GA4 loader/config pair so recurring builds cannot silently remove analytics coverage or add duplicates.
