@@ -168,7 +168,6 @@ def main():
             ("Courtrooms & VC Links", "/courtrooms/"),
             "Lex Talk Legal public courtroom and virtual-hearing directory, organised by court and forum with manual VC details.",
             content,
-            extra_head=extra_head,
         ),
         encoding="utf8",
     )

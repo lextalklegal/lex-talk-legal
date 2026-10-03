@@ -1,0 +1,137 @@
+<main class="case-status-v2">
+  <div class="utility-kicker">LEGAL UTILITY · CASE SERVICES</div>
+
+  <section class="cs-hero">
+    <div class="cs-hero-copy">
+      <div class="cs-kicker">CASE STATUS DESK</div>
+      <h1>Check case status.<br><em>Go to the official source.</em></h1>
+      <p class="cs-hero-lead">Find public case-status entry points for the Supreme Court, High Courts and major tribunals. Lex Talk Legal provides the route; the concerned official portal remains the source for the current case record.</p>
+      <div class="cs-hero-actions">
+        <a class="cs-text-btn" href="#case-finder">Find a court ↓</a>
+        <a class="cs-text-btn" href="/courtrooms/">Courtrooms / VC ↗</a>
+        <a class="cs-text-btn" href="/category/courts/">Courts Desk ↗</a>
+      </div>
+    </div>
+    <aside class="cs-hero-panel">
+      <div>
+        <div class="cs-panel-kicker">LEX TALK LEGAL</div>
+        <strong>Official links.<br>Clearer navigation.</strong>
+        <p>Some official services require CAPTCHA, login, registration or other access controls. Lex Talk Legal does not bypass them.</p>
+      </div>
+      <div class="cs-hero-mini">
+        <span><b>{{SUPREME_COUNT}}</b><small>Supreme Court</small></span>
+        <span><b>{{HIGH_COUNT}}</b><small>High Courts</small></span>
+        <span><b>{{TRIBUNAL_COUNT}}</b><small>Forum groups</small></span>
+      </div>
+    </aside>
+  </section>
+
+  <section class="cs-notice">
+    <div class="cs-notice-icon">!</div>
+    <div><strong>Always verify on the official portal</strong><p>Case data, cause lists, filings, orders, access rules and portal availability can change. Use the concerned court or tribunal's current official service before relying on any case information.</p></div>
+  </section>
+
+  <section class="cs-quick-grid" aria-label="Case status shortcuts">
+    <a class="cs-quick-tile" href="#supreme-court"><span class="cs-quick-icon">⌖</span><span><strong>Supreme Court</strong><small>Official case service</small></span><b>↘</b></a>
+    <a class="cs-quick-tile" href="#high-courts"><span class="cs-quick-icon">⚖</span><span><strong>High Courts</strong><small>State-wise access</small></span></a>
+    <a class="cs-quick-tile" href="#drt"><span class="cs-quick-icon">₹</span><span><strong>DRT</strong><small>Debt recovery</small></span><b>↘</b></a>
+    <a class="cs-quick-tile" href="#drat"><span class="cs-quick-icon">↗</span><span><strong>DRAT</strong><small>Appeal forum</small></span><b>↘</b></a>
+    <a class="cs-quick-tile" href="#nclt"><span class="cs-quick-icon">▣</span><span><strong>NCLT</strong><small>Company law tribunal</small></span><b>↘</b></a>
+    <a class="cs-quick-tile" href="#nclat"><span class="cs-quick-icon">⌁</span><span><strong>NCLAT</strong><small>Appellate tribunal</small></span><b>↘</b></a>
+  </section>
+
+  <section id="case-finder" class="cs-finder">
+    <div class="cs-finder-top">
+      <div><div class="cs-kicker">COURT / TRIBUNAL FINDER</div><h2>Search the directory</h2><p>Type a court, city, bench or tribunal name, then open the official service.</p></div>
+      <div class="cs-result-count" id="caseResultCount">All entries</div>
+    </div>
+    <div class="cs-search-row"><label class="cs-search-field" for="caseStatusSearch"><span>⌕</span><input id="caseStatusSearch" type="search" placeholder="e.g. Delhi High Court, DRT Lucknow, NCLAT…" autocomplete="off"></label><button class="cs-clear" id="caseStatusClear" type="button">Clear</button></div>
+    <div class="cs-filter-row" role="tablist" aria-label="Filter by forum">
+      <button class="cs-filter is-active" type="button" data-filter="all">All</button>
+      <button class="cs-filter" type="button" data-filter="supreme">Supreme Court</button>
+      <button class="cs-filter" type="button" data-filter="high">High Courts</button>
+      <button class="cs-filter" type="button" data-filter="drt">DRT</button>
+      <button class="cs-filter" type="button" data-filter="drat">DRAT</button>
+      <button class="cs-filter" type="button" data-filter="nclt">NCLT</button>
+      <button class="cs-filter" type="button" data-filter="nclat">NCLAT</button>
+    </div>
+  </section>
+
+  <section class="cs-how">
+    <div class="cs-how-head"><div class="cs-kicker">HOW TO USE THIS PAGE</div><h2>Three simple steps</h2></div>
+    <div class="cs-how-grid">
+      <article><span>01</span><h3>Find the forum</h3><p>Use the quick shortcuts or search the directory by court, bench or tribunal.</p></article>
+      <article><span>02</span><h3>Open the official service</h3><p>Choose the official case-status link provided for the relevant court or tribunal.</p></article>
+      <article><span>03</span><h3>Verify the current record</h3><p>Use the official portal for the latest status, orders, cause lists and filing information.</p></article>
+    </div>
+  </section>
+
+  <section id="supreme-court" class="cs-directory-section" data-forum="supreme">
+    <div class="cs-section-head"><div><div class="cs-kicker">SUPREME COURT OF INDIA</div><h2>Supreme Court</h2><p>Official public case-status and court-services entry points.</p></div><div class="cs-count">1 official route</div></div>
+    <div class="cs-grid">{{SUPREME_CARDS}}</div>
+  </section>
+
+  <section id="high-courts" class="cs-directory-section" data-forum="high">
+    <div class="cs-section-head"><div><div class="cs-kicker">HIGH COURTS</div><h2>High Courts</h2><p>State-wise official court websites and national eCourts case-service entry points.</p></div><div class="cs-count">{{HIGH_COUNT}} courts</div></div>
+    <div class="cs-grid">{{HIGH_CARDS}}</div>
+  </section>
+
+  <section id="drt" class="cs-directory-section" data-forum="drt">
+    <div class="cs-section-head"><div><div class="cs-kicker">DEBT RECOVERY TRIBUNALS</div><h2>DRT</h2><p>Official debt-recovery tribunal service entry points.</p></div><div class="cs-count">{{DRT_COUNT}} entries</div></div>
+    <div class="cs-grid">{{DRT_CARDS}}</div>
+  </section>
+
+  <section id="drat" class="cs-directory-section" data-forum="drat">
+    <div class="cs-section-head"><div><div class="cs-kicker">DEBT RECOVERY APPELLATE TRIBUNALS</div><h2>DRAT</h2><p>Official appellate tribunal service entry points.</p></div><div class="cs-count">{{DRAT_COUNT}} entries</div></div>
+    <div class="cs-grid">{{DRAT_CARDS}}</div>
+  </section>
+
+  <section id="nclt" class="cs-directory-section" data-forum="nclt">
+    <div class="cs-section-head"><div><div class="cs-kicker">NATIONAL COMPANY LAW TRIBUNAL</div><h2>NCLT</h2><p>Official public case-status and related service entry points.</p></div><div class="cs-count">{{NCLT_COUNT}} benches</div></div>
+    <div class="cs-grid">{{NCLT_CARDS}}</div>
+  </section>
+
+  <section id="nclat" class="cs-directory-section" data-forum="nclat">
+    <div class="cs-section-head"><div><div class="cs-kicker">NATIONAL COMPANY LAW APPELLATE TRIBUNAL</div><h2>NCLAT</h2><p>Official public case and listing service entry points.</p></div><div class="cs-count">{{NCLAT_COUNT}} benches</div></div>
+    <div class="cs-grid">{{NCLAT_CARDS}}</div>
+  </section>
+
+  <section class="cs-bottom-note">
+    <div><div class="cs-kicker">NEED THE ACTUAL RECORD?</div><h2>Use the official court service.</h2><p>Lex Talk Legal is a navigation layer for public legal information. The concerned court / tribunal remains the authoritative source for the current case record.</p></div>
+    <a class="primary-btn" href="/category/courts/">Read Courts Coverage ↗</a>
+  </section>
+
+  <script>
+  (()=>{
+    const input=document.getElementById('caseStatusSearch');
+    const clear=document.getElementById('caseStatusClear');
+    const count=document.getElementById('caseResultCount');
+    const filters=[...document.querySelectorAll('.cs-filter')];
+    const sections=[...document.querySelectorAll('.cs-directory-section')];
+    const cards=[...document.querySelectorAll('.cs-directory-section .utility-card')];
+    let forum='all';
+    const apply=()=>{
+      const q=(input?.value||'').trim().toLowerCase();
+      let visible=0;
+      sections.forEach(section=>{
+        const allowed=forum==='all'||section.dataset.forum===forum;
+        let sectionVisible=0;
+        section.querySelectorAll('.utility-card').forEach(card=>{
+          const hit=!q||card.textContent.toLowerCase().includes(q);
+          const show=allowed&&hit;
+          card.hidden=!show;
+          if(show){sectionVisible++;visible++;}
+        });
+        section.hidden=!allowed||sectionVisible===0;
+      });
+      if(count)count.textContent=visible+' entr'+(visible===1?'y':'ies');
+    };
+    filters.forEach(btn=>btn.addEventListener('click',()=>{
+      filters.forEach(x=>x.classList.remove('is-active'));btn.classList.add('is-active');forum=btn.dataset.filter||'all';apply();
+    }));
+    input?.addEventListener('input',apply);
+    clear?.addEventListener('click',()=>{if(input){input.value='';input.focus()}forum='all';filters.forEach(x=>x.classList.toggle('is-active',x.dataset.filter==='all'));apply();});
+    apply();
+  })();
+  </script>
+</main>
