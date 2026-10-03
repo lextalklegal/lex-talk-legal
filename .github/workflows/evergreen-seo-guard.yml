@@ -1,0 +1,39 @@
+name: Lex Talk Legal - Evergreen SEO Guard
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "content/evergreen/**"
+      - "scripts/validate_evergreen.py"
+      - "templates/**"
+      - "scripts/build_site.py"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
+
+      - name: Compile validators
+        run: python -m py_compile scripts/build_site.py scripts/validate_evergreen.py
+
+      - name: Validate evergreen SEO sources and generated pages
+        env:
+          LOCAL_BUILD: "1"
+        run: python scripts/validate_evergreen.py --verbose

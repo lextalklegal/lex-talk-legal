@@ -11,6 +11,7 @@ on:
       - "content/evergreen/**"
       - "templates/category/explained.html"
       - "scripts/build_site.py"
+      - "scripts/validate_evergreen.py"
 
 permissions:
   contents: write
@@ -38,7 +39,7 @@ jobs:
 
       - name: Validate build sources
         run: |
-          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py scripts/validate_evergreen.py
 
       - name: Repair stale public GA tags before editorial build
         run: python scripts/ensure_public_ga.py
@@ -49,6 +50,11 @@ jobs:
           YOUTUBE_HANDLE: "@lextalklegal"
         run: python scripts/build_site.py
 
+      - name: Validate evergreen SEO package
+        env:
+          LOCAL_BUILD: "1"
+        run: python scripts/validate_evergreen.py --verbose
+
       - name: Enforce GA4 coverage after editorial build
         run: python scripts/ensure_public_ga.py
 
@@ -57,7 +63,7 @@ jobs:
 
       - name: Validate generated editorial build
         run: |
-          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py scripts/validate_evergreen.py
           python scripts/smoke_test.py
 
       - name: Commit editorial outputs only
@@ -65,7 +71,7 @@ jobs:
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos scripts/ensure_public_ga.py
+          git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos scripts/ensure_public_ga.py scripts/validate_evergreen.py
           git add '*.html' '**/*.html'
           if git diff --cached --quiet; then
             echo "No editorial changes."
