@@ -45,6 +45,9 @@ jobs:
       - name: Enforce GA4 coverage after editorial build
         run: python scripts/ensure_public_ga.py
 
+      - name: Refresh and synchronize site-wide timestamp
+        run: python scripts/refresh_site_timestamp.py --if-content-changed
+
       - name: Validate generated editorial build
         run: |
           python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
@@ -56,6 +59,7 @@ jobs:
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
           git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos scripts/ensure_public_ga.py
+          git add '*.html' '**/*.html'
           if git diff --cached --quiet; then
             echo "No editorial changes."
           else

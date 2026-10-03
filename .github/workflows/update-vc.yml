@@ -106,8 +106,8 @@ jobs:
       - name: Rebuild Courtrooms from local base data
         run: python scripts/build_vc.py
 
-      - name: Refresh site-wide timestamp
-        run: python scripts/refresh_site_timestamp.py
+      - name: Refresh and synchronize site-wide timestamp
+        run: python scripts/refresh_site_timestamp.py --if-content-changed
 
       - name: Validate manual desk
         run: python scripts/smoke_test.py
@@ -118,6 +118,7 @@ jobs:
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/vc_links.json courtrooms/index.html data/site_meta.json
+          git add '*.html' '**/*.html'
           if git diff --cached --quiet; then
             echo "No VC changes."
           else
