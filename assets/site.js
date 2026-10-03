@@ -54,7 +54,7 @@
       const data=await r.json();
       const label=String(data.built_at_ist||'').trim();
       if(!label)return;
-      els.forEach(el=>{el.textContent='Content last updated: '+label;el.dataset.builtAt=label;if(data.built_at_epoch)el.dataset.builtEpoch=String(data.built_at_epoch);});
+      els.forEach(el=>{el.textContent='Content last updated: '+label;if(data.built_at_epoch)el.dataset.builtEpoch=String(data.built_at_epoch);});
     }catch(_){}
   }
   hydrateBuildTimestamp();

@@ -44,7 +44,6 @@ def main():
     t=t.replace("{{JOB_CARDS}}",cards).replace("{{UPDATED_AT}}",datetime.now(timezone.utc).date().isoformat())
     OUT.parent.mkdir(parents=True,exist_ok=True)
     OUT.write_text(site.page_shell(("Legal Jobs Board","/jobs/"),"Lex Talk Legal manually maintained legal jobs, internships and professional opportunities.",t),encoding="utf8")
-    site.write_site_meta()
     print(f"Wrote {OUT}")
 if __name__=="__main__":
     main()

@@ -904,6 +904,7 @@ def page_shell(title,description,content,extra_head='',robots_override=None,incl
     page_css=f'<link rel="stylesheet" href="/assets/pages/{H.escape(style_file,quote=True)}">' if style_file else ''
     schema={"@context":"https://schema.org","@type":"WebSite","name":"Lex Talk Legal","url":SITE_URL+"/","description":"Law Simplified for Everyone.","publisher":{"@type":"Organization","name":"LEXBOTICS AI MEDIA LLP","url":SITE_URL+"/"}}
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
+    site_time, site_epoch = current_site_timestamp()
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 {GOOGLE_ANALYTICS_SNIPPET}
 <meta name="description" content="{H.escape(description,quote=True)}"><meta name="robots" content="{robots}">
@@ -915,7 +916,7 @@ def page_shell(title,description,content,extra_head='',robots_override=None,incl
 <header class="masthead"><div class="wrap masthead-inner"><a href="/" aria-label="Lex Talk Legal home"><img src="{LOGO}" alt="Lex Talk Legal"></a></div></header>
 <nav class="nav"><div class="wrap nav-inner">{nav}</div></nav>
 {content}
-<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{BUILD_TIME} IST" data-built-epoch="{BUILD_EPOCH}">Content last updated: {BUILD_TIME} IST</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
+<footer class="footer"><div class="footergrid"><div><h3>Lex Talk Legal</h3><p>Law Simplified for Everyone.</p><p>Digital legal news, court updates, legal education and practical legal awareness.</p><p><b>LEXBOTICS AI MEDIA LLP</b></p></div><div><h3>Explore</h3><ul><li><a href="/">Latest</a></li><li><a href="/auctions/">Auctions</a></li><li><a href="/category/courts/">Courts</a></li><li><a href="/category/banking-law/">Banking &amp; Recovery</a></li><li><a href="/category/legal-careers/">Legal Careers</a></li><li><a href="/category/dra/">DRA</a></li></ul></div><div><h3>Utilities</h3><ul><li><a href="/courtrooms/">Courtrooms / VC</a></li><li><a href="/case-status/">Case Status</a></li><li><a href="/search.html">Search</a></li><li><a href="/category/drt-drat/">DRT / DRAT</a></li><li><a href="/case-help.html">Case Information</a></li></ul></div><div><h3>Connect</h3><ul><li><a href="https://www.youtube.com/@LexTalkLegal" target="_blank" rel="noopener noreferrer">YouTube</a></li><li><a href="https://www.instagram.com/lex_talk_legal" target="_blank" rel="noopener noreferrer">Instagram</a></li><li><a href="https://x.com/Lex_Talk_Legal" target="_blank" rel="noopener noreferrer">X</a></li><li><a href="https://in.linkedin.com/company/lextalklegal" target="_blank" rel="noopener noreferrer">LinkedIn</a></li><li><a href="https://t.me/lextalklegal" target="_blank" rel="noopener noreferrer">Telegram</a></li></ul></div><div><h3>Legal &amp; Contact</h3><p>+91-8368268507<br>+91-9318445957<br>office.lextalklegal@gmail.com</p><ul><li><a href="/privacy-policy.html">Privacy Policy</a></li><li><a href="/terms-of-use.html">Terms of Use</a></li><li><a href="/disclaimer.html">Disclaimer</a></li><li><a href="/editorial-policy.html">Editorial Policy</a></li><li><a href="/copyright-policy.html">Copyright / Takedown</a></li><li><a href="/corrections-grievance.html">Corrections &amp; Grievance</a></li><li><a href="/ai-content-policy.html">AI Content Policy</a></li></ul></div></div><div class="updated-line" data-built-at="{site_time}" data-built-epoch="{site_epoch}">Content last updated: {site_time}</div><div class="copy">© 2026 LEXBOTICS AI MEDIA LLP | Lex Talk Legal | For Educational &amp; Informational Use Only</div></footer><script src="/assets/site.js" defer></script></body></html>'''
 
 def article(a, all_articles=None):
     all_articles=all_articles or [a]
@@ -1153,6 +1154,15 @@ def write_site_meta(force=False):
     return payload
 
 
+def current_site_timestamp():
+    """Return the authoritative visible footer timestamp from data/site_meta.json."""
+    meta = _read_site_meta()
+    if meta:
+        return str(meta.get('built_at_ist','')).strip(), str(meta.get('built_at_epoch','')).strip()
+    now = datetime.now(ZoneInfo('Asia/Kolkata'))
+    return now.strftime('%d %B %Y, %H:%M:%S') + ' IST', str(int(now.timestamp()))
+
+
 def write_news_sitemap(arts):
     """Write Google's News sitemap for articles published in the last 48 hours."""
     now=datetime.now(timezone.utc)
@@ -1251,6 +1261,9 @@ Sitemap: https://lextalk.legal/news-sitemap.xml
 
 /assets/*
   Cache-Control: public, max-age=86400
+
+/data/site_meta.json
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
 ''',encoding='utf8')
     redirect_lines=['/admin / 302','/advocates /team.html 301','/advocates/ /team.html 301','/advocates/apply /team.html 301','/advocates/apply/ /team.html 301']
     existing_pairs={(line.split(' ')[0],line.split(' ')[1]) for line in redirect_lines if len(line.split(' '))>=2}
