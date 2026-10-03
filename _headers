@@ -7,3 +7,7 @@
 
 /assets/*
   Cache-Control: public, max-age=86400
+
+/data/site_meta.json
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+
