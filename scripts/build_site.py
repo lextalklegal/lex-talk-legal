@@ -874,9 +874,26 @@ def nav_html():
     mega=mega_menu_html()
     return f'<button class="menu-trigger" id="menuTrigger" type="button" aria-expanded="false" aria-controls="megaMenu" aria-label="Open site menu"><span class="hamburger-lines"><i></i><i></i><i></i></span><span class="menu-trigger-label">MENU</span></button><div class="nav-links">{main}</div><a class="nav-search" href="/search.html" aria-label="Search">⌕ <span>SEARCH</span></a><div class="mega-menu" id="megaMenu" hidden><div class="mega-menu-inner">{mega}</div></div>'
 
-BUILD_DT=datetime.now(ZoneInfo('Asia/Kolkata'))
-BUILD_TIME=BUILD_DT.strftime('%d %B %Y, %H:%M:%S')
-BUILD_EPOCH=int(BUILD_DT.timestamp())
+def _load_or_create_site_timestamp():
+    try:
+        data = json.loads(SITE_META_FILE.read_text(encoding='utf8'))
+        if isinstance(data, dict) and data.get('built_at_ist') and data.get('built_at_epoch'):
+            label = str(data['built_at_ist']).replace(' IST','').strip()
+            return label, int(data['built_at_epoch'])
+    except Exception:
+        pass
+    dt = datetime.now(ZoneInfo('Asia/Kolkata'))
+    label = dt.strftime('%d %B %Y, %H:%M:%S')
+    epoch = int(dt.timestamp())
+    SITE_META_FILE.parent.mkdir(exist_ok=True)
+    SITE_META_FILE.write_text(json.dumps({
+        'built_at_ist': f'{label} IST',
+        'built_at_epoch': epoch,
+        'generated_by': 'Lex Talk Legal site-wide timestamp refresh'
+    }, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
+    return label, epoch
+
+BUILD_TIME, BUILD_EPOCH = _load_or_create_site_timestamp()
 
 def page_shell(title,description,content,extra_head='',robots_override=None,include_ads=True):
     t=title[0] if isinstance(title,tuple) else title
@@ -1107,14 +1124,33 @@ def _article_datetime(value):
         return None
 
 
-def write_site_meta():
-    """Publish one site-wide build timestamp used by every public footer."""
+def _read_site_meta():
+    try:
+        data = json.loads(SITE_META_FILE.read_text(encoding='utf8'))
+        if isinstance(data, dict) and data.get('built_at_ist') and data.get('built_at_epoch'):
+            return data
+    except Exception:
+        pass
+    return None
+
+
+def write_site_meta(force=False):
+    """Keep one persistent site-wide timestamp as the single footer source of truth.
+
+    Normal page builders must never overwrite the shared timestamp independently.
+    Use scripts/refresh_site_timestamp.py for an intentional site-wide timestamp refresh.
+    """
     SITE_META_FILE.parent.mkdir(exist_ok=True)
-    SITE_META_FILE.write_text(json.dumps({
+    existing = _read_site_meta()
+    if existing and not force:
+        return existing
+    payload = {
         'built_at_ist': f'{BUILD_TIME} IST',
         'built_at_epoch': BUILD_EPOCH,
-        'generated_by': 'Lex Talk Legal editorial build'
-    }, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
+        'generated_by': 'Lex Talk Legal site-wide timestamp refresh' if force else 'Lex Talk Legal editorial build'
+    }
+    SITE_META_FILE.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
+    return payload
 
 
 def write_news_sitemap(arts):

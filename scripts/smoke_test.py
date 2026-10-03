@@ -85,6 +85,17 @@ if "toRelative" in site_js or "ago" in site_js:
 if "G-3KT3SQPFXD" not in BUILD_TEXT:
     raise SystemExit("Google Analytics Measurement ID is missing from build_site.py")
 
+# One site-wide timestamp is the single source of truth for every visible footer.
+meta_path = ROOT / "data/site_meta.json"
+try:
+    site_meta = json.loads(meta_path.read_text(encoding="utf-8"))
+except Exception as exc:
+    raise SystemExit(f"Unable to read data/site_meta.json: {exc}")
+site_timestamp = str(site_meta.get("built_at_ist", "")).strip()
+site_epoch = str(site_meta.get("built_at_epoch", "")).strip()
+if not site_timestamp or not site_epoch:
+    raise SystemExit("data/site_meta.json must contain built_at_ist and built_at_epoch")
+
 # Every public HTML page must carry exactly one GA4 tag. This prevents a future
 # build/sync from silently dropping analytics coverage or injecting duplicates.
 public_html = []
@@ -97,6 +108,18 @@ for page in sorted(public_html):
     text = page.read_text(encoding="utf-8")
     if "<head" not in text.lower():
         continue
+    timestamp_match = re.search(
+        r'<div class="updated-line"\s+data-built-at="([^"]+)"\s+data-built-epoch="([^"]+)">Content last updated: ([^<]+)</div>',
+        text,
+    )
+    if not timestamp_match:
+        raise SystemExit(f"Unified footer timestamp is missing: {page.relative_to(ROOT)}")
+    if (
+        timestamp_match.group(1).strip() != site_timestamp
+        or timestamp_match.group(2).strip() != site_epoch
+        or timestamp_match.group(3).strip() != site_timestamp
+    ):
+        raise SystemExit(f"Timestamp inconsistency: {page.relative_to(ROOT)} does not match data/site_meta.json")
     src_count = text.count('https://www.googletagmanager.com/gtag/js?id=G-3KT3SQPFXD')
     config_count = text.count("gtag('config', 'G-3KT3SQPFXD')")
     if src_count != 1 or config_count != 1:
