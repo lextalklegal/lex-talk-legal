@@ -16,7 +16,7 @@ UPDATED_RE = re.compile(
 def public_html_files():
     for page in ROOT.rglob("*.html"):
         rel = page.relative_to(ROOT)
-        if "templates" in rel.parts or "content" in rel.parts or "admin" in rel.parts or ".git" in rel.parts:
+        if any(part in rel.parts for part in ("templates", "content", "admin", "docs", ".git")):
             continue
         yield page
 
@@ -59,6 +59,9 @@ def content_changes_present() -> bool:
         if " -> " in path:
             path = path.split(" -> ", 1)[1].strip()
         if path == "data/site_meta.json":
+            continue
+        # Documentation/template-only changes must not trigger a public-site timestamp refresh.
+        if path == "docs" or path.startswith("docs/"):
             continue
         # The timestamp script itself is never modified by this check during a run.
         if path == "scripts/refresh_site_timestamp.py" and status == "??":

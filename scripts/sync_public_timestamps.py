@@ -16,20 +16,9 @@ UPDATED_RE = re.compile(
 
 
 def public_html_files():
-    """Yield only deployable/public HTML files.
-
-    Source, template, documentation, and development HTML must never be
-    treated as public pages.
-    """
-    excluded_dirs = {
-        "templates", "content", "admin", "docs", ".git", ".github",
-        ".wrangler", "scripts", "node_modules", "src", "db", "functions",
-    }
     for page in ROOT.rglob("*.html"):
         rel = page.relative_to(ROOT)
-        if any(part in excluded_dirs for part in rel.parts):
-            continue
-        if any(part.startswith(".") for part in rel.parts):
+        if any(part in rel.parts for part in ("templates", "content", "admin", "docs", ".git")):
             continue
         yield page
 

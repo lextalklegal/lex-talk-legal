@@ -101,15 +101,9 @@ if not site_timestamp or not site_epoch:
 # Every public HTML page must carry exactly one GA4 tag. This prevents a future
 # build/sync from silently dropping analytics coverage or injecting duplicates.
 public_html = []
-excluded_public_dirs = {
-    "templates", "content", "admin", "docs", ".git", ".github",
-    ".wrangler", "scripts", "node_modules", "src", "db", "functions",
-}
 for page in ROOT.rglob("*.html"):
     rel = page.relative_to(ROOT)
-    if any(part in excluded_public_dirs for part in rel.parts):
-        continue
-    if any(part.startswith(".") for part in rel.parts):
+    if any(part in rel.parts for part in ("templates", "content", "admin", "docs", ".git")):
         continue
     public_html.append(page)
 for page in sorted(public_html):
