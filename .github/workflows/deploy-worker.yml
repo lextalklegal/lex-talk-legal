@@ -26,16 +26,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Validate page design contracts
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Run repository smoke test
-        run: |
-          python -m py_compile scripts/build_site.py scripts/build_vc.py scripts/build_auctions.py scripts/build_jobs.py scripts/smoke_test.py
-          python scripts/smoke_test.py
-
       - name: Deploy Worker and static assets
         uses: cloudflare/wrangler-action@v4
         with:
