@@ -17,6 +17,8 @@ REQUIRED_FUNCTIONS = {
     "refresh_static_pages",
     "write_news_sitemap",
     "write_sitemap",
+    "load_evergreen_articles",
+    "write_evergreen_articles",
     "main",
 }
 missing = REQUIRED_FUNCTIONS - FUNCTIONS
@@ -101,7 +103,7 @@ if not site_timestamp or not site_epoch:
 public_html = []
 for page in ROOT.rglob("*.html"):
     rel = page.relative_to(ROOT)
-    if "templates" in rel.parts or "admin" in rel.parts:
+    if "templates" in rel.parts or "content" in rel.parts or "admin" in rel.parts:
         continue
     public_html.append(page)
 for page in sorted(public_html):
@@ -131,6 +133,37 @@ for page in sorted(public_html):
             f"Google Analytics tag coverage error: {page.relative_to(ROOT)} "
             f"has {src_count} loader + {config_count} config occurrence(s)"
         )
+
+# Evergreen source/public ownership and SEO contracts.
+evergreen_source = ROOT / "content/evergreen"
+if not evergreen_source.exists():
+    raise SystemExit("Evergreen source directory is missing: content/evergreen")
+evergreen_files = sorted(evergreen_source.glob("*.html"))
+if not evergreen_files:
+    raise SystemExit("No evergreen source articles found in content/evergreen")
+for source in evergreen_files:
+    raw = source.read_text(encoding="utf-8")
+    if "Lex Talk Legal Evergreen Metadata" not in raw:
+        raise SystemExit(f"Evergreen metadata block is missing: {source.relative_to(ROOT)}")
+    if "<h1>" not in raw.lower() or "<article" not in raw.lower():
+        raise SystemExit(f"Evergreen source article structure is incomplete: {source.relative_to(ROOT)}")
+
+evergreen_public = sorted((ROOT / "article" / "evergreen").glob("*.html"))
+if len(evergreen_public) != len(evergreen_files):
+    raise SystemExit(f"Evergreen output count mismatch: source={len(evergreen_files)} public={len(evergreen_public)}")
+for page in evergreen_public:
+    page_text = page.read_text(encoding="utf-8")
+    for marker in (
+        "/assets/pages/article.css",
+        "\"datePublished\"",
+        "\"dateModified\"",
+        "Lex Talk Legal Editorial Desk",
+        "Evergreen legal guide",
+    ):
+        if marker not in page_text:
+            raise SystemExit(f"Evergreen SEO marker missing: {page.relative_to(ROOT)} -> {marker}")
+    if '"@type": "NewsArticle"' in page_text:
+        raise SystemExit(f"Evergreen page must use Article, not NewsArticle: {page.relative_to(ROOT)}")
 
 # Approved page-design contracts. A future sync/build must fail before commit if
 # any approved page falls back to a generic legacy <main> class or loses its CSS.

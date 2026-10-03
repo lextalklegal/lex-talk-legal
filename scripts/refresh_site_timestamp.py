@@ -16,7 +16,7 @@ UPDATED_RE = re.compile(
 def public_html_files():
     for page in ROOT.rglob("*.html"):
         rel = page.relative_to(ROOT)
-        if "templates" in rel.parts or "admin" in rel.parts or ".git" in rel.parts:
+        if "templates" in rel.parts or "content" in rel.parts or "admin" in rel.parts or ".git" in rel.parts:
             continue
         yield page
 

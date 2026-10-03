@@ -37,6 +37,9 @@ ONECOURT_NCLAT_VC = 'https://onecourt.in/vc-links/nclat/NCLAT_VC_Hearing_Links.h
 VC_DATA_PATH = ROOT / 'data/vc_links.json'
 PARTNER_CAMPAIGN_FILE = ROOT / 'data/partner_campaigns.json'
 SITE_META_FILE = ROOT / 'data/site_meta.json'
+EVERGREEN_SOURCE_DIR = ROOT / 'content/evergreen'
+EVERGREEN_OUTPUT_DIR = ROOT / 'article/evergreen'
+EVERGREEN_META_RE = re.compile(r'<!--\s*Lex Talk Legal Evergreen Metadata\s*(.*?)-->', re.S)
 GOOGLE_ANALYTICS_ID = 'G-3KT3SQPFXD'
 GOOGLE_ANALYTICS_SNIPPET = f'''<!-- Google tag (gtag.js) -->
 <script async src=\"https://www.googletagmanager.com/gtag/js?id={GOOGLE_ANALYTICS_ID}\"></script>
@@ -369,7 +372,8 @@ def explained_guide_cards():
     return ''.join(f'<a class="explained-guide-card" href="{H.escape(url,quote=True)}"><span class="explained-guide-kicker">{H.escape(kicker)}</span><h3>{H.escape(title)}</h3><p>{H.escape(desc)}</p><span class="explained-guide-link">Open guide ↗</span></a>' for kicker,title,desc,url in guides)
 
 
-def write_category_pages(arts):
+def write_category_pages(arts, evergreens=None):
+    evergreens=evergreens or []
     for key,(name,_) in CATEGORY_MAP.items():
         items=[a for a in arts if category_matches(a,key)]
         if key in CATEGORY_TEMPLATE_MAP:
@@ -396,6 +400,9 @@ def write_category_pages(arts):
             cards=''.join(article_card(a) for a in items[:30]) or '<div class="empty">No stories published in this section yet.</div>'
             content=f'<main class="utility-page"><div class="utility-kicker">LEX TALK LEGAL</div><h1>{H.escape(name)}</h1><p class="lead">Latest Lex Talk Legal stories in this section are synced automatically from Blogger.</p><div class="grid">{cards}</div></main>'
             desc=f'Lex Talk Legal — {name} news, updates and explainers.'
+        resource_block=evergreen_resource_section(evergreens, key)
+        if resource_block:
+            content=content.replace('</main>', resource_block + '</main>', 1)
         p=ROOT/'category'/key/'index.html'
         p.parent.mkdir(parents=True,exist_ok=True)
         p.write_text(page_shell((name,f'/category/{key}/'),desc,content),encoding='utf8')
@@ -781,6 +788,9 @@ def format_article_datetime(value):
 
 def article_category_key(a):
     preferred=('courts','law-policy','drt-drat','banking-law','legal-careers','dra','explained')
+    explicit=str(a.get('evergreen_section','')).strip().lower() if isinstance(a,dict) else ''
+    if explicit in preferred:
+        return explicit
     for key in preferred:
         if category_matches(a,key):
             return key
@@ -820,6 +830,108 @@ def related_articles(current, arts, limit=4):
         scored.append((score,recency,other))
     scored.sort(key=lambda row:(row[0],row[1]),reverse=True)
     return [row[2] for row in scored[:limit] if row[0]>0]
+
+def _parse_evergreen_metadata(raw: str) -> dict:
+    match = EVERGREEN_META_RE.search(raw or '')
+    if not match:
+        raise ValueError('Missing Lex Talk Legal Evergreen Metadata block')
+    meta = {}
+    for line in match.group(1).splitlines():
+        if ':' not in line:
+            continue
+        key, value = line.split(':', 1)
+        meta[key.strip().lower()] = value.strip()
+    required = ('title', 'slug', 'meta description', 'section', 'labels', 'published', 'updated')
+    missing = [key for key in required if not meta.get(key)]
+    if missing:
+        raise ValueError('Missing evergreen metadata: ' + ', '.join(missing))
+    return meta
+
+
+def _clean_evergreen_content(raw: str) -> str:
+    soup = BeautifulSoup(raw or '', 'html.parser')
+    for x in soup(['script', 'style', 'iframe', 'form', 'object', 'embed', 'video']):
+        x.decompose()
+    article_root = soup.find('article')
+    if article_root:
+        body_html = ''.join(str(child) for child in article_root.contents).strip()
+    else:
+        body_html = str(soup.body or soup).strip()
+    body = BeautifulSoup(body_html, 'html.parser')
+    for a in body.find_all('a', href=True):
+        href = a.get('href', '').strip()
+        if href.startswith('http://') or href.startswith('https://'):
+            a['target'] = '_blank'
+            rel = [x for x in a.get('rel', []) if x] if isinstance(a.get('rel'), list) else [x for x in str(a.get('rel', '')).split() if x]
+            for item in ('noopener', 'noreferrer'):
+                if item not in rel:
+                    rel.append(item)
+            a['rel'] = rel
+        else:
+            a.attrs.pop('target', None)
+    for img in body.find_all('img'):
+        img['loading'] = 'lazy'
+        img['decoding'] = 'async'
+    return str(body).strip()
+
+
+def load_evergreen_articles():
+    EVERGREEN_SOURCE_DIR.mkdir(parents=True, exist_ok=True)
+    out=[]
+    for source in sorted(EVERGREEN_SOURCE_DIR.glob('*.html')):
+        raw=source.read_text(encoding='utf-8')
+        meta=_parse_evergreen_metadata(raw)
+        soup=BeautifulSoup(raw,'html.parser')
+        h1=soup.find('h1')
+        title=(h1.get_text(' ',strip=True) if h1 else meta.get('title','')).strip()
+        if not title:
+            raise ValueError(f'No title found in {source.relative_to(ROOT)}')
+        slug_value=slug(meta['slug'])
+        section=meta['section'].strip().lower()
+        if section not in CATEGORY_MAP:
+            raise ValueError(f'Unknown evergreen section in {source.relative_to(ROOT)}: {section}')
+        labels=[x.strip() for x in meta['labels'].split(',') if x.strip()]
+        excerpt_node=soup.select_one('.article-intro')
+        excerpt=excerpt_node.get_text(' ',strip=True) if excerpt_node else meta['meta description']
+        out.append({
+            'title':title,
+            'url':f'/article/evergreen/{slug_value}.html',
+            'source_url':'',
+            'published':meta['published'],
+            'updated':meta['updated'],
+            'labels':labels,
+            'category':CATEGORY_MAP[section][0],
+            'evergreen_section':section,
+            'evergreen':True,
+            'image':meta.get('image',''),
+            'excerpt':excerpt[:260]+('…' if len(excerpt)>260 else ''),
+            'meta_description':meta['meta description'],
+            'content':_clean_evergreen_content(raw),
+            'source_file':str(source.relative_to(ROOT)),
+        })
+    return out
+
+
+def evergreen_article_card(a):
+    return f'''<article class="story-card"><a href="{H.escape(a['url'],quote=True)}">{media_html(a.get('image',''),'story-image',a.get('title',''))}</a><div class="story-meta">EVERGREEN · {H.escape(a.get('category','Legal Guide'))}</div><h3><a href="{H.escape(a['url'],quote=True)}">{H.escape(a.get('title',''))}</a></h3><p>{H.escape(a.get('excerpt',''))}</p></article>'''
+
+
+def evergreen_resource_section(evergreens, key):
+    items=evergreens[:8] if key=='explained' else [a for a in evergreens if article_category_key(a)==key][:8]
+    if not items:
+        return ''
+    cards=''.join(evergreen_article_card(a) for a in items)
+    return f'''<section class="guide-section evergreen-library-section"><div class="section-head"><div><div class="section-kicker">EVERGREEN LEGAL GUIDES</div><h2>Search-focused legal guides</h2></div><p>Original Lex Talk Legal reference pages designed to answer practical legal questions and connect readers to primary sources.</p></div><div class="grid">{cards}</div></section>'''
+
+
+def write_evergreen_articles(evergreens, all_articles):
+    EVERGREEN_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    for f in EVERGREEN_OUTPUT_DIR.glob('*.html'):
+        f.unlink()
+    for a in evergreens:
+        destination=EVERGREEN_OUTPUT_DIR / a['url'].rsplit('/',1)[-1]
+        destination.write_text(article(a, all_articles), encoding='utf-8')
+
 
 def blogger():
     if os.getenv('LOCAL_BUILD') == '1':
@@ -920,6 +1032,7 @@ def page_shell(title,description,content,extra_head='',robots_override=None,incl
 
 def article(a, all_articles=None):
     all_articles=all_articles or [a]
+    is_evergreen=bool(a.get('evergreen'))
     image=a.get('image','')
     hero=(f'<div class="article-hero media-frame" style="--media-image:url(&quot;{H.escape(image,quote=True)}&quot;)"><img src="{H.escape(image,quote=True)}" alt="{H.escape(a.get("title",""),quote=True)}" loading="eager" decoding="async"></div>' if image else '')
     soup=BeautifulSoup(a.get('content','') or '','html.parser')
@@ -962,7 +1075,7 @@ def article(a, all_articles=None):
 
     schema={
         '@context':'https://schema.org',
-        '@type':'NewsArticle',
+        '@type':'Article' if is_evergreen else 'NewsArticle',
         'headline':a.get('title',''),
         'datePublished':published_iso,
         'dateModified':updated_iso or published_iso,
@@ -991,20 +1104,21 @@ def article(a, all_articles=None):
     }
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
     breadcrumb_json=json.dumps(breadcrumb_schema,ensure_ascii=False).replace('</','<\\/')
-    desc=a.get('excerpt','')
+    desc=a.get('meta_description') or a.get('excerpt','')
     published_meta=H.escape('Published: '+published_label if published_label else 'Publication date unavailable')
     updated_meta=H.escape('Updated: '+updated_label) if show_updated else ''
     updated_html=f'<span>·</span>{updated_meta}' if updated_meta else ''
 
+    source_line = (f'<a href="{H.escape(a.get("source_url",""),quote=True)}" target="_blank" rel="noopener noreferrer">Original source ↗</a>' if a.get('source_url') else 'Primary-source references are included below.')
+    type_label = 'Evergreen legal guide' if is_evergreen else 'Educational &amp; informational coverage'
     body=(f'<main class="article-wrap">{breadcrumb}'
           f'<div class="utility-kicker">{H.escape(a.get("category", "Legal News"))}</div>'
           f'<h1>{H.escape(a.get("title", ""))}</h1>'
           f'<div class="story-meta article-publication-date">{published_meta} {updated_html}</div>'
-          f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> Educational &amp; informational coverage <span>·</span> '
-          f'<a href="{H.escape(a.get("source_url", ""),quote=True)}" target="_blank" rel="noopener noreferrer">Original source ↗</a></div>{hero}'
+          f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> {type_label} <span>·</span> {source_line}</div>{hero}'
           f'<div class="article-body">{body_html}</div>{pass_the_bar_promo("article-aibe") if is_aibe_related(a) else ""}{related_block}'
           f'<div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div>'
-          f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div></main>')
+          + (f'<div class="article-source">Source reference: This is an original Lex Talk Legal evergreen guide. Primary-source links are included in the article for verification.</div>' if is_evergreen else f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div>') + '</main>')
 
     html=page_shell((a.get('title',''),a.get('url','')),desc,body)
     html=html.replace('<meta property="og:type" content="website">','<meta property="og:type" content="article">',1)
@@ -1193,7 +1307,8 @@ def write_news_sitemap(arts):
     (ROOT/'news-sitemap.xml').write_text(xml,encoding='utf8')
 
 
-def write_sitemap(arts):
+def write_sitemap(arts, evergreens=None):
+    evergreens=evergreens or []
     """Write a stable XML sitemap with accurate content-derived lastmod values."""
     # Use the site's canonical extensionless routes where the platform redirects
     # the .html asset URL (notably About and Contact).
@@ -1203,7 +1318,7 @@ def write_sitemap(arts):
                  '/profile-guidelines.html']
     entries=['<url><loc>'+H.escape(SITE_URL+'/',quote=False)+'</loc></url>']
     latest_all=[]
-    for a in arts or []:
+    for a in list(arts or []) + list(evergreens or []):
         dt=_article_datetime(a.get('updated') or a.get('published'))
         if dt:
             latest_all.append(dt)
@@ -1213,8 +1328,8 @@ def write_sitemap(arts):
 
     for key in CATEGORY_MAP:
         dates=[]
-        for a in arts or []:
-            if category_matches(a,key):
+        for a in list(arts or []) + list(evergreens or []):
+            if article_category_key(a) == key or category_matches(a,key):
                 dt=_article_datetime(a.get('updated') or a.get('published'))
                 if dt: dates.append(dt)
         loc='<loc>'+H.escape(SITE_URL+f'/category/{key}/',quote=False)+'</loc>'
@@ -1222,6 +1337,14 @@ def write_sitemap(arts):
         entries.append('<url>'+loc+last.replace(' ','')+'</url>')
 
     for a in arts or []:
+        url=str(a.get('url','')).strip()
+        if not url: continue
+        loc='<loc>'+H.escape(SITE_URL+url,quote=False)+'</loc>'
+        dt=_article_datetime(a.get('updated') or a.get('published'))
+        last=f'<lastmod>{dt.date().isoformat()}</lastmod>' if dt else ''
+        entries.append('<url>'+loc+last+'</url>')
+
+    for a in evergreens or []:
         url=str(a.get('url','')).strip()
         if not url: continue
         loc='<loc>'+H.escape(SITE_URL+url,quote=False)+'</loc>'
@@ -1300,11 +1423,14 @@ def main():
     ap.parent.mkdir(exist_ok=True);ap.write_text(json.dumps(arts,ensure_ascii=False,indent=2),encoding='utf8')
     write_site_meta()
     videos=youtube();videos.sort(key=lambda x:x.get('published',''),reverse=True);(ROOT/'data/youtube.json').write_text(json.dumps(videos,ensure_ascii=False,indent=2),encoding='utf8')
+    evergreens=load_evergreen_articles()
+    all_articles=arts+evergreens
     d=ROOT/'article';d.mkdir(exist_ok=True)
     for f in d.glob('*.html'):f.unlink()
-    for a in arts:(d/(slug(a['title'])+'.html')).write_text(article(a,arts),encoding='utf8')
-    write_category_pages(arts);write_videos_page(videos);write_config(article_redirects);sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
+    for a in arts:(d/(slug(a['title'])+'.html')).write_text(article(a,all_articles),encoding='utf8')
+    write_evergreen_articles(evergreens,all_articles)
+    write_category_pages(arts,evergreens);write_videos_page(videos);write_config(article_redirects);sync_homepage(arts,videos);refresh_static_pages();write_news_sitemap(arts)
     # Rebuild the stable public sitemap. Lastmod is derived from content dates, not build time.
-    write_sitemap(arts)
+    write_sitemap(arts,evergreens)
 
 if __name__=='__main__':main()

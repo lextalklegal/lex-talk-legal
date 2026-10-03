@@ -23,7 +23,7 @@ CONFIG_RE = re.compile(rf"gtag\(['\"]config['\"],\s*['\"]{re.escape(GA_ID)}['\"]
 def public_html_files():
     for page in ROOT.rglob("*.html"):
         rel = page.relative_to(ROOT)
-        if "templates" in rel.parts or "admin" in rel.parts:
+        if "templates" in rel.parts or "content" in rel.parts or "admin" in rel.parts:
             continue
         text = page.read_text(encoding="utf-8")
         if "<head" not in text.lower():
