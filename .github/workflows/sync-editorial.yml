@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "*/30 * * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - "content/evergreen/**"
+      - "templates/category/explained.html"
+      - "scripts/build_site.py"
 
 permissions:
   contents: write
