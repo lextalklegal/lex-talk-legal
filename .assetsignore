@@ -36,6 +36,10 @@ pnpm-lock.yaml
 dev.vars*
 templates
 templates/**
+content
+content/**
+docs
+docs/**
 data/articles.json
 data/youtube.json
 data/vc_links.json
