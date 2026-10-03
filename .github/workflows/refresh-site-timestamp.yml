@@ -1,0 +1,46 @@
+name: Refresh Lex Talk Legal Site Timestamp
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lex-talk-legal-timestamp-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Refresh one site-wide timestamp
+        run: python scripts/refresh_site_timestamp.py
+
+      - name: Validate timestamp and production contracts
+        run: |
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/refresh_site_timestamp.py
+          python scripts/smoke_test.py
+
+      - name: Commit timestamp refresh
+        shell: bash
+        run: |
+          git config user.name "Lex Talk Legal Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/site_meta.json
+          git add '*.html' '**/*.html'
+          if git diff --cached --quiet; then
+            echo "No timestamp changes."
+          else
+            git commit -m "chore: refresh site-wide footer timestamp"
+            git push
+          fi

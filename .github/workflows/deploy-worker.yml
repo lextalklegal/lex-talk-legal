@@ -31,9 +31,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install production Python dependencies
-        run: python -m pip install --disable-pip-version-check beautifulsoup4
-
       - name: Repair stale public GA tags
         run: python scripts/ensure_public_ga.py
 
