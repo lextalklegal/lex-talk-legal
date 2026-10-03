@@ -1,0 +1,13 @@
+{
+  "purpose": "Search-intent planning for owned evergreen Lex Talk Legal guides. This is a content planning layer, not a ranking guarantee.",
+  "articles": [
+    {"source":"01-what-is-drt-in-india.html","primary_query":"what is DRT in India","secondary_queries":["DRT full form","how DRT works","how to file DRT case","what is DRAT"],"intent":"informational","section":"drt-drat"},
+    {"source":"02-sarfaesi-section-13-2.html","primary_query":"SARFAESI Section 13(2)","secondary_queries":["13(2) notice","60 day SARFAESI notice","SARFAESI demand notice"],"intent":"informational","section":"banking-law"},
+    {"source":"03-sarfaesi-section-13-4.html","primary_query":"SARFAESI Section 13(4)","secondary_queries":["13(4) possession","SARFAESI possession","sale under SARFAESI","DRT Section 17 remedy"],"intent":"informational","section":"banking-law"},
+    {"source":"04-what-happens-after-sarfaesi-possession-notice.html","primary_query":"what happens after SARFAESI possession notice","secondary_queries":["symbolic possession","physical possession SARFAESI","Section 14 SARFAESI","auction after possession notice"],"intent":"informational","section":"banking-law"},
+    {"source":"05-drt-vs-civil-court.html","primary_query":"DRT vs civil court","secondary_queries":["SARFAESI civil court jurisdiction","Section 34 SARFAESI","DRT jurisdiction"],"intent":"comparative informational","section":"drt-drat"},
+    {"source":"06-recovery-certificate-in-drt.html","primary_query":"what is a Recovery Certificate in DRT","secondary_queries":["DRT Recovery Certificate","Recovery Officer","RDB Act Section 19"],"intent":"informational","section":"drt-drat"},
+    {"source":"07-drat-appeal-from-drt-order.html","primary_query":"DRAT appeal from DRT order","secondary_queries":["DRT appeal 30 days","DRAT pre deposit","RDB Act Section 20 21"],"intent":"informational","section":"drt-drat"},
+    {"source":"08-how-to-check-case-status-online-india.html","primary_query":"how to check case status online in India","secondary_queries":["CNR status","case status by party name","case status by advocate name","eCourts case status"],"intent":"utility informational","section":"explained"}
+  ]
+}
