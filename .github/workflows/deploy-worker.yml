@@ -37,9 +37,12 @@ jobs:
       - name: Repair stale public GA tags
         run: python scripts/ensure_public_ga.py
 
+      - name: Synchronize public timestamps to site-wide source of truth
+        run: python scripts/sync_public_timestamps.py
+
       - name: Validate production build before deploy
         run: |
-          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py scripts/refresh_site_timestamp.py
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py scripts/refresh_site_timestamp.py scripts/sync_public_timestamps.py
           python scripts/smoke_test.py
 
       - name: Deploy Worker and static assets
