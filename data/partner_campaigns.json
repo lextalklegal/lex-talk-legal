@@ -1,0 +1,20 @@
+{
+  "pass-the-bar-aibe100": {
+    "active": true,
+    "brand": "Pass The Bar",
+    "label": "AIBE XXII PREPARATION",
+    "destination": "https://passthebar.org/",
+    "promo_code": "AIBE100",
+    "offer": "Save ₹100",
+    "campaign": "aibe100",
+    "features": [
+      "21 previous AIBE papers",
+      "Full-length mock tests",
+      "Bare Acts library",
+      "Question-by-question explanations",
+      "Performance analytics & weak-area practice",
+      "Practice in 14 languages"
+    ],
+    "landing_url": "/aibe-preparation/"
+  }
+}

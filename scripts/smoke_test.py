@@ -220,3 +220,48 @@ for old_url, new_url in (
 
 print("Lex Talk Legal SEO + PIB smoke test passed.")
 print("Page-design ownership contracts: PASS")
+
+# Sponsored campaign safeguards: the active Pass The Bar promotion must be
+# traceable, clearly labelled, and present only on approved relevant surfaces.
+campaign_path = ROOT / "data/partner_campaigns.json"
+if not campaign_path.exists():
+    raise SystemExit("Sponsored campaign configuration is missing")
+try:
+    campaign_data = json.loads(campaign_path.read_text(encoding="utf-8"))
+except Exception as exc:
+    raise SystemExit(f"Sponsored campaign configuration is invalid: {exc}")
+ptb = campaign_data.get("pass-the-bar-aibe100", {})
+if not isinstance(ptb, dict) or not ptb.get("active"):
+    raise SystemExit("Pass The Bar campaign is not marked active")
+if str(ptb.get("promo_code")) != "AIBE100" or str(ptb.get("offer")) != "Save ₹100":
+    raise SystemExit("Pass The Bar offer/code configuration is incorrect")
+
+for rel in ("index.html", "category/legal-careers/index.html"):
+    page_text = (ROOT / rel).read_text(encoding="utf-8")
+    for marker in ("SPONSORED PROMOTION", "AIBE100", "Save ₹100", 'rel="sponsored noopener noreferrer"'):
+        if marker not in page_text:
+            raise SystemExit(f"Sponsored campaign marker missing from {rel}: {marker}")
+
+landing = ROOT / "aibe-preparation/index.html"
+if not landing.exists():
+    raise SystemExit("AIBE sponsored landing page is missing")
+landing_text = landing.read_text(encoding="utf-8")
+for marker in (
+    'noindex,follow,max-image-preview:large',
+    '/assets/pages/aibe-preparation.css',
+    "AIBE100",
+    "Save ₹100",
+    "SPONSORED PARTNER",
+    'rel="sponsored noopener noreferrer"',
+):
+    if marker not in landing_text:
+        raise SystemExit(f"AIBE landing page marker missing: {marker}")
+if "ca-pub-3161673810996421" in landing_text:
+    raise SystemExit("AIBE sponsored landing must not add AdSense code")
+
+# A paid external campaign CTA should use Google's sponsored link qualification.
+article_css = (ROOT / "assets/pages/article.css").read_text(encoding="utf-8")
+if ".ltl-sponsored-article-aibe" not in article_css:
+    raise SystemExit("Article sponsor placement CSS is missing")
+
+print("Sponsored campaign safeguards: PASS")

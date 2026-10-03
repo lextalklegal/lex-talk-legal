@@ -161,7 +161,6 @@ def main():
     data = load_data()
     template = TEMPLATE.read_text(encoding="utf8")
     content = template.replace("{{COURT_BLOCKS}}", build_courts(data))
-    extra_head = '<link rel="stylesheet" href="/assets/pages/courtrooms.css">'
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
         site.page_shell(
