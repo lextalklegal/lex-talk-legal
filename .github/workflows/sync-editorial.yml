@@ -27,7 +27,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install editorial dependencies
-        run: pip install beautifulsoup4
+        run: python -m pip install --disable-pip-version-check -r requirements.txt
 
       - name: Validate build sources
         run: |
