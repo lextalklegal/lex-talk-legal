@@ -1,0 +1,16 @@
+Lex Talk Legal Hybrid Publishing Validation
+============================================
+Public HTML files: 51
+Evergreen source files: 8
+Evergreen generated pages: 8
+Standard sitemap URLs: 46
+News sitemap URLs: 2
+Smoke test: PASS
+Page-design contracts: PASS
+Sponsored campaign safeguards: PASS
+Sampled header/nav/footer shell checks: PASS
+Evergreen source excluded from Cloudflare static assets: YES
+Deploy workflow ignores source-only evergreen changes to avoid racing Editorial Sync: YES
+Editorial Sync triggers on content/evergreen/** changes: YES
+Evergreen pages use Article (not NewsArticle) schema: YES
+Evergreen pages use dedicated article.css: YES
