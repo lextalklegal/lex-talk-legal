@@ -28,30 +28,11 @@ def main():
         "generated_by": "Lex Talk Legal site-wide timestamp refresh"
     }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
-    changed = 0
-    checked = 0
-    failures = []
-    for page in public_html_files():
-        checked += 1
-        text = page.read_text(encoding="utf-8")
-        if 'class="updated-line"' not in text:
-            failures.append(str(page.relative_to(ROOT)))
-            continue
-        updated, count = UPDATED_RE.subn(
-            lambda m: f'{m.group(1)}{label} IST{m.group(2)}{epoch}{m.group(3)}{label} IST{m.group(5)}',
-            text,
-            count=1,
-        )
-        if count != 1:
-            failures.append(str(page.relative_to(ROOT)))
-            continue
-        if updated != text:
-            page.write_text(updated, encoding="utf-8")
-            changed += 1
-
-    if failures:
-        raise SystemExit("Timestamp refresh failed for pages: " + ", ".join(failures[:10]))
-    print(f"Site timestamp refreshed: {label} IST | checked={checked} changed={changed}")
+    # The site-wide timestamp is intentionally stored only in data/site_meta.json.
+    # Public pages read this value at runtime through assets/site.js, which avoids
+    # rewriting dozens of HTML files and prevents partial commits from creating
+    # timestamp drift between generated pages and the authoritative value.
+    print(f"Site timestamp refreshed: {label} IST | source=data/site_meta.json")
 
 if __name__ == "__main__":
     main()
