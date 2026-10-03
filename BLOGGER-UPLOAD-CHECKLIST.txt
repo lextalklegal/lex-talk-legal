@@ -1,0 +1,13 @@
+LEX TALK LEGAL — BLOGGER UPLOAD CHECKLIST
+
+For each article:
+1. Open the .html file.
+2. Copy the article body into Blogger's HTML view.
+3. Use the supplied SEO Title as the Blogger title.
+4. Use the supplied slug only if Blogger allows the exact custom permalink.
+5. Add the supplied labels.
+6. Keep the official-source links and editorial note.
+7. Add a featured image that is original/licensed for Lex Talk Legal.
+8. Before publishing, verify the current legal provisions and links.
+9. After publishing, add the final canonical Blogger URL to relevant related articles.
+10. Do not publish multiple near-duplicate versions of the same article just to target keyword variations.
