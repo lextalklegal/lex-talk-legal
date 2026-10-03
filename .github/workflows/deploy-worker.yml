@@ -26,6 +26,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
+      - name: Setup Python for production guard
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Repair stale public GA tags
+        run: python scripts/ensure_public_ga.py
+
+      - name: Validate production build before deploy
+        run: |
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
+          python scripts/smoke_test.py
+
       - name: Deploy Worker and static assets
         uses: cloudflare/wrangler-action@v4
         with:

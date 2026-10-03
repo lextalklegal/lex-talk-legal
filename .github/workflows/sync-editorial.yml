@@ -29,10 +29,12 @@ jobs:
       - name: Install editorial dependencies
         run: pip install beautifulsoup4
 
-      - name: Validate repository
+      - name: Validate build sources
         run: |
-          python -m py_compile scripts/build_site.py scripts/smoke_test.py
-          python scripts/smoke_test.py
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
+
+      - name: Repair stale public GA tags before editorial build
+        run: python scripts/ensure_public_ga.py
 
       - name: Sync Blogger and YouTube only
         env:
@@ -40,9 +42,12 @@ jobs:
           YOUTUBE_HANDLE: "@lextalklegal"
         run: python scripts/build_site.py
 
+      - name: Enforce GA4 coverage after editorial build
+        run: python scripts/ensure_public_ga.py
+
       - name: Validate generated editorial build
         run: |
-          python -m py_compile scripts/build_site.py scripts/smoke_test.py
+          python -m py_compile scripts/build_site.py scripts/smoke_test.py scripts/ensure_public_ga.py
           python scripts/smoke_test.py
 
       - name: Commit editorial outputs only
@@ -50,7 +55,7 @@ jobs:
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos
+          git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos scripts/ensure_public_ga.py
           if git diff --cached --quiet; then
             echo "No editorial changes."
           else
