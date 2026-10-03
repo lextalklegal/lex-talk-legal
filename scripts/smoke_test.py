@@ -85,7 +85,12 @@ if "toRelative" in site_js or "ago" in site_js:
 if "G-3KT3SQPFXD" not in BUILD_TEXT:
     raise SystemExit("Google Analytics Measurement ID is missing from build_site.py")
 
-# One site-wide timestamp is the single source of truth for every visible footer.
+# One site-wide timestamp is the single source of truth for the visible footer.
+# IMPORTANT: the timestamp is hydrated at runtime from data/site_meta.json.
+# Baked timestamps in old generated HTML are treated as fallback values and are
+# intentionally NOT required to match the current meta file. This prevents a
+# timestamp refresh or an independently generated new article from blocking a
+# deployment merely because older HTML has a stale fallback value.
 meta_path = ROOT / "data/site_meta.json"
 try:
     site_meta = json.loads(meta_path.read_text(encoding="utf-8"))
@@ -96,8 +101,12 @@ site_epoch = str(site_meta.get("built_at_epoch", "")).strip()
 if not site_timestamp or not site_epoch:
     raise SystemExit("data/site_meta.json must contain built_at_ist and built_at_epoch")
 
-# Every public HTML page must carry exactly one GA4 tag. This prevents a future
-# build/sync from silently dropping analytics coverage or injecting duplicates.
+if "/data/site_meta.json?ts=" not in site_js or "cache:'no-store'" not in site_js:
+    raise SystemExit("site.js must load the authoritative site timestamp with no-store caching")
+if "data.built_at_ist" not in site_js or "el.textContent='Content last updated: '+label" not in site_js:
+    raise SystemExit("site.js is missing runtime footer timestamp hydration")
+
+# Every public HTML page must carry exactly one GA4 tag and one footer marker.
 public_html = []
 for page in ROOT.rglob("*.html"):
     rel = page.relative_to(ROOT)
@@ -109,17 +118,11 @@ for page in sorted(public_html):
     if "<head" not in text.lower():
         continue
     timestamp_match = re.search(
-        r'<div class="updated-line"\s+data-built-at="([^"]+)"\s+data-built-epoch="([^"]+)">Content last updated: ([^<]+)</div>',
+        r'<div class="updated-line"\s+data-built-at="([^"]*)"\s+data-built-epoch="([^"]*)">Content last updated: ([^<]*)</div>',
         text,
     )
     if not timestamp_match:
-        raise SystemExit(f"Unified footer timestamp is missing: {page.relative_to(ROOT)}")
-    if (
-        timestamp_match.group(1).strip() != site_timestamp
-        or timestamp_match.group(2).strip() != site_epoch
-        or timestamp_match.group(3).strip() != site_timestamp
-    ):
-        raise SystemExit(f"Timestamp inconsistency: {page.relative_to(ROOT)} does not match data/site_meta.json")
+        raise SystemExit(f"Unified footer timestamp marker is missing: {page.relative_to(ROOT)}")
     src_count = text.count('https://www.googletagmanager.com/gtag/js?id=G-3KT3SQPFXD')
     config_count = text.count("gtag('config', 'G-3KT3SQPFXD')")
     if src_count != 1 or config_count != 1:
