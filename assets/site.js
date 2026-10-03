@@ -75,18 +75,85 @@
   });
 })();
 
-/* Lex Talk Legal — GA4 interaction tracking */
+/* Lex Talk Legal — GA4 interaction & conversion tracking */
+/* Existing campaign event: sponsor_click remains supported through data-ga-event links. */
 (function(){
-  function track(name,params){try{if(typeof window.gtag==='function')window.gtag('event',name,params||{});}catch(_){} }
+  function track(name,params){
+    try{
+      if(typeof window.gtag!=='function')return;
+      const payload=Object.assign({
+        page_path:location.pathname,
+        page_title:document.title,
+        page_location:location.href
+      },params||{});
+      Object.keys(payload).forEach(k=>{if(payload[k]===undefined||payload[k]===null)delete payload[k]});
+      window.gtag('event',name,payload);
+    }catch(_){}
+  }
   document.addEventListener('click',function(e){
-    const a=e.target.closest('a'); if(!a)return;
+    const a=e.target.closest('a');if(!a)return;
     const href=a.getAttribute('href')||'';
-    const text=(a.innerText||'').trim().slice(0,100);
-    if(a.dataset.gaEvent){track(a.dataset.gaEvent,{campaign:a.dataset.gaCampaign||undefined,link_url:a.href,link_text:text});return;}
-    if(/passthebar\.org/i.test(href)){track('sponsor_click',{campaign:'aibe100',link_url:a.href,link_text:text});return;}
-    if(/youtube\.com/i.test(href)){track('youtube_click',{link_url:a.href,link_text:text});return;}
-    if(/^mailto:/i.test(href)){track('contact_click',{method:'email',link_text:text});return;}
-    try{if(/(^|\.)wa\.me$/i.test(new URL(href,location.href).hostname)){track('whatsapp_click',{link_url:a.href});return;}}catch(_){}
-    if(a.target==='_blank'&&/^https?:/i.test(href)){track('external_link_click',{link_url:a.href,link_text:text});}
+    const text=(a.innerText||a.getAttribute('aria-label')||'').trim().slice(0,120);
+    const path=location.pathname;
+
+    if(a.dataset.gaEvent){
+      track(a.dataset.gaEvent,{
+        campaign:a.dataset.gaCampaign,
+        placement:a.dataset.gaPlacement,
+        content_type:a.dataset.gaContentType,
+        link_url:a.href,
+        link_text:text
+      });
+      return;
+    }
+    if(/passthebar\.org/i.test(href)){
+      track('aibe_offer_click',{campaign:'aibe100',placement:'sponsor',link_url:a.href,link_text:text});
+      return;
+    }
+    if(/youtube\.com/i.test(href)){
+      track('youtube_click',{link_url:a.href,link_text:text});
+      return;
+    }
+    if(path.startsWith('/advertise')&&/^mailto:/i.test(href)){
+      const subject=(decodeURIComponent(href).match(/subject=([^&]*)/i)||[])[1]||'';
+      track(/media.?kit/i.test(subject)?'media_kit_request':'advertiser_enquiry',{placement:'advertise_page',link_text:text});
+      return;
+    }
+    if(path.startsWith('/jobs/')&&/^mailto:/i.test(href)){
+      track('job_listing_submission',{placement:'jobs_page',link_text:text});
+      return;
+    }
+    if(/^mailto:/i.test(href)){
+      track('contact_click',{method:'email',link_text:text});
+      return;
+    }
+    try{
+      const url=new URL(href,location.href);
+      if(/(^|\.)wa\.me$/i.test(url.hostname)){
+        track('whatsapp_click',{link_url:a.href,link_text:text});
+        return;
+      }
+      if(url.origin!==location.origin&&/^https?:/i.test(url.protocol)){
+        track('external_link_click',{link_url:a.href,link_text:text,placement:'external'});
+      }
+    }catch(_){ }
+  });
+
+  const searchBtn=document.getElementById('siteSearchBtn');
+  const searchInput=document.getElementById('siteSearchInput');
+  if(searchBtn&&searchInput){
+    const sendSearch=()=>{
+      const q=(searchInput.value||'').trim();
+      if(q)track('site_search',{search_term:q.slice(0,100)});
+    };
+    searchBtn.addEventListener('click',sendSearch);
+    searchInput.addEventListener('keydown',e=>{if(e.key==='Enter')sendSearch()});
+  }
+
+  document.querySelectorAll('.newsletter-form').forEach(form=>{
+    form.addEventListener('submit',()=>{
+      const input=form.querySelector('input[type="email"]');
+      track('newsletter_signup_attempt',{method:'newsletter_form',has_email:!!(input&&input.value)});
+    });
   });
 })();
