@@ -65,8 +65,8 @@ jobs:
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
-          # Commit only generated/editorial output paths; never source/docs HTML.
           git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/site_meta.json article category videos scripts/ensure_public_ga.py
+          git add '*.html' '**/*.html' ':!docs/**'
           if git diff --cached --quiet; then
             echo "No editorial changes."
           else

@@ -11,8 +11,8 @@ on:
       - "data/pib_queue.json"
       - "content/evergreen/**"
       - "templates/category/explained.html"
-      - "scripts/build_site.py"
       - "docs/**"
+      - "scripts/build_site.py"
 
 permissions:
   contents: read
