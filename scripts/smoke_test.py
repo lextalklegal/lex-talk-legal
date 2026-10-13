@@ -87,6 +87,17 @@ if "toRelative" in site_js or "ago" in site_js:
 if "G-3KT3SQPFXD" not in BUILD_TEXT:
     raise SystemExit("Google Analytics Measurement ID is missing from build_site.py")
 
+# YouTube-to-blog automation must remain wired into the editorial workflow.
+YOUTUBE_ARTICLE_SCRIPT = ROOT / "scripts" / "generate_youtube_articles.py"
+YOUTUBE_ARTICLE_WORKFLOW = (ROOT / ".github" / "workflows" / "sync-editorial.yml").read_text(encoding="utf-8")
+if not YOUTUBE_ARTICLE_SCRIPT.exists():
+    raise SystemExit("YouTube auto-article generator is missing")
+for marker in ("OPENAI_API_KEY", "generate_youtube_articles.py", "youtube_articles.json"):
+    if marker not in YOUTUBE_ARTICLE_WORKFLOW and marker not in BUILD_TEXT:
+        raise SystemExit(f"YouTube auto-blog wiring is missing: {marker}")
+if "VideoObject" not in BUILD_TEXT or "video_schema_json" not in BUILD_TEXT:
+    raise SystemExit("Generated YouTube article pages are missing VideoObject structured data")
+
 # One site-wide timestamp is the single source of truth for every visible footer.
 meta_path = ROOT / "data/site_meta.json"
 try:

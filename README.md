@@ -25,6 +25,7 @@ For a single-page redesign, change only that page's HTML/template and page CSS. 
 It fetches only:
 - Blogger editorial posts
 - YouTube feed
+- transcript-grounded automatic article generation for new YouTube uploads (requires the `OPENAI_API_KEY` GitHub Actions secret; see `YOUTUBE-AUTO-BLOG-SETUP.md`)
 
 It rebuilds only:
 - article pages

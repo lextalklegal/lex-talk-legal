@@ -1103,6 +1103,20 @@ def article(a, all_articles=None):
         ]
     }
     schema_json=json.dumps(schema,ensure_ascii=False).replace('</','<\\/')
+    video_schema_json = ''
+    if a.get('video_id') and a.get('video_upload_date'):
+        video_schema = {
+            '@context': 'https://schema.org',
+            '@type': 'VideoObject',
+            'name': a.get('video_title') or a.get('title',''),
+            'description': a.get('meta_description') or a.get('excerpt',''),
+            'uploadDate': str(a.get('video_upload_date','')),
+            'embedUrl': a.get('video_embed_url') or ('https://www.youtube-nocookie.com/embed/' + str(a.get('video_id',''))),
+            'publisher': {'@type':'Organization','name':'Lex Talk Legal','url':SITE_URL+'/'},
+        }
+        if image:
+            video_schema['thumbnailUrl'] = [image]
+        video_schema_json = '<script type="application/ld+json">' + json.dumps(video_schema,ensure_ascii=False).replace('</','<\\/') + '</script>'
     breadcrumb_json=json.dumps(breadcrumb_schema,ensure_ascii=False).replace('</','<\\/')
     desc=a.get('meta_description') or a.get('excerpt','')
     published_meta=H.escape('Published: '+published_label if published_label else 'Publication date unavailable')
@@ -1118,7 +1132,7 @@ def article(a, all_articles=None):
           f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> {type_label} <span>·</span> {source_line}</div>{hero}'
           f'<div class="article-body">{body_html}</div>{pass_the_bar_promo("article-aibe") if is_aibe_related(a) else ""}{related_block}'
           f'<div class="notice"><strong>Editorial note:</strong> This content is for general legal information and education. Verify important legal facts, orders, dates and current procedural requirements from the concerned official source.</div>'
-          + (f'<div class="article-source">Source reference: This is an original Lex Talk Legal evergreen guide. Primary-source links are included in the article for verification.</div>' if is_evergreen else f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div>') + '</main>')
+          + (f'<div class="article-source">Source reference: This is an original Lex Talk Legal evergreen guide. Primary-source links are included in the article for verification.</div>' if is_evergreen else (f'<div class="article-source">Source reference: This article is based on the linked Lex Talk Legal YouTube video and its available transcript or description. Claims have not been independently verified unless separately cited.</div>' if a.get('youtube_auto_article') else f'<div class="article-source">Source reference: Original Blogger publication linked above. Lex Talk Legal independently prepares and publishes this presentation; readers should verify material facts, orders, dates and legal positions from the relevant primary source.</div>')) + '</main>')
 
     html=page_shell((a.get('title',''),a.get('url','')),desc,body)
     html=html.replace('<meta property="og:type" content="website">','<meta property="og:type" content="article">',1)
@@ -1131,7 +1145,7 @@ def article(a, all_articles=None):
                   f'<link rel="stylesheet" href="/assets/pages/article.css">'
                   f'<script type="application/ld+json">{schema_json}</script>'
                   f'<script type="application/ld+json">{breadcrumb_json}</script>')
-    return html.replace('</head>',article_head+'</head>',1)
+    return html.replace('</head>',article_head+video_schema_json+'</head>',1)
 
 
 def media_html(url, cls='story-image', alt=''):
@@ -1417,6 +1431,12 @@ def main():
     if not arts:
         try:arts=json.loads(ap.read_text(encoding='utf8'))
         except Exception:arts=[]
+    # Merge transcript-grounded articles generated from new YouTube uploads.
+    try:
+        generated=json.loads((ROOT/'data/youtube_articles.json').read_text(encoding='utf8'))
+        if isinstance(generated,list): arts=list(arts or []) + generated
+    except Exception:
+        pass
     arts=normalize_articles(arts)
     arts,article_redirects=dedupe_articles(arts)
     arts.sort(key=lambda x:x.get('published',''),reverse=True)
