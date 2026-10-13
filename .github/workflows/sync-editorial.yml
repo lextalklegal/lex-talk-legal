@@ -43,7 +43,7 @@ jobs:
         env:
           YOUTUBE_HANDLE: "@lextalklegal"
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-2.5-flash-lite"
+          GEMINI_MODEL: "gemini-3.5-flash-lite"
         run: python scripts/generate_youtube_articles.py
 
       - name: Validate build sources
