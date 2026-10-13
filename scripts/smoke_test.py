@@ -92,9 +92,13 @@ YOUTUBE_ARTICLE_SCRIPT = ROOT / "scripts" / "generate_youtube_articles.py"
 YOUTUBE_ARTICLE_WORKFLOW = (ROOT / ".github" / "workflows" / "sync-editorial.yml").read_text(encoding="utf-8")
 if not YOUTUBE_ARTICLE_SCRIPT.exists():
     raise SystemExit("YouTube auto-article generator is missing")
-for marker in ("OPENAI_API_KEY", "generate_youtube_articles.py", "youtube_articles.json"):
+for marker in ("GEMINI_API_KEY", "generate_youtube_articles.py", "youtube_articles.json"):
     if marker not in YOUTUBE_ARTICLE_WORKFLOW and marker not in BUILD_TEXT:
         raise SystemExit(f"YouTube auto-blog wiring is missing: {marker}")
+if "OPENAI_API_KEY" in YOUTUBE_ARTICLE_WORKFLOW or "api.openai.com" in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8"):
+    raise SystemExit("Paid OpenAI API dependency remains in the YouTube automation")
+if "GEMINI_API_KEY" not in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8") or "media:group/media:description" not in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8"):
+    raise SystemExit("Gemini integration or YouTube feed description fallback is missing")
 if "VideoObject" not in BUILD_TEXT or "video_schema_json" not in BUILD_TEXT:
     raise SystemExit("Generated YouTube article pages are missing VideoObject structured data")
 

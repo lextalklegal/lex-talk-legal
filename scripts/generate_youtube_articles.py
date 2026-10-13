@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 """Create an original, transcript-grounded article for each new Lex Talk Legal upload.
 
-Requires OPENAI_API_KEY. Articles are generated only when a transcript or a meaningful
-YouTube description is available. Claims are attributed to the speaker/source; the
-script never invents dates, locations, quotes, legal holdings, or independent verification.
+Uses the Gemini API free tier when GEMINI_API_KEY is configured. Articles are generated only when a transcript or meaningful source material is available. Claims are attributed to the speaker/source; the script never invents dates, locations, quotes, legal holdings, or independent verification.
 """
 from __future__ import annotations
 import html
@@ -21,10 +19,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HANDLE = os.getenv("YOUTUBE_HANDLE", "@lextalklegal")
 CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID", "").strip()
-API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite").strip() or "gemini-2.5-flash-lite"
 SITE = "https://lextalk.legal"
-FEED_NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015"}
+FEED_NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015", "media": "http://search.yahoo.com/mrss/"}
 STATE_PATH = ROOT / "data/youtube_articles.json"
 IMAGE_DIR = ROOT / "assets/images/youtube-blog"
 
@@ -55,7 +53,8 @@ def get_uploads() -> list[dict]:
         video_id = entry.findtext("yt:videoId", default="", namespaces=FEED_NS)
         url = link.attrib.get("href", "") if link is not None else ("https://www.youtube.com/watch?v=" + video_id if video_id else "")
         if video_id and title and url:
-            videos.append({"title": title, "url": url, "published": published, "video_id": video_id})
+            description = entry.findtext("media:group/media:description", default="", namespaces=FEED_NS).strip()
+            videos.append({"title": title, "url": url, "published": published, "video_id": video_id, "description": description})
     return videos
 
 
@@ -105,46 +104,57 @@ def save_thumbnail(video_id: str) -> str:
 
 
 def call_model(video: dict, source_text: str, source_type: str) -> dict:
+    """Use Gemini's API with JSON output; keep prompts grounded and SEO-useful."""
     instructions = """You are the editorial writer for Lex Talk Legal, an Indian legal-news and public-affairs website.
 Create an original, accurate, search-friendly article based ONLY on the supplied YouTube title and transcript/description.
 Return one JSON object with exactly these keys: headline, meta_description, excerpt, category, labels, html.
-Rules:
-- headline: clear, descriptive, factual, about 45-75 characters when possible; do not use clickbait.
-- meta_description: useful summary, ideally 140-160 characters.
-- excerpt: 1-2 sentence summary for article cards.
+SEO and editorial requirements:
+- headline: specific, clear, human-readable; target 50-70 characters when possible; include the main topic naturally, never keyword-stuff or use clickbait.
+- meta_description: unique, accurate, compelling, approximately 140-160 characters; describe what the reader will learn, no unsupported claims.
+- excerpt: 1-2 useful sentences for cards and internal links.
 - category: one of Courts, Law & Policy, Banking Law, DRT / DRAT, Legal Careers, DRA, Explained, Legal News.
-- labels: array of 2-5 short relevant topical labels, include the selected category as one label.
-- html: valid article body fragment using only <p>, <h2>, <h3>, <ul>, <ol>, <li>, <blockquote>, <strong>, <em>, <a>. No <html>, <body>, scripts, images or iframe.
-- Write in clear English. Explain Hindi speech in English and translate only when clear from the source. Do not invent quotes or present uncertain translations as verbatim.
+- labels: array of 3-5 relevant topical labels; include the selected category and specific subject/entities only if clearly in source.
+- html: useful, readable article body fragment using only <p>, <h2>, <h3>, <ul>, <ol>, <li>, <blockquote>, <strong>, <em>, <a>. No <html>, <body>, scripts, images or iframe.
+- Structure: informative opening; descriptive H2 subheadings; explain key points and context available in the source; short conclusion. Do not pad the article or repeat the same keyword.
+- Write in clear English. Explain Hindi speech in English and translate only when clear. Do not invent quotes or present uncertain translations as verbatim.
 - Attribute political statements, allegations, predictions and disputed claims to the speaker/channel. Say when the video does not independently establish a claim.
 - Do not add facts, dates, locations, statistics, official responses, legal conclusions or context absent from the supplied material.
-- If the video is primarily a public statement, describe who said what and why it matters, without endorsing it. Keep a short video summary focused, usually 250-450 words; do not pad or repeat keywords.
-- Include an ending paragraph noting the article is based on the linked video and that material claims should be checked against primary records where relevant.
-- Do not make claims about rankings or guarantee search visibility.
+- If source material is only a title or too thin to support an article, return a JSON object with headline/meta_description/excerpt/category/labels/html, but set html to a short transparent note that the video description does not contain enough detail for a reliable article. The caller should avoid publishing that note as a full news story.
+- Aim for 250-450 words only when the source material supports it; short source should result in short output.
+- Include a final paragraph noting that the article is based on the linked video and that material claims should be checked against primary records where relevant.
+- Never guarantee search visibility, legal outcomes, or accuracy beyond the supplied source.
 """
-    payload = {
-        "model": MODEL,
-        "response_format": {"type": "json_object"},
-        "temperature": 0.2,
-        "messages": [
-            {"role": "system", "content": instructions},
-            {"role": "user", "content": json.dumps({"video_title": video["title"], "video_url": video["url"], "published_at": video["published"], "source_type": source_type, "source_material": source_text[:22000]}, ensure_ascii=False)}
-        ]
+    prompt = {
+        "video_title": video["title"],
+        "video_url": video["url"],
+        "published_at": video.get("published", ""),
+        "source_type": source_type,
+        "source_material": source_text[:22000],
     }
-    req = urllib.request.Request("https://api.openai.com/v1/chat/completions", data=json.dumps(payload).encode("utf-8"), headers={"Authorization": "Bearer " + API_KEY, "Content-Type": "application/json", "User-Agent": "LexTalkLegalEditorialBot/1.0"}, method="POST")
+    payload = {
+        "system_instruction": {"parts": [{"text": instructions}]},
+        "contents": [{"role": "user", "parts": [{"text": json.dumps(prompt, ensure_ascii=False)}]}],
+        "generationConfig": {"temperature": 0.2, "responseMimeType": "application/json"},
+    }
+    endpoint = "https://generativelanguage.googleapis.com/v1beta/models/" + urllib.parse.quote(MODEL, safe="") + ":generateContent?key=" + urllib.parse.quote(API_KEY, safe="")
+    req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers={"Content-Type": "application/json", "User-Agent": "LexTalkLegalEditorialBot/1.0"}, method="POST")
     with urllib.request.urlopen(req, timeout=90) as response:
         result = json.loads(response.read().decode("utf-8"))
-    content = result["choices"][0]["message"]["content"]
+    content = "".join(part.get("text", "") for part in result["candidates"][0]["content"]["parts"])
     data = json.loads(content)
     for key in ("headline", "meta_description", "excerpt", "category", "labels", "html"):
         if key not in data:
-            raise ValueError("Model response missing " + key)
+            raise ValueError("Gemini response missing " + key)
     if data["category"] not in {"Courts", "Law & Policy", "Banking Law", "DRT / DRAT", "Legal Careers", "DRA", "Explained", "Legal News"}:
         data["category"] = "Legal News"
     if not isinstance(data["labels"], list):
         data["labels"] = [data["category"]]
+    data["labels"] = [str(label).strip()[:60] for label in data["labels"] if str(label).strip()][:5]
     if data["category"] not in data["labels"]:
         data["labels"].insert(0, data["category"])
+    data["headline"] = re.sub(r"\s+", " ", str(data["headline"])).strip()[:110]
+    data["meta_description"] = re.sub(r"\s+", " ", str(data["meta_description"])).strip()[:165]
+    data["excerpt"] = re.sub(r"\s+", " ", str(data["excerpt"])).strip()[:320]
     return data
 
 
@@ -175,7 +185,7 @@ def load_state() -> list[dict]:
 
 def main() -> int:
     if not API_KEY:
-        print("OPENAI_API_KEY is not set. Skipping auto-article generation; regular YouTube sync can still run.")
+        print("GEMINI_API_KEY is not set. Skipping AI article generation; regular YouTube sync can still run.")
         return 0
     state = load_state()
     known = {str(a.get("video_id", "")) for a in state}
@@ -186,6 +196,10 @@ def main() -> int:
             continue
         text = transcript_text(video["video_id"])
         source_type = "video transcript"
+        if len(text) < 80:
+            # Prefer the description embedded in the public Atom upload feed; YouTube's watch page often blocks GitHub-hosted IPs.
+            text = str(video.get("description", "")).strip()
+            source_type = "YouTube upload feed description (transcript unavailable)"
         if len(text) < 80:
             text = video_description(video["video_id"])
             source_type = "public YouTube description (transcript unavailable)"

@@ -42,8 +42,8 @@ jobs:
       - name: Generate article drafts from new YouTube uploads
         env:
           YOUTUBE_HANDLE: "@lextalklegal"
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: "gpt-4.1-mini"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: "gemini-2.5-flash-lite"
         run: python scripts/generate_youtube_articles.py
 
       - name: Validate build sources
