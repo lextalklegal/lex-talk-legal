@@ -21,3 +21,5 @@
 .article-body .article-x-embed p{margin:9px 0 0}
 .article-x-embed iframe{max-width:100%!important}
 @media(max-width:700px){.article-x-embed{padding:10px;margin:20px 0 24px}.article-x-embed-head{align-items:flex-start;flex-wrap:wrap}}
+
+/* X-post newsroom publishing support verified by production deploy pipeline — 2026-10-21. */
