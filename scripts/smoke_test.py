@@ -143,6 +143,24 @@ for row in x_rows:
             raise SystemExit(f"Rendered X article is missing embed/fallback marker: {route} -> {marker}")
 
 
+# TV Frame reading mode: reusable, distraction-free reading without public animation tools or creator hints.
+if "ltl-reader-open" not in BUILD_TEXT or "article-reading-mode.js" not in BUILD_TEXT:
+    raise SystemExit("Article template is missing the LexTalk.Legal TV Frame reading mode")
+if "data-ltl-reader-open" not in BUILD_TEXT:
+    raise SystemExit("Article template is missing the TV Frame launch button")
+for article_file in (ROOT / "article").rglob("*.html"):
+    rendered_article = article_file.read_text(encoding="utf-8")
+    if 'class="article-wrap"' not in rendered_article:
+        continue
+    if 'data-ltl-reader-open' not in rendered_article or '/assets/pages/article-reading-mode.js' not in rendered_article:
+        raise SystemExit(f"Generated article is missing TV Frame reading mode: {article_file}")
+    if '/video-tools/delhi-grap-stage-i-explainer.html' in rendered_article:
+        raise SystemExit(f"Generated article still links to the retired animator: {article_file}")
+if (ROOT / "video-tools" / "delhi-grap-stage-i-explainer.html").exists():
+    raise SystemExit("Retired public GRAP animation tool must not be present")
+if any("/video-tools/" in str(row.get("content", "")) or "animated GRAP explainer" in str(row.get("content", "")).lower() for row in x_rows):
+    raise SystemExit("Public X article source still advertises the animation tool")
+
 # One site-wide timestamp is the single source of truth for every visible footer.
 meta_path = ROOT / "data/site_meta.json"
 try:

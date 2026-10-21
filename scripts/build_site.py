@@ -1263,6 +1263,7 @@ def article(a, all_articles=None):
           f'<h1>{H.escape(a.get("title", ""))}</h1>'
           f'<div class="story-meta article-publication-date">{published_meta} {updated_html}</div>'
           f'<div class="article-meta">By <a href="/editorial-policy.html">Lex Talk Legal Editorial Desk</a> <span>·</span> {type_label} <span>·</span> {source_line}</div>{hero}'
+          f'<div class="ltl-reader-launch"><button type="button" class="ltl-reader-open" data-ltl-reader-open aria-haspopup="dialog">Read blog in LexTalk.Legal TV Frame <span aria-hidden="true">↗</span></button></div>'
           f'<div class="article-body">{body_html}</div>{pass_the_bar_promo("article-aibe") if is_aibe_related(a) else ""}{related_block}'
           f'<div class="notice"><strong>Editorial note:</strong> This report is for general information, not legal advice. Allegations and statements are attributed to their sources. Check linked orders, documents and official records for primary-source verification.</div>'
           + '<div class="article-source">' + (
@@ -1284,6 +1285,7 @@ def article(a, all_articles=None):
                   f'<meta property="article:section" content="{H.escape(section_name,quote=True)}">'
                   f'<meta name="author" content="Lex Talk Legal Editorial Desk">'
                   f'<link rel="stylesheet" href="/assets/pages/article.css">'
+                  f'<script src="/assets/pages/article-reading-mode.js" defer></script>'
                   f'<script type="application/ld+json">{schema_json}</script>'
                   f'<script type="application/ld+json">{breadcrumb_json}</script>')
     return html.replace('</head>',article_head+video_schema_json+'</head>',1)
