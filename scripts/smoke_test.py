@@ -468,3 +468,13 @@ if article_rows:
             _page=(ROOT/"category"/_key/"index.html").read_text(encoding="utf-8")
             if not any(str(a.get("title","")) in _page for a in _matches[:3]):
                 raise SystemExit(f"Category mapping failed to surface current {_key} article")
+
+# Homepage-specific quality checks: avoid duplicate brand titles and non-functional newsletter controls.
+home_html = (ROOT / 'index.html').read_text(encoding='utf-8')
+if '<title>Legal News, Court Updates &amp; Legal Explainers | Lex Talk Legal</title>' not in home_html:
+    raise SystemExit('Homepage SEO title is missing or duplicated')
+if 'Newsletter signup will be connected' in home_html or 'onsubmit=' in home_html and 'event.preventDefault();alert(' in home_html:
+    raise SystemExit('Non-functional newsletter signup placeholder remains on homepage')
+for follow_link in ('https://t.me/lextalklegal', 'https://www.youtube.com/@lextalklegal'):
+    if follow_link not in home_html:
+        raise SystemExit(f'Homepage follow CTA missing: {follow_link}')
