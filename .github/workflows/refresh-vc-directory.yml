@@ -5,6 +5,12 @@ on:
     # 9:00 PM India Standard Time (15:30 UTC)
     - cron: "30 15 * * *"
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/refresh_vc_from_onecourt.py"
+      - ".github/workflows/refresh-vc-directory.yml"
 
 permissions:
   contents: write
