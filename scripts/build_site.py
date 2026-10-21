@@ -1280,6 +1280,7 @@ def article(a, all_articles=None):
     html=html.replace('<meta property="og:type" content="website">','<meta property="og:type" content="article">',1)
     if image:
         html=html.replace('<meta property="og:image" content="'+SITE_URL+LOGO+'">','<meta property="og:image" content="'+H.escape(image,quote=True)+'">',1)
+    # Reader script cache version is bumped independently whenever shared reading behaviour changes.
     article_head=(f'<meta property="article:published_time" content="{H.escape(published_iso,quote=True)}">'
                   f'{("<meta property=\"article:modified_time\" content=\""+H.escape(updated_iso,quote=True)+"\">") if updated_iso else ""}'
                   f'<meta property="article:section" content="{H.escape(section_name,quote=True)}">'
