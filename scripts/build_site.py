@@ -1159,7 +1159,24 @@ def article(a, all_articles=None):
     hero=(f'<div class="article-hero media-frame" style="--media-image:url(&quot;{H.escape(image,quote=True)}&quot;)"><img src="{H.escape(image,quote=True)}" alt="{H.escape(a.get("title",""),quote=True)}" loading="eager" decoding="async"></div>' if image else '')
     soup=BeautifulSoup(a.get('content','') or '','html.parser')
     if image:
-        norm=re.sub(r'[?#].*
+        norm=re.sub(r'[?#].*$','',image).rstrip('/')
+        for im in soup.find_all('img'):
+            src=(im.get('src') or '').split('#')[0].rstrip('/')
+            if src==norm or (src and norm and src.endswith(norm.split('/')[-1])):
+                im.decompose()
+    x_post_url = normalize_x_post_url(a.get('x_post_url')) if a.get('x_post_url') else ''
+    if x_post_url:
+        embed_soup = BeautifulSoup(x_post_embed_markup(x_post_url), 'html.parser')
+        intro = soup.find('p', class_='article-intro') or soup.find('p')
+        nodes = list(embed_soup.contents)
+        if intro:
+            for node in reversed(nodes):
+                intro.insert_after(node)
+        else:
+            for node in reversed(nodes):
+                soup.insert(0, node)
+    body_html=str(soup)
+
     published_iso=str(a.get('published','')).strip()
     updated_iso=str(a.get('updated','')).strip()
     published_label=format_article_datetime(published_iso)
