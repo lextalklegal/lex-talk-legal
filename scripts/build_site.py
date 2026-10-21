@@ -1376,8 +1376,21 @@ def write_auctions_page():
     (ROOT/'auctions/index.html').write_text(page_shell(('Auction Desk','/auctions/'),'Bank, financial institution and authority auction information with participation-process assistance.',content),encoding='utf8')
 
 def write_search_page():
-    content='''<main class="utility-page"><span class="utility-kicker">SEARCH</span><h1>Search Lex Talk Legal</h1><p class="lead">Search recent articles, explainers and legal updates published on Lex Talk Legal.</p><div class="search-box"><input id="siteSearchInput" type="search" placeholder="Search a topic, case, section or keyword" autocomplete="off"><button class="primary-btn" id="siteSearchBtn" type="button">Search</button></div><div id="searchMeta" class="search-meta"></div><div id="searchResults" class="search-results"><div class="empty">Type a keyword to search the latest indexed Lex Talk Legal content.</div></div></main><script>fetch('/data/articles.json').then(r=>r.json()).then(items=>{const input=document.getElementById('siteSearchInput'),btn=document.getElementById('siteSearchBtn'),results=document.getElementById('searchResults'),meta=document.getElementById('searchMeta');const run=()=>{const q=input.value.trim().toLowerCase();if(!q){results.innerHTML='<div class=\"empty\">Type a keyword to search the latest indexed Lex Talk Legal content.</div>';meta.textContent='';return;}const out=items.filter(a=>((a.title||'')+' '+(a.excerpt||'')+' '+(a.category||'')).toLowerCase().includes(q)).slice(0,20);meta.textContent=out.length+' result'+(out.length===1?'':'s');results.innerHTML=out.length?out.map(a=>'<article class=\"search-result\"><div class=\"story-meta\">'+(a.category||'Legal News')+' · '+(a.published||'').slice(0,10)+'</div><h2><a href=\"'+a.url+'\">'+(a.title||'')+'</a></h2><p>'+((a.excerpt||'').replace(/</g,'&lt;'))+'</p></article>').join(''):'<div class=\"empty\">No matching stories found.</div>';};btn.addEventListener('click',run);input.addEventListener('keydown',e=>{if(e.key==='Enter')run();});}).catch(()=>{document.getElementById('searchResults').innerHTML='<div class=\"empty\">Search is temporarily unavailable.</div>';});</script>'''
-    (ROOT/'search.html').write_text(page_shell(('Search','/search.html'),'Search Lex Talk Legal for legal news, judgments, explainers and updates.',content),encoding='utf8')
+    content='''<main class="utility-page search-page">
+<span class="utility-kicker">SEARCH</span>
+<h1>Search Lex Talk Legal</h1>
+<p class="lead">Search legal news, court updates, judgments, explainers, banking and recovery topics, legal careers and more.</p>
+<form class="search-box" id="siteSearchForm" role="search">
+<label class="sr-only" for="siteSearchInput">Search Lex Talk Legal</label>
+<input id="siteSearchInput" type="search" placeholder="Search a case, court, law, section or keyword…" autocomplete="off" enterkeyhint="search" aria-describedby="searchHelp">
+<button class="primary-btn" id="siteSearchBtn" type="submit">Search</button>
+</form>
+<p id="searchHelp" class="search-help">Tip: use a few words, e.g. “SARFAESI Section 13(2)” or “Delhi High Court”.</p>
+<div id="searchMeta" class="search-meta" role="status" aria-live="polite">Loading searchable articles…</div>
+<div id="searchResults" class="search-results" aria-live="polite"><div class="empty">Preparing the search index…</div></div>
+</main>
+<script src="/assets/pages/search.js" defer></script>'''
+    (ROOT/'search.html').write_text(page_shell(('Search','/search.html'),'Search Lex Talk Legal for legal news, judgments, explainers, courts and updates.',content),encoding='utf8')
 
 def _article_datetime(value):
     """Parse common ISO/RFC 2822 publication timestamps into an aware UTC datetime."""

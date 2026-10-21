@@ -506,3 +506,18 @@ try:
     ast.parse(vc_refresh_script.read_text(encoding="utf-8"))
 except SyntaxError as exc:
     raise SystemExit(f"OneCourt VC refresh script has invalid Python syntax: {exc}")
+
+# Search UI regression checks: ensure the dedicated full-text runtime is shipped and filter hiding works.
+search_builder = BUILD_TEXT[BUILD_TEXT.index("def write_search_page"):BUILD_TEXT.index("def _article_datetime")]
+if '/assets/pages/search.js' not in search_builder:
+    raise SystemExit("Search page does not load the dedicated search runtime")
+search_runtime_path = ROOT / "assets/pages/search.js"
+if not search_runtime_path.exists():
+    raise SystemExit("Dedicated search runtime is missing")
+search_runtime = search_runtime_path.read_text(encoding="utf-8")
+for marker in ("article.content", "article.labels", "siteSearchForm", "searchParams", "replaceChildren", "safeArticleUrl"):
+    if marker not in search_runtime:
+        raise SystemExit(f"Search runtime regression: missing {marker}")
+for css_path in (ROOT / "assets/site.css", ROOT / "assets/pages/courtrooms.css"):
+    if "[hidden]{display:none!important}" not in css_path.read_text(encoding="utf-8"):
+        raise SystemExit(f"Filtered elements may remain visible; missing hidden override in {css_path.name}")
