@@ -1286,7 +1286,7 @@ def article(a, all_articles=None):
                   f'<meta property="article:section" content="{H.escape(section_name,quote=True)}">'
                   f'<meta name="author" content="Lex Talk Legal Editorial Desk">'
                   f'<link rel="stylesheet" href="/assets/pages/article.css?v=20261021-tvframe-v2">'
-                  f'<script src="/assets/pages/article-reading-mode.js?v=20261021-tvframe-v3" defer></script>'
+                  f'<script src="/assets/pages/article-reading-mode.js?v=20261021-tvframe-v4" defer></script>'
                   f'<script type="application/ld+json">{schema_json}</script>'
                   f'<script type="application/ld+json">{breadcrumb_json}</script>')
     return html.replace('</head>',article_head+video_schema_json+'</head>',1)
