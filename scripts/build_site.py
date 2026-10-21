@@ -775,11 +775,32 @@ def _normalized_source_url(value):
         return str(value).strip().lower().rstrip('/')
 
 
+def _article_sort_key(article):
+    """Sort date-only editorial publish dates after timed stories on the same day.
+
+    Some manually published posts carry YYYY-MM-DD while Blogger feed posts carry
+    full timestamps. A date-only value means the post was published on that date,
+    not at midnight before the timed posts; use end-of-day UTC for ordering.
+    """
+    raw = str((article or {}).get('published', '')).strip()
+    if not raw:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    try:
+        if re.fullmatch(r'\d{4}-\d{2}-\d{2}', raw):
+            return datetime.fromisoformat(raw).replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+        value = datetime.fromisoformat(raw.replace('Z', '+00:00'))
+        if value.tzinfo is None:
+            value = value.replace(tzinfo=timezone.utc)
+        return value.astimezone(timezone.utc)
+    except Exception:
+        return datetime.min.replace(tzinfo=timezone.utc)
+
+
 def dedupe_articles(arts):
     kept=[]
     seen={}
     redirects=[]
-    for a in sorted(arts or [], key=lambda x:x.get('published',''), reverse=True):
+    for a in sorted(arts or [], key=_article_sort_key, reverse=True):
         source_key=_normalized_source_url(a.get('source_url'))
         title_key=re.sub(r'\s+',' ',str(a.get('title','')).strip().lower())
         date_key=str(a.get('published',''))[:10]
@@ -1333,7 +1354,7 @@ def homepage_sidebar_markup():
     return f'''<article class="utility-card"><div class="icon">🎥</div><div class="side-kicker">LEGAL UTILITY</div><h3><a href="/courtrooms/">Official courtroom &amp; VC links</a></h3><p>Open public virtual-hearing destinations and courtroom information.</p><a class="utility-link" href="/courtrooms/">Open Courtrooms ↗</a></article><article class="utility-card"><div class="icon">🔎</div><div class="side-kicker">LEGAL UTILITY</div><h3><a href="/case-status/">Official case-status portals</a></h3><p>Quick links for courts and tribunals. CAPTCHA and access controls remain with the official portal.</p><a class="utility-link" href="/case-status/">Check Case Status ↗</a></article><article class="utility-card"><div class="icon">📚</div><div class="side-kicker">LEGAL KNOWLEDGE</div><h3><a href="/category/drt-drat/">DRT, DRAT, SARFAESI &amp; Banking Law</a></h3><p>Practical explainers, history and current legal coverage.</p><a class="utility-link" href="/category/banking-law/">Explore Banking Law ↗</a></article>{auction_widget_markup()}'''
 
 def sync_homepage(arts,videos):
-    arts=normalize_articles(arts)
+    arts=sorted(normalize_articles(arts), key=_article_sort_key, reverse=True)
     now=datetime.now(timezone.utc)
     fresh=[]
     for a in arts:
@@ -1636,7 +1657,7 @@ def main():
                 if _normalized_source_url(item.get('source_url')) != _normalized_source_url(prior.get('source_url')):
                     raise ValueError(f'X article route collision: {filename}. Choose a distinct slug before publishing.')
         route_owners[filename] = item
-    arts.sort(key=lambda x:x.get('published',''),reverse=True)
+    arts.sort(key=_article_sort_key,reverse=True)
     ap.parent.mkdir(exist_ok=True);ap.write_text(json.dumps(arts,ensure_ascii=False,indent=2),encoding='utf8')
     write_site_meta()
     videos=youtube();videos.sort(key=lambda x:x.get('published',''),reverse=True);(ROOT/'data/youtube.json').write_text(json.dumps(videos,ensure_ascii=False,indent=2),encoding='utf8')
