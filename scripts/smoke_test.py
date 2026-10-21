@@ -499,3 +499,10 @@ if "refresh_vc_from_onecourt.py" not in vc_refresh:
 vc_builder = (ROOT / "scripts" / "build_vc.py").read_text(encoding="utf-8")
 if 'Public VC destination' not in vc_builder or 'source_url' not in vc_builder:
     raise SystemExit("Courtroom VC labels/source attribution are missing")
+
+# Parse the isolated scheduled refresh script without executing network requests.
+vc_refresh_script = ROOT / "scripts" / "refresh_vc_from_onecourt.py"
+try:
+    ast.parse(vc_refresh_script.read_text(encoding="utf-8"))
+except SyntaxError as exc:
+    raise SystemExit(f"OneCourt VC refresh script has invalid Python syntax: {exc}")
