@@ -74,20 +74,47 @@
     target.querySelectorAll("script,object,embed,form").forEach(function (element) { element.remove(); });
 
     target.querySelectorAll(".article-x-embed").forEach(function (embed) {
-      const source = embed.querySelector('a[href*="x.com/"]');
-      const card = document.createElement("div");
-      card.className = "ltl-reader-external";
-      if (source) {
-        const link = document.createElement("a");
-        link.href = source.href;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = "Open the original X post ↗";
-        card.appendChild(link);
-      } else {
-        card.textContent = "The original X post is linked in the source article.";
-      }
-      embed.replaceWith(card);
+      // Rebuild the official X embed markup from its canonical post URL. A cloned
+      // tweet may already have been converted to an iframe on the source page, and
+      // copying that iframe is unreliable; widgets.js must render a fresh blockquote.
+      const source = embed.querySelector('.article-x-embed-head a[href*="x.com/"], a[href*="x.com/"]');
+      if (!source) return;
+
+      const postUrl = source.href;
+      const replacement = embed.cloneNode(false);
+      const header = document.createElement("div");
+      header.className = "article-x-embed-head";
+      const label = document.createElement("span");
+      label.textContent = "ORIGINAL POST";
+      const openLink = document.createElement("a");
+      openLink.href = postUrl;
+      openLink.target = "_blank";
+      openLink.rel = "noopener noreferrer";
+      openLink.textContent = "Open on X ↗";
+      header.append(label, openLink);
+
+      const tweet = document.createElement("blockquote");
+      tweet.className = "twitter-tweet";
+      tweet.setAttribute("data-conversation", "none");
+      tweet.setAttribute("data-dnt", "true");
+      const tweetLink = document.createElement("a");
+      tweetLink.href = postUrl;
+      tweetLink.textContent = "View the original post on X";
+      tweet.appendChild(tweetLink);
+
+      const fallback = document.createElement("p");
+      fallback.className = "article-x-embed-fallback";
+      fallback.appendChild(document.createTextNode("If the post does not load, "));
+      const fallbackLink = document.createElement("a");
+      fallbackLink.href = postUrl;
+      fallbackLink.target = "_blank";
+      fallbackLink.rel = "noopener noreferrer";
+      fallbackLink.textContent = "open the original on X ↗";
+      fallback.appendChild(fallbackLink);
+      fallback.appendChild(document.createTextNode("."));
+
+      replacement.append(header, tweet, fallback);
+      embed.replaceWith(replacement);
     });
 
     target.querySelectorAll("iframe").forEach(function (frame) {
@@ -123,6 +150,47 @@
     });
   }
 
+  let xWidgetsReady = null;
+
+  function loadXWidgets(target) {
+    function renderWidgets() {
+      if (!window.twttr || !window.twttr.widgets || typeof window.twttr.widgets.load !== "function") return;
+      try {
+        const rendered = window.twttr.widgets.load(target);
+        if (rendered && typeof rendered.then === "function") {
+          rendered.then(function () {
+            target.querySelectorAll(".article-x-embed").forEach(function (embed) {
+              if (embed.querySelector("iframe")) {
+                const fallback = embed.querySelector(".article-x-embed-fallback");
+                if (fallback) fallback.hidden = true;
+              }
+            });
+          }).catch(function () {});
+        }
+      } catch (_) {}
+    }
+
+    if (window.twttr && window.twttr.widgets && typeof window.twttr.widgets.load === "function") {
+      renderWidgets();
+      return;
+    }
+
+    if (!xWidgetsReady) {
+      xWidgetsReady = new Promise(function (resolve, reject) {
+        const script = document.createElement("script");
+        script.async = true;
+        script.charset = "utf-8";
+        script.src = "https://platform.twitter.com/widgets.js";
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      }).catch(function () {
+        // Keep the visible direct-to-X link as a fallback if the embed is blocked.
+      });
+    }
+    xWidgetsReady.then(renderWidgets);
+  }
+
   function openReader() {
     if (overlay) return;
 
@@ -155,6 +223,7 @@
     });
 
     document.body.appendChild(overlay);
+    loadXWidgets(documentPane);
     document.body.classList.add("ltl-reader-active");
     document.body.style.overflow = "hidden";
     trigger.setAttribute("aria-expanded", "true");
