@@ -1350,6 +1350,7 @@ def sync_homepage(arts,videos):
                 fresh.append(a)
         except Exception:
             continue
+    # Freshness is normalized before selecting stories so date-only source records stay visible.
     pool=(fresh[:8] if fresh else arts[:8])
     lead=pool[:1]; side=pool[1:4]; latest=pool[1:8]; vids=videos[:4]
     if lead:

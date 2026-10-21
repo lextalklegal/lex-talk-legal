@@ -13,7 +13,6 @@ on:
       - "content/evergreen/**"
       - "templates/category/explained.html"
       - "docs/**"
-      - "scripts/build_site.py"
 
 permissions:
   contents: read
@@ -44,6 +43,9 @@ jobs:
 
       - name: Synchronize public timestamps to site-wide source of truth
         run: python scripts/sync_public_timestamps.py
+
+      - name: Build generated pages from current editorial sources
+        run: python scripts/build_site.py
 
       - name: Validate production build before deploy
         run: |
