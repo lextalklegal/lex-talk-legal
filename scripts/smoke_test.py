@@ -87,20 +87,20 @@ if "toRelative" in site_js or "ago" in site_js:
 if "G-3KT3SQPFXD" not in BUILD_TEXT:
     raise SystemExit("Google Analytics Measurement ID is missing from build_site.py")
 
-# YouTube-to-blog automation must remain wired into the editorial workflow.
+# Automatic YouTube-to-blog publishing is intentionally retired. Historical
+# records remain renderable, but recurring editorial sync must never execute the generator.
 YOUTUBE_ARTICLE_SCRIPT = ROOT / "scripts" / "generate_youtube_articles.py"
 YOUTUBE_ARTICLE_WORKFLOW = (ROOT / ".github" / "workflows" / "sync-editorial.yml").read_text(encoding="utf-8")
+if "run: python scripts/generate_youtube_articles.py" in YOUTUBE_ARTICLE_WORKFLOW:
+    raise SystemExit("YouTube automatic article generation must remain disabled")
+if "GEMINI_API_KEY:" in YOUTUBE_ARTICLE_WORKFLOW:
+    raise SystemExit("Gemini API key must not be passed to the recurring editorial workflow")
 if not YOUTUBE_ARTICLE_SCRIPT.exists():
-    raise SystemExit("YouTube auto-article generator is missing")
-for marker in ("GEMINI_API_KEY", "generate_youtube_articles.py", "youtube_articles.json"):
-    if marker not in YOUTUBE_ARTICLE_WORKFLOW and marker not in BUILD_TEXT:
-        raise SystemExit(f"YouTube auto-blog wiring is missing: {marker}")
-if "OPENAI_API_KEY" in YOUTUBE_ARTICLE_WORKFLOW or "api.openai.com" in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8"):
-    raise SystemExit("Paid OpenAI API dependency remains in the YouTube automation")
-if "GEMINI_API_KEY" not in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8") or "media:group/media:description" not in YOUTUBE_ARTICLE_SCRIPT.read_text(encoding="utf-8"):
-    raise SystemExit("Gemini integration or YouTube feed description fallback is missing")
+    raise SystemExit("Keep the retired generator for audit/rollback, but do not execute it automatically")
+if "youtube_articles.json" not in BUILD_TEXT:
+    raise SystemExit("Previously published YouTube articles must remain supported")
 if "VideoObject" not in BUILD_TEXT or "video_schema_json" not in BUILD_TEXT:
-    raise SystemExit("Generated YouTube article pages are missing VideoObject structured data")
+    raise SystemExit("Historical YouTube article pages are missing VideoObject structured data")
 
 # One site-wide timestamp is the single source of truth for every visible footer.
 meta_path = ROOT / "data/site_meta.json"

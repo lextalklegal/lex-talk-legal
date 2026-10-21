@@ -24,11 +24,12 @@ For a single-page redesign, change only that page's HTML/template and page CSS. 
 
 It fetches only:
 - Blogger editorial posts
-- YouTube feed
-- transcript-grounded automatic article generation for new YouTube uploads (requires the `OPENAI_API_KEY` GitHub Actions secret; see `YOUTUBE-AUTO-BLOG-SETUP.md`)
+- YouTube channel feed for the Videos page
+
+**YouTube-to-blog auto-generation was retired on 21 October 2026.** The recurring workflow no longer executes the Gemini-based article generator. Previously generated articles remain published; deleting an API key alone is not the mechanism used to stop the workflow. See `YOUTUBE-AUTO-BLOG-SETUP.md` for historical details.
 
 It rebuilds only:
-- article pages
+- existing article pages and Blogger-sourced article content
 - editorial category pages
 - Videos page
 - homepage content selection

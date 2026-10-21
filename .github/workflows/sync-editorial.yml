@@ -36,17 +36,8 @@ jobs:
       - name: Install editorial dependencies
         run: python -m pip install --disable-pip-version-check -r requirements.txt
 
-      - name: Install YouTube transcript helper
-        run: python -m pip install --disable-pip-version-check youtube-transcript-api
-
-      - name: Generate article drafts from new YouTube uploads
-        env:
-          YOUTUBE_HANDLE: "@lextalklegal"
-          YOUTUBE_CHANNEL_ID: ${{ vars.YOUTUBE_CHANNEL_ID }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          GEMINI_MODEL: "gemini-3.5-flash-lite"
-        run: python scripts/generate_youtube_articles.py
-
+      # YouTube-to-blog automatic generation retired on 2026-10-21.
+      # Existing generated articles are preserved; only the Blogger/YouTube feed sync below runs.
       - name: Validate build sources
         run: |
           python -m py_compile scripts/build_site.py scripts/generate_youtube_articles.py scripts/smoke_test.py scripts/ensure_public_ga.py
