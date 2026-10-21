@@ -11,6 +11,12 @@ on:
       - "templates/**"
       - "scripts/build_site.py"
       - "scripts/site_audit.py"
+      - "scripts/smoke_test.py"
+      - "scripts/build_vc.py"
+      - "scripts/refresh_vc_from_onecourt.py"
+      - ".github/workflows/refresh-vc-directory.yml"
+      - "data/vc_links.json"
+      - "courtrooms/index.html"
       - "index.html"
       - "article/**"
       - "category/**"
@@ -40,12 +46,15 @@ jobs:
         run: python -m pip install --disable-pip-version-check -r requirements.txt
 
       - name: Compile validators
-        run: python -m py_compile scripts/build_site.py scripts/validate_evergreen.py
+        run: python -m py_compile scripts/build_site.py scripts/validate_evergreen.py scripts/build_vc.py scripts/refresh_vc_from_onecourt.py scripts/smoke_test.py
 
       - name: Validate evergreen SEO sources and generated pages
         env:
           LOCAL_BUILD: "1"
         run: python scripts/validate_evergreen.py --verbose
+
+      - name: Run site smoke tests
+        run: python scripts/smoke_test.py
 
       - name: Audit public HTML metadata, structured data and internal links
         run: python scripts/site_audit.py
