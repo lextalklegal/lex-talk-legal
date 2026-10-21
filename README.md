@@ -110,3 +110,10 @@ For each new page:
 6. move to the next page
 
 Manual desks and editorial sync are intentionally separated so content updates do not unexpectedly overwrite unrelated page designs.
+
+
+## X-post newsroom publishing
+
+`data/x_articles.json` is the source of truth for researched articles that begin with an X/Twitter post supplied by the editor. Adding or editing a record triggers the existing editorial build, which writes the article page, category/homepage cards, canonical/Open Graph/NewsArticle metadata, related links and both sitemaps. The deployment workflow intentionally skips a source-data-only change; the generated output commit triggers the Worker deployment. See `docs/X-POST-PUBLISHING-WORKFLOW.md`.
+
+Automatic YouTube-to-blog generation is retired. This X workflow is editorial-input driven; it does not watch or automatically republish YouTube uploads.

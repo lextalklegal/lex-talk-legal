@@ -41,6 +41,7 @@ content/**
 docs
 docs/**
 data/articles.json
+data/x_articles.json
 data/youtube.json
 data/vc_links.json
 data/auctions.json

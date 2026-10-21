@@ -11,6 +11,7 @@ on:
       - "content/evergreen/**"
       - "templates/category/explained.html"
       - "scripts/build_site.py"
+      - "data/x_articles.json"
 
 permissions:
   contents: write

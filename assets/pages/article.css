@@ -10,3 +10,14 @@
 @media(max-width:720px){.ltl-sponsor-grid{grid-template-columns:1fr}.ltl-sponsor-features{border-left:0;border-top:1px solid var(--line)}.ltl-sponsor-copy{padding:20px 17px 18px}.ltl-sponsor-copy h2{font-size:26px}.ltl-sponsor-top{padding:8px 12px}.ltl-sponsor-note{padding:8px 12px}}
 
 .ltl-sponsored-article-aibe{margin-top:28px;margin-bottom:30px}
+
+
+/* Original X-post embed: page-specific, responsive and attributed. */
+.article-x-embed{width:100%;max-width:100%;margin:24px 0 30px;padding:13px 15px;border:1px solid var(--line);background:var(--paper);overflow-wrap:anywhere}
+.article-x-embed-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;font:900 9px Arial,sans-serif;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted)}
+.article-x-embed-head a,.article-x-embed-fallback a{color:var(--red);text-decoration:underline;text-underline-offset:2px}
+.article-x-embed blockquote.twitter-tweet{width:100%;max-width:550px;margin:0 auto 8px!important}
+.article-x-embed-fallback{margin:9px 0 0;font:11px/1.55 Arial,sans-serif;color:var(--muted)}
+.article-body .article-x-embed p{margin:9px 0 0}
+.article-x-embed iframe{max-width:100%!important}
+@media(max-width:700px){.article-x-embed{padding:10px;margin:20px 0 24px}.article-x-embed-head{align-items:flex-start;flex-wrap:wrap}}

@@ -9,6 +9,7 @@ on:
       - "**.md"
       - "LICENSE"
       - "data/pib_queue.json"
+      - "data/x_articles.json"
       - "content/evergreen/**"
       - "templates/category/explained.html"
       - "docs/**"

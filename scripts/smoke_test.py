@@ -102,6 +102,47 @@ if "youtube_articles.json" not in BUILD_TEXT:
 if "VideoObject" not in BUILD_TEXT or "video_schema_json" not in BUILD_TEXT:
     raise SystemExit("Historical YouTube article pages are missing VideoObject structured data")
 
+# X-post publishing contract: source URL/ID dedupe, safe routes and generated official widget.
+X_ARTICLE_DATA = ROOT / "data" / "x_articles.json"
+try:
+    x_rows = json.loads(X_ARTICLE_DATA.read_text(encoding="utf-8"))
+except Exception as exc:
+    raise SystemExit(f"Unable to read data/x_articles.json: {exc}")
+if not isinstance(x_rows, list):
+    raise SystemExit("data/x_articles.json must be a JSON array")
+x_sources, x_routes = set(), set()
+for row in x_rows:
+    if not isinstance(row, dict):
+        raise SystemExit("Every X article record must be a JSON object")
+    for required in ("title", "url", "x_post_url", "source_url", "published", "updated", "category", "labels", "excerpt", "meta_description", "content"):
+        if not str(row.get(required, "")).strip():
+            raise SystemExit(f"X article is missing required field: {required}")
+    x_url = str(row["x_post_url"]).strip()
+    if not re.fullmatch(r"https://x\.com/[^/]+/status/[0-9]+", x_url):
+        raise SystemExit(f"X article source must be a canonical X status URL: {x_url}")
+    if str(row["source_url"]).strip() != x_url:
+        raise SystemExit("X article source_url must equal its canonical x_post_url")
+    if x_url in x_sources:
+        raise SystemExit(f"Duplicate X post ID/source URL: {x_url}")
+    x_sources.add(x_url)
+    route = str(row["url"]).strip()
+    if not re.fullmatch(r"/article/[a-z0-9-]+\.html", route):
+        raise SystemExit(f"Unsafe X article route: {route}")
+    if route in x_routes:
+        raise SystemExit(f"Duplicate X article route: {route}")
+    x_routes.add(route)
+    raw_body = str(row["content"]).lower()
+    if re.search(r"<\s*(script|iframe|object|embed|form)\b|\son[a-z]+\s*=", raw_body):
+        raise SystemExit("X article body must not include scripts, iframes, forms, objects, embeds or event handlers")
+    output_page = ROOT / route.lstrip("/")
+    if not output_page.exists():
+        raise SystemExit(f"X article output page has not been built: {route}")
+    rendered = output_page.read_text(encoding="utf-8")
+    for marker in ('class="article-x-embed"', 'class="twitter-tweet"', "platform.twitter.com/widgets.js", x_url):
+        if marker not in rendered:
+            raise SystemExit(f"Rendered X article is missing embed/fallback marker: {route} -> {marker}")
+
+
 # One site-wide timestamp is the single source of truth for every visible footer.
 meta_path = ROOT / "data/site_meta.json"
 try:
