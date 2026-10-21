@@ -25,7 +25,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-lex-talk-legal
+  # A failed editorial workflow_run is skipped by the job condition; keep it from cancelling a valid push deployment.
+  group: deploy-lex-talk-legal-${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && github.run_id || 'production' }}
   cancel-in-progress: true
 
 jobs:
