@@ -66,10 +66,10 @@
       if (hits.length !== terms.length) continue;
       let score = 0;
       for (const term of terms) {
-        if (row.title.includes(term)) score += 12;
-        if (row.category.includes(term)) score += 5;
-        if (row.labels.includes(term)) score += 4;
-        if (row.excerpt.includes(term)) score += 3;
+        if (row.titleNorm.includes(term)) score += 12;
+        if (row.categoryNorm.includes(term)) score += 5;
+        if (row.labelsNorm.includes(term)) score += 4;
+        if (row.excerptNorm.includes(term)) score += 3;
         if (row.text.includes(term)) score += 1;
       }
       found.push({ ...row, score });
@@ -128,11 +128,11 @@
       if (!Array.isArray(data)) throw new Error('Search index has an unexpected format');
       index = data.map(article => {
         const content = stripHtml(article.content || '');
-        const labels = normalize(Array.isArray(article.labels) ? article.labels.join(' ') : article.labels || '');
-        const category = normalize(article.category || '');
-        const title = normalize(article.title || '');
-        const excerpt = normalize(article.excerpt || article.meta_description || '');
-        return { ...article, title, category, labels, excerpt, text: searchableText({ ...article, content }), date: dateValue(article) };
+        const labelsNorm = normalize(Array.isArray(article.labels) ? article.labels.join(' ') : article.labels || '');
+        const categoryNorm = normalize(article.category || '');
+        const titleNorm = normalize(article.title || '');
+        const excerptNorm = normalize(article.excerpt || article.meta_description || '');
+        return { ...article, titleNorm, categoryNorm, labelsNorm, excerptNorm, text: searchableText({ ...article, content }), date: dateValue(article) };
       }).filter(article => safeArticleUrl(article.url));
       loaded = true;
       render(initialQuery);
