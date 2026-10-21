@@ -521,3 +521,12 @@ for marker in ("article.content", "article.labels", "siteSearchForm", "searchPar
 for css_path in (ROOT / "assets/site.css", ROOT / "assets/pages/courtrooms.css"):
     if "[hidden]{display:none!important}" not in css_path.read_text(encoding="utf-8"):
         raise SystemExit(f"Filtered elements may remain visible; missing hidden override in {css_path.name}")
+
+# Editorial images, homepage DRA promotion and AdSense review UX.
+for image_path in (ROOT / "assets/images/editorial/delhi-grap-stage-i.svg", ROOT / "assets/images/editorial/delhi-hc-gen-z-hearing.svg"):
+    if not image_path.exists() or "<svg" not in image_path.read_text(encoding="utf-8")[:500]:
+        raise SystemExit(f"Missing or invalid editorial image: {image_path.relative_to(ROOT)}")
+if "def dra_exam_promo(" not in BUILD_TEXT or '{dra_exam_promo("homepage")}' not in BUILD_TEXT:
+    raise SystemExit("Homepage must feature the DRA exam guide instead of the AIBE sponsor")
+if '<div class="home-ad ad-wrap">' in BUILD_TEXT or 'class="ad-slot rail-ad"' in BUILD_TEXT:
+    raise SystemExit("Empty homepage AdSense placeholders must not be rendered while site approval is pending")
