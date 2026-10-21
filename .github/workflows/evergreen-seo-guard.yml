@@ -10,6 +10,15 @@ on:
       - "scripts/validate_evergreen.py"
       - "templates/**"
       - "scripts/build_site.py"
+      - "scripts/site_audit.py"
+      - "index.html"
+      - "article/**"
+      - "category/**"
+      - "videos/**"
+      - "sitemap.xml"
+      - "news-sitemap.xml"
+      - "data/articles.json"
+      - "src/index.js"
 
 permissions:
   contents: read
@@ -37,3 +46,6 @@ jobs:
         env:
           LOCAL_BUILD: "1"
         run: python scripts/validate_evergreen.py --verbose
+
+      - name: Audit public HTML metadata, structured data and internal links
+        run: python scripts/site_audit.py
