@@ -148,6 +148,19 @@ if "ltl-reader-open" not in BUILD_TEXT or "article-reading-mode.js" not in BUILD
     raise SystemExit("Article template is missing the LexTalk.Legal TV Frame reading mode")
 if "data-ltl-reader-open" not in BUILD_TEXT:
     raise SystemExit("Article template is missing the TV Frame launch button")
+
+reader_js = (ROOT / "assets/pages/article-reading-mode.js").read_text(encoding="utf-8")
+reader_css = (ROOT / "assets/pages/article.css").read_text(encoding="utf-8")
+for marker in ("requestFullscreen", "navigationUI", "aria-modal", "ltl-reader-footer"):
+    if marker not in reader_js:
+        raise SystemExit(f"TV Frame script is missing a required fullscreen/accessibility marker: {marker}")
+for marker in (".ltl-reader-overlay", ".ltl-reader-scroll", ".ltl-reader-footer"):
+    if marker not in reader_css:
+        raise SystemExit(f"TV Frame stylesheet is missing a required layout marker: {marker}")
+if 'href="/assets/pages/article.css?v=20261021-tvframe-v2"' not in BUILD_TEXT:
+    raise SystemExit("Article CSS is not cache-busted for the TV Frame update")
+if 'src="/assets/pages/article-reading-mode.js?v=20261021-tvframe-v2"' not in BUILD_TEXT:
+    raise SystemExit("Article reader script is not cache-busted for the TV Frame update")
 for article_file in (ROOT / "article").rglob("*.html"):
     rendered_article = article_file.read_text(encoding="utf-8")
     if 'class="article-wrap"' not in rendered_article:
