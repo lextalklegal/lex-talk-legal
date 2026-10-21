@@ -414,11 +414,18 @@ if not isinstance(ptb, dict) or not ptb.get("active"):
 if str(ptb.get("promo_code")) != "AIBE100" or str(ptb.get("offer")) != "Save ₹100":
     raise SystemExit("Pass The Bar offer/code configuration is incorrect")
 
-for rel in ("index.html", "category/legal-careers/index.html"):
-    page_text = (ROOT / rel).read_text(encoding="utf-8")
-    for marker in ("SPONSORED PROMOTION", "AIBE100", "Save ₹100", 'rel="sponsored noopener noreferrer"'):
-        if marker not in page_text:
-            raise SystemExit(f"Sponsored campaign marker missing from {rel}: {marker}")
+# The AIBE partner promo remains on the relevant career landing/category page;
+# the homepage now features our own DRA Exam educational guide instead.
+career_page_text = (ROOT / "category/legal-careers/index.html").read_text(encoding="utf-8")
+for marker in ("SPONSORED PROMOTION", "AIBE100", "Save ₹100", 'rel="sponsored noopener noreferrer"'):
+    if marker not in career_page_text:
+        raise SystemExit(f"Sponsored campaign marker missing from category/legal-careers/index.html: {marker}")
+homepage_text = (ROOT / "index.html").read_text(encoding="utf-8")
+for marker in ("Planning for the DRA Exam?", "/category/dra/", "Read the DRA Exam Guide"):
+    if marker not in homepage_text:
+        raise SystemExit(f"Homepage DRA Exam promotion marker missing: {marker}")
+if "Preparing for AIBE XXII?" in homepage_text:
+    raise SystemExit("Homepage must not show the AIBE promotion after the DRA campaign switch")
 
 landing = ROOT / "aibe-preparation/index.html"
 if not landing.exists():
@@ -523,7 +530,7 @@ for css_path in (ROOT / "assets/site.css", ROOT / "assets/pages/courtrooms.css")
         raise SystemExit(f"Filtered elements may remain visible; missing hidden override in {css_path.name}")
 
 # Editorial images, homepage DRA promotion and AdSense review UX.
-for image_path in (ROOT / "assets/images/editorial/delhi-grap-stage-i.svg", ROOT / "assets/images/editorial/delhi-hc-gen-z-hearing.svg"):
+for image_path in (ROOT / "assets/images/blog-illustrations/delhi-ncr-grap-stage-i.svg", ROOT / "assets/images/blog-illustrations/delhi-high-court-gen-z-exchange.svg"):
     if not image_path.exists() or "<svg" not in image_path.read_text(encoding="utf-8")[:500]:
         raise SystemExit(f"Missing or invalid editorial image: {image_path.relative_to(ROOT)}")
 if "def dra_exam_promo(" not in BUILD_TEXT or '{dra_exam_promo("homepage")}' not in BUILD_TEXT:
