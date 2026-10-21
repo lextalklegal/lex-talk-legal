@@ -1338,11 +1338,20 @@ def sync_homepage(arts,videos):
     fresh=[]
     for a in arts:
         try:
-            dt=datetime.fromisoformat(a.get('published','').replace('Z','+00:00'))
-            if (now-dt).total_seconds() <= 7*24*3600: fresh.append(a)
-        except Exception: pass
+            raw_date=str(a.get('published','')).strip()
+            if not raw_date:
+                continue
+            dt=datetime.fromisoformat(raw_date.replace('Z','+00:00'))
+            # Blogger/X sources often publish date-only values. Treat those as UTC
+            # midnight instead of silently dropping them from the freshness pool.
+            if dt.tzinfo is None:
+                dt=dt.replace(tzinfo=timezone.utc)
+            if 0 <= (now-dt).total_seconds() <= 7*24*3600:
+                fresh.append(a)
+        except Exception:
+            continue
     pool=(fresh[:8] if fresh else arts[:8])
-    lead=pool[:1]; side=pool[1:4]; latest=pool[4:8]; vids=videos[:4]
+    lead=pool[:1]; side=pool[1:4]; latest=pool[1:8]; vids=videos[:4]
     if lead:
         a=lead[0]
         img=media_html(a.get('image',''),'home-lead-image',a.get('title','')) if a.get('image') else '<div class="home-lead-image media-frame"></div>'

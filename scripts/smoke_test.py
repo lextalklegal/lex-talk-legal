@@ -421,7 +421,7 @@ for marker in ("SPONSORED PROMOTION", "AIBE100", "Save ₹100", 'rel="sponsored 
     if marker not in career_page_text:
         raise SystemExit(f"Sponsored campaign marker missing from category/legal-careers/index.html: {marker}")
 homepage_text = (ROOT / "index.html").read_text(encoding="utf-8")
-for marker in ("Planning for the DRA Exam?", "/category/dra/", "Read the DRA Exam Guide"):
+for marker in ("Preparing for the DRA Exam?", "/category/dra/", "Read the DRA Exam Guide"):
     if marker not in homepage_text:
         raise SystemExit(f"Homepage DRA Exam promotion marker missing: {marker}")
 if "Preparing for AIBE XXII?" in homepage_text:

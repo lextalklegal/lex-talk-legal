@@ -128,3 +128,6 @@ a{color:inherit;text-decoration:none}img{display:block;max-width:100%}button,inp
 
 /* Keep filtered and conditional UI truly hidden even when component styles set display. */
 [hidden]{display:none!important}
+
+/* Hide empty ad placeholders until actual AdSense units are configured in their place. */
+.ad-slot{display:none!important}
