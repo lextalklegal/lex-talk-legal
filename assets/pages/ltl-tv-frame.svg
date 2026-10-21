@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" role="img" aria-label="Lex Talk Legal legal reading frame">
+<defs>
+ <linearGradient id="paper" x2="0" y2="1"><stop stop-color="#fffdf8"/><stop offset="1" stop-color="#e9dfcf"/></linearGradient>
+ <linearGradient id="red" x2="1"><stop stop-color="#721125"/><stop offset=".5" stop-color="#b31f3d"/><stop offset="1" stop-color="#701126"/></linearGradient>
+ <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#e6e0d6"/><stop offset="1" stop-color="#a9a198"/></linearGradient>
+ <pattern id="grain" width="13" height="13" patternUnits="userSpaceOnUse"><path d="M0 12L12 0" stroke="#a69b8b" stroke-opacity=".08"/></pattern>
+</defs>
+<rect width="1920" height="1080" fill="url(#paper)"/><rect width="1920" height="1080" fill="url(#grain)"/>
+<!-- courthouse skyline -->
+<g fill="#8e887f" stroke="#554f49" stroke-width="3" opacity=".78">
+ <path d="M0 205V160h28v-25h22v25h22v45z M76 205v-58h16v-24h15v24h18v58z M140 205v-88h20V88h18v29h20v88z"/>
+ <path d="M1360 205V110h34V86h28v24h34v95z M1465 205V80h28V56h24v24h29v125z M1560 205V96h24V70h22v26h24v109z M1640 205V55h35V30h30v25h34v150z M1750 205V90h25V64h22v26h25v115z M1840 205V44h30V19h22v25h28v161z"/>
+ <path d="M1400 205v-34h330v34z M1450 126h280 M1468 126v79 M1518 126v79 M1568 126v79 M1618 126v79 M1668 126v79 M1718 126v79" fill="none"/>
+</g>
+<!-- left law books -->
+<g stroke="#33251e" stroke-width="3">
+ <path d="M0 600L168 580 180 680 0 708z" fill="#2b2925"/><path d="M0 710L180 682 190 780 0 812z" fill="#7d1729"/><path d="M0 814L190 782 198 880 0 916z" fill="#342b24"/><path d="M0 918L198 882 206 977 0 1018z" fill="#75192b"/>
+ <path d="M16 620l139-20 M15 691l150-22 M16 735l145-22 M15 793l154-25 M16 841l155-26 M16 898l160-27 M16 944l160-28 M16 1001l164-29" stroke="#d2b888" stroke-width="2"/>
+</g>
+<g fill="#e9d8b5" font-family="Georgia,serif" font-weight="bold" font-size="17" text-anchor="middle">
+ <text x="87" y="650" transform="rotate(-7 87 650)">CONSTITUTION</text><text x="88" y="669" transform="rotate(-7 88 669)">OF INDIA</text>
+ <text x="91" y="751" transform="rotate(-8 91 751)">CIVIL PROCEDURE</text><text x="92" y="770" transform="rotate(-8 92 770)">CODE</text>
+ <text x="94" y="850" transform="rotate(-9 94 850)">SARFAESI ACT</text><text x="97" y="953" transform="rotate(-9 97 953)">RECOVERY OF DEBTS</text>
+</g>
+<!-- justice scales -->
+<g fill="none" stroke="#57504a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".86">
+ <path d="M90 260v175 M45 300h90 M90 275l-36 22 M90 275l36 22 M45 300l-22 66h44z M135 300l-22 66h44z M58 435h64l-12 22H70z"/>
+ <path d="M1810 310h70 M1845 270v180 M1810 310l-25 62h50z M1880 310l-25 62h50z M1818 450h54l-10 18h-34z"/>
+</g>
+<!-- gavel -->
+<g transform="translate(1695 820) rotate(-25)" fill="#5c3828" stroke="#2c201b" stroke-width="5"><rect x="0" y="50" width="190" height="24" rx="8"/><rect x="38" y="5" width="90" height="55" rx="8"/><rect x="25" y="-4" width="116" height="24" rx="6"/><rect x="70" y="50" width="26" height="125" rx="10"/></g>
+<!-- central article window -->
+<rect x="190" y="220" width="1540" height="560" rx="15" fill="#fff" stroke="url(#red)" stroke-width="10"/>
+<rect x="201" y="231" width="1518" height="538" rx="10" fill="none" stroke="#d4c6b4" stroke-width="3"/>
+<!-- footer motif -->
+<g fill="#a29a8e" opacity=".6">
+ <path d="M220 1020v-50h14v-30h14v30h14v50z M275 1020v-75h16v-25h17v25h17v75z M342 1020v-62h14v-24h16v24h14v62z"/>
+ <path d="M480 1020v-56h18v-25h16v25h18v56z M550 1020v-78h18v-22h18v22h18v78z"/>
+</g>
+<path d="M570 930h280 M1090 930h180" stroke="#8c8277" stroke-width="3"/>
+<circle cx="1325" cy="930" r="28" fill="none" stroke="#4e4b47" stroke-width="4"/><path d="M1297 930h56 M1325 902v56 M1307 912q18 18 36 0 M1307 948q18-18 36 0" fill="none" stroke="#4e4b47" stroke-width="3"/>
+<path d="M1470 886l-35 90h350l-35-90z" fill="url(#paper)" stroke="url(#red)" stroke-width="5"/>
+<text x="1610" y="936" font-family="Georgia,serif" font-size="22" font-weight="bold" fill="#27231f" text-anchor="middle">VIDEO SOURCE</text><path d="M1510 954h200" stroke="#6c6257" stroke-width="2"/>
+<path d="M0 1045L270 900 M1920 0L1800 220 M1920 850l-220 170" stroke="url(#red)" stroke-width="22" fill="none"/>
+</svg>
