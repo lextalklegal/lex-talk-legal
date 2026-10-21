@@ -489,3 +489,13 @@ for social_url in (
 ):
     if social_url not in (ROOT / "index.html").read_text(encoding="utf-8"):
         raise SystemExit(f"Homepage footer missing official social link: {social_url}")
+
+# Courtroom VC refresh is isolated from the common editorial build and runs once daily at 9 PM IST.
+vc_refresh = (ROOT / ".github/workflows/refresh-vc-directory.yml").read_text(encoding="utf-8")
+if 'cron: "30 15 * * *"' not in vc_refresh:
+    raise SystemExit("Courtroom VC refresh workflow must run daily at 9 PM IST")
+if "refresh_vc_from_onecourt.py" not in vc_refresh:
+    raise SystemExit("Courtroom VC refresh script is not connected to its scheduled workflow")
+vc_builder = (ROOT / "scripts" / "build_vc.py").read_text(encoding="utf-8")
+if 'Public VC destination' not in vc_builder or 'source_url' not in vc_builder:
+    raise SystemExit("Courtroom VC labels/source attribution are missing")

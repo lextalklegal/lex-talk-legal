@@ -56,11 +56,36 @@ def reference_from_url(url):
 
 
 def entry_reference(item, url, index):
+    # Prefer a named judicial officer / bench / room label from the source.
+    label = str(item.get("label") or "").strip()
+    generic = {"join vc", "vc link", "vc hearing links", "district court join vc", "court join vc"}
+    if label and label.lower() not in generic and not re.fullmatch(r"vc link ?\d+", label, re.I):
+        return label
     for key in ("courtroom", "room_reference", "room", "court_number", "court_no"):
         value = str(item.get(key) or "").strip()
         if value:
             return value
-    return reference_from_url(url) or f"VC Link {index:02d}"
+    path = urlparse(url).path.lower()
+    # Decode common stable room identifiers without inventing judge names.
+    match = re.search(r"(?:court|courtroom|registrarcourt)[-_ ]?(\d+)", path)
+    if match:
+        return f"Courtroom No. {int(match.group(1))}"
+    match = re.search(r"(?:pdsjroom)(\d+)", path)
+    if match:
+        return f"Principal District & Sessions Judge · Room {match.group(1)}"
+    match = re.search(r"dj(\d+)commercialroom(\d+)", path)
+    if match:
+        return f"Commercial Court {int(match.group(1)):02d} · Room {match.group(2)}"
+    match = re.search(r"ddc\.(?:central|vc\.)?(?:ts|northwest|southeast)?(\d+)", path)
+    if match:
+        return f"VC Room {int(match.group(1))}"
+    match = re.search(r"(?:vc-court|court)(\d+)", path)
+    if match:
+        return f"Courtroom No. {int(match.group(1))}"
+    slug = path.rstrip("/").split("/")[-1]
+    if slug and len(slug) <= 60 and slug not in {"", "join", "meet"}:
+        return slug.replace("-", " ").replace("_", " ").strip().title()
+    return f"Public VC destination {index:02d}"
 
 
 def unique_items(items):
@@ -102,6 +127,10 @@ def court_detail_html(venue, forum_label, items):
             meta.append(f'<div><span>Verified</span><strong>{H.escape(str(item["verified_on"]))}</strong></div>')
         if item.get("notes"):
             meta.append(f'<div><span>Notes</span><strong>{H.escape(str(item["notes"]))}</strong></div>')
+        if item.get("source_url"):
+            meta.append(f'<div><span>Source</span><strong><a href="{H.escape(str(item["source_url"]), quote=True)}" target="_blank" rel="noopener noreferrer">OneCourt source ↗</a></strong></div>')
+        elif item.get("verified_on"):
+            meta.append('<div><span>Directory source</span><strong>Lex Talk Legal VC directory</strong></div>')
         meta_html = f'<div class="cr-vc-meta">{"".join(meta)}</div>' if meta else ''
         rows.append(
             f'<article class="cr-vc-row">'

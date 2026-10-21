@@ -28,3 +28,63 @@
 @media(max-width:1050px){.cr-hero{grid-template-columns:1fr}.cr-alerts,.cr-guidance{grid-template-columns:1fr}.cr-finder-head{align-items:stretch;flex-direction:column}.cr-finder-tools{width:100%}.cr-directory-layout{grid-template-columns:1fr}.cr-detail-pane{position:relative;top:auto;max-height:none}.cr-court-list{max-height:none}}
 @media(max-width:720px){.courtrooms-page{width:min(var(--max),calc(100% - 28px));padding-top:20px}.cr-hero{padding:23px}.cr-hero h1{font-size:40px}.cr-howto-grid{grid-template-columns:1fr}.cr-court-list{grid-template-columns:1fr}.cr-utility-strip{grid-template-columns:1fr}.cr-checklist{grid-template-columns:1fr}.cr-court-list-wrap{order:1}.cr-detail-pane{order:2}.cr-finder{padding:17px}.cr-finder-head h2{font-size:27px}.cr-modal-backdrop{padding:10px}.cr-modal-actions{flex-direction:column-reverse;align-items:stretch}.cr-join,.cr-cancel{width:100%}}
 @media(max-width:460px){.cr-hero-card{min-height:180px}.cr-vc-meta{grid-template-columns:1fr}.cr-forum-tabs{display:grid;grid-template-columns:1fr 1fr}.cr-tab{width:100%}}
+
+
+/* Mobile-first usability and accessible interaction refinements for the VC finder. */
+.cr-court-list{scrollbar-width:thin}
+.cr-court-card{min-width:0}
+.cr-court-card h3{overflow-wrap:anywhere}
+.cr-court-summary{font-size:12px;line-height:1.55;min-height:0}
+.cr-court-forum,.cr-court-count,.cr-platform-chip{font-size:10px}
+.cr-view-court{min-height:44px;font-size:11px}
+.cr-vc-ref{font-size:15px;line-height:1.4;overflow-wrap:anywhere}
+.cr-vc-platform{font-size:10px}
+.cr-open-vc,.cr-copy{min-height:44px;font-size:11px}
+.cr-detail-head h3{overflow-wrap:anywhere}
+.cr-detail-head p{font-size:13px;line-height:1.65}
+.cr-vc-meta{font-size:12px;overflow-wrap:anywhere}
+.cr-vc-meta strong{overflow-wrap:anywhere}
+.cr-list-meta span{font-size:12px}
+.cr-search-box input{min-width:0;font-size:16px}
+.cr-tab{min-height:42px;font-size:10px}
+.cr-modal-backdrop[hidden]{display:none!important}
+@media(max-width:720px){
+  .courtrooms-page{width:calc(100% - 24px);padding:14px 0 42px}
+  .cr-hero{padding:18px;gap:16px}
+  .cr-hero h1{font-size:clamp(34px,9vw,43px);letter-spacing:-.8px;line-height:1.02}
+  .cr-lead{font-size:14px;line-height:1.65}
+  .cr-hero-actions{display:grid;grid-template-columns:1fr}
+  .cr-primary,.cr-secondary{width:100%;min-height:46px;font-size:12px}
+  .cr-alerts{margin:12px 0 24px;gap:8px}
+  .cr-alert{padding:13px}
+  .cr-alert p{font-size:12px;line-height:1.6}
+  .cr-finder{margin-top:22px;padding:14px}
+  .cr-directory-layout{display:flex;flex-direction:column;gap:12px}
+  .cr-court-list-wrap,.cr-detail-pane{width:100%;min-width:0}
+  .cr-court-list{display:grid;grid-template-columns:1fr;max-height:none;overflow:visible;padding:0}
+  .cr-court-card{padding:14px}
+  .cr-court-card.selected{padding:13px}
+  .cr-detail-pane{order:0;position:static;top:auto;max-height:none;min-height:0;overflow:visible}
+  .cr-detail-placeholder{min-height:210px;padding:22px}
+  .cr-detail-placeholder h3{font-size:23px}
+  .cr-detail-head{padding:16px}
+  .cr-detail-head h3{font-size:24px}
+  .cr-detail-links{padding:10px}
+  .cr-vc-row{padding:12px}
+  .cr-vc-actions{display:grid;grid-template-columns:minmax(0,1fr) 76px;gap:8px}
+  .cr-open-vc,.cr-copy{width:100%;min-width:0;min-height:46px}
+  .cr-vc-meta{grid-template-columns:1fr}
+  .cr-forum-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+  .cr-tab{white-space:normal;line-height:1.3;padding:8px 5px}
+  .cr-list-meta{align-items:flex-start;flex-direction:column;gap:4px}
+  .cr-list-meta span{font-size:11px}
+  .cr-modal{width:100%;max-height:calc(100dvh - 20px);overflow:auto}
+  .cr-modal-top h2{font-size:19px}
+  .cr-confirm-copy p{font-size:13px}
+}
+@media(max-width:380px){
+  .cr-court-top{flex-direction:column;gap:7px}
+  .cr-court-count{align-self:flex-start}
+  .cr-vc-actions{grid-template-columns:minmax(0,1fr) 66px}
+  .cr-modal-actions{padding-left:12px;padding-right:12px}
+}
