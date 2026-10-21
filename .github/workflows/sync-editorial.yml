@@ -68,13 +68,15 @@ jobs:
         run: |
           git config user.name "Lex Talk Legal Bot"
           git config user.email "actions@users.noreply.github.com"
+          # Bring the branch current before staging generated files. Autostash preserves
+          # the build output while rebasing any concurrent main-branch changes.
+          git fetch origin main
+          git pull --rebase --autostash origin main
           git add index.html sitemap.xml news-sitemap.xml data/articles.json data/youtube.json data/youtube_articles.json data/site_meta.json assets/images/youtube-blog article category videos scripts/ensure_public_ga.py
           git add '*.html' '**/*.html' ':!docs/**'
           if git diff --cached --quiet; then
             echo "No editorial changes."
           else
             git commit -m "chore: sync editorial content"
-            git fetch origin main
-            git rebase origin/main
             git push origin HEAD:main
           fi
