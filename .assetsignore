@@ -47,3 +47,7 @@ data/vc_links.json
 data/auctions.json
 data/jobs.json
 site-config.json
+
+# Archived source material is kept in Git but never published as site assets.
+obsolete
+obsolete/**

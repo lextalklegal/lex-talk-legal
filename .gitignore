@@ -1,0 +1,13 @@
+# Python build artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# Local secrets and development configuration
+.env
+.dev.vars
+
+# Tooling/build artifacts
+.wrangler/
+node_modules/
