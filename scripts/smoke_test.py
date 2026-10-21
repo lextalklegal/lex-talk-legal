@@ -530,7 +530,7 @@ for css_path in (ROOT / "assets/site.css", ROOT / "assets/pages/courtrooms.css")
         raise SystemExit(f"Filtered elements may remain visible; missing hidden override in {css_path.name}")
 
 # Editorial images, homepage DRA promotion and AdSense review UX.
-for image_path in (ROOT / "assets/images/blog-illustrations/delhi-ncr-grap-stage-i.svg", ROOT / "assets/images/blog-illustrations/delhi-high-court-gen-z-exchange.svg"):
+for image_path in (ROOT / "assets/images/editorial/delhi-grap-stage-i.svg", ROOT / "assets/images/editorial/delhi-hc-gen-z-hearing.svg"):
     if not image_path.exists() or "<svg" not in image_path.read_text(encoding="utf-8")[:500]:
         raise SystemExit(f"Missing or invalid editorial image: {image_path.relative_to(ROOT)}")
 if "def dra_exam_promo(" not in BUILD_TEXT or '{dra_exam_promo("homepage")}' not in BUILD_TEXT:
