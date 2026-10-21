@@ -53,6 +53,9 @@ jobs:
           LOCAL_BUILD: "1"
         run: python scripts/validate_evergreen.py --verbose
 
+      - name: Build generated pages before smoke tests
+        run: python scripts/build_site.py
+
       - name: Run site smoke tests
         run: python scripts/smoke_test.py
 
