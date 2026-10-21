@@ -2,6 +2,12 @@ name: Deploy Lex Talk Legal Worker
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Lex Talk Legal - Editorial Sync"]
+    types:
+      - completed
+    branches:
+      - main
   push:
     branches:
       - main
@@ -24,6 +30,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
