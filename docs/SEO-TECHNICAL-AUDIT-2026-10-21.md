@@ -36,8 +36,8 @@ The initial review queue:
 - Protest Call at Mandi House Highlights Debate Over Delhi Assembly Spaces (213)
 - What is the DRA Exam? Debt Recovery Agent Certification Guide (253)
 
-### P1 — Improve homepage title and subscription UX
-The generated homepage title is currently “Lex Talk Legal | Lex Talk Legal”, which wastes title space and repeats the brand. Use a descriptive title such as “Legal News, Court Updates & Legal Explainers | Lex Talk Legal” and a more specific description. The homepage generator also renders a newsletter form whose submit action only shows an alert saying signup will be connected later. This should be replaced by a working provider integration or honest follow links; a fake subscribe control should not remain public.
+### Resolved during audit — Homepage title and subscription UX
+The initial scan found a duplicated homepage title (“Lex Talk Legal | Lex Talk Legal”) and a newsletter form whose submit action only showed a placeholder alert. The build generator now uses “Legal News, Court Updates & Legal Explainers | Lex Talk Legal” with a more specific description. The fake email signup has been replaced by direct Telegram and YouTube follow links, so the public page no longer promises a non-existent subscription backend.
 
 ### P1 — Strengthen legal-news trust signals
 For legal and public-affairs reporting, make the author/editor identity verifiable; link bylines to a genuine editorial/team profile; distinguish allegations from verified facts; cite the original order, notification, court record or official release wherever available; show meaningful publication/update dates; and record substantive edits. Do not invent credentials or claim expert review that did not occur.
@@ -56,6 +56,9 @@ Run PageSpeed Insights / Search Console Core Web Vitals on the homepage, article
 ### P2 — Security and architecture
 The active Wrangler entry point is `src/index.js`; the `functions/` directory and `admin/` directory are excluded from the asset bundle, and the Worker redirects `/admin` to the homepage. Their legacy code has been preserved under `obsolete/`, not deleted. The archived `functions/_middleware.js` security-header policy was not part of the active Worker entry path. If adding a Content-Security-Policy later, explicitly test GA4, AdSense, YouTube embeds, images and any translation tools so security headers do not silently block required services.
 
+## Automated site-audit result
+The new CI audit completed successfully against **79 public HTML pages** and checked **4,593 internal links**. It reported: 0 missing titles/descriptions/canonicals, 0 duplicate title groups, 0 duplicate canonical groups, 0 invalid JSON-LD blocks, 0 broken internal links, 0 images missing alt attributes, and 0 noindex pages in the sitemap. The audit is non-blocking while legacy content-quality issues are reviewed; it is now wired into the SEO guard workflow.
+
 ## Housekeeping completed
 - Archived eight historical hotfix/phase/validation documents under `obsolete/docs/`.
 - Archived legacy `admin/` and Cloudflare Pages-style `functions/` code under `obsolete/` because the active deployment uses Wrangler Worker `src/index.js`.
@@ -65,12 +68,10 @@ The active Wrangler entry point is `src/index.js`; the `functions/` directory an
 - No active workflow was removed.
 
 ## Next recommended phases
-1. Correct homepage title/description and remove the non-functional newsletter submission UI.
-2. Add an automated site-wide metadata/link/structured-data audit to CI.
-3. Use Search Console exports to prioritize content by impressions, CTR, clicks, position, indexing status and query intent.
-4. Review and expand the 16 short feed-derived articles; keep historical URLs until data supports a change.
-5. Test Core Web Vitals and ad placement; measure GA4 engagement and AdSense revenue separately.
-6. Build topical clusters around SARFAESI, DRT/DRAT, case-status guidance and legal careers, with original expert-led explainers and contextual internal links.
+1. Use Search Console exports to prioritize content by impressions, CTR, clicks, position, indexing status and query intent.
+2. Review and expand the 16 short feed-derived articles; keep historical URLs until data supports a change.
+3. Test Core Web Vitals and ad placement; measure GA4 engagement and AdSense revenue separately.
+4. Build topical clusters around SARFAESI, DRT/DRAT, case-status guidance and legal careers, with original expert-led explainers and contextual internal links.
 
 ## References
 - Google helpful, reliable, people-first content: https://developers.google.com/search/docs/fundamentals/creating-helpful-content
