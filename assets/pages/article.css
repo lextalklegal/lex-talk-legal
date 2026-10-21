@@ -85,3 +85,12 @@
  .ltl-reader-open{width:100%;min-height:46px}
 }
 @media(prefers-reduced-motion:reduce){.ltl-reader-open{transition:none}.ltl-reader-scroll{scroll-behavior:auto}}
+
+/* TV Frame: continuous legal disclaimer ticker, scoped to the reader frame only. */
+.ltl-reader-footer.ltl-reader-disclaimer{display:block;overflow:hidden;white-space:nowrap;padding:0;background:#f7f0e4;border-top:1px solid #b31c32;color:#26232a;text-align:left;text-transform:none;letter-spacing:0;font:700 9px/30px Arial,sans-serif}
+.ltl-reader-disclaimer-track{display:flex;width:max-content;min-width:200%;animation:ltl-disclaimer-right 95s linear infinite;will-change:transform}
+.ltl-reader-disclaimer-track span{display:block;flex:0 0 auto;padding-right:3rem}
+@keyframes ltl-disclaimer-right{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+.ltl-reader-disclaimer:hover .ltl-reader-disclaimer-track{animation-play-state:paused}
+@media(max-width:700px){.ltl-reader-footer.ltl-reader-disclaimer{font-size:8px;line-height:30px}.ltl-reader-disclaimer-track{animation-duration:115s}}
+@media(prefers-reduced-motion:reduce){.ltl-reader-disclaimer-track{animation:none;transform:none;min-width:0}.ltl-reader-disclaimer-track span+span{display:none}}
