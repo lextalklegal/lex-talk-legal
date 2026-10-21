@@ -157,7 +157,7 @@ for marker in ("requestFullscreen", "navigationUI", "aria-modal", "ltl-reader-fo
 for marker in (".ltl-reader-overlay", ".ltl-reader-scroll", ".ltl-reader-footer"):
     if marker not in reader_css:
         raise SystemExit(f"TV Frame stylesheet is missing a required layout marker: {marker}")
-if 'href="/assets/pages/article.css?v=20261021-tvframe-v2"' not in BUILD_TEXT:
+if 'href="/assets/pages/article.css?v=20261021-tvframe-v3"' not in BUILD_TEXT:
     raise SystemExit("Article CSS is not cache-busted for the TV Frame update")
 if 'src="/assets/pages/article-reading-mode.js?v=20261021-tvframe-v4"' not in BUILD_TEXT:
     raise SystemExit("Article reader script is not cache-busted for the TV Frame update")
