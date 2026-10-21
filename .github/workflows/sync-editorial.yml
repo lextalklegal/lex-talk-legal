@@ -3,7 +3,7 @@ name: Lex Talk Legal - Editorial Sync
 on:
   workflow_dispatch:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "13 */2 * * *"
   push:
     branches:
       - main

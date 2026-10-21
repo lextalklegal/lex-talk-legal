@@ -2,12 +2,6 @@ name: Deploy Lex Talk Legal Worker
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Lex Talk Legal - Editorial Sync"]
-    types:
-      - completed
-    branches:
-      - main
   push:
     branches:
       - main
@@ -25,13 +19,11 @@ permissions:
   contents: read
 
 concurrency:
-  # A failed editorial workflow_run is skipped by the job condition; keep it from cancelling a valid push deployment.
-  group: deploy-lex-talk-legal-${{ github.event_name == 'workflow_run' && github.event.workflow_run.conclusion != 'success' && github.run_id || 'production' }}
+  group: deploy-lex-talk-legal-production
   cancel-in-progress: true
 
 jobs:
   deploy:
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

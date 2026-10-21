@@ -3,7 +3,7 @@ name: Lex Talk Legal - PIB Radar
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17,47 * * * *"
+    - cron: "37 * * * *"
 
 permissions:
   contents: write

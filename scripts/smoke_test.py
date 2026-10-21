@@ -478,3 +478,14 @@ if 'Newsletter signup will be connected' in home_html or 'onsubmit=' in home_htm
 for follow_link in ('https://t.me/lextalklegal', 'https://www.youtube.com/@lextalklegal'):
     if follow_link not in home_html:
         raise SystemExit(f'Homepage follow CTA missing: {follow_link}')
+
+# Public social profile links in the shared site footer must remain canonical and consistent.
+for social_url in (
+    "https://www.instagram.com/lextalk.legal/",
+    "https://www.linkedin.com/company/lextalklegal",
+    "https://youtube.com/@lextalklegal",
+    "https://www.facebook.com/lextalklegal",
+    "https://x.com/lex_talk_legal",
+):
+    if social_url not in (ROOT / "index.html").read_text(encoding="utf-8"):
+        raise SystemExit(f"Homepage footer missing official social link: {social_url}")
