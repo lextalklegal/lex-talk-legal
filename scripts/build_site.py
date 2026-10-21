@@ -308,7 +308,7 @@ def dra_exam_promo(placement='homepage'):
     <div class="ltl-sponsor-kicker">DEBT RECOVERY AGENT CERTIFICATION</div>
     <h2>Preparing for the DRA Exam?</h2>
     <p>Start with Lex Talk Legal’s plain-language guide to the Debt Recovery Agent (DRA) certification, the IIBF exam pathway and responsible recovery practices.</p>
-    <div class="ltl-sponsor-actions"><a class="ltl-sponsor-cta" href="{article_url}">Read the DRA Exam Guide ↗</a><a class="ltl-sponsor-info" href="/category/dra/">Explore DRA Resources ↗</a></div>
+    <div class="ltl-sponsor-actions"><a class="ltl-sponsor-cta" href="https://dra.lextalk.legal">Visit DRA Exam Portal ↗</a><a class="ltl-sponsor-info" href="https://dra.lextalk.legal">Open DRA Exam Website ↗</a></div>
   </div><div class="ltl-sponsor-features"><div class="ltl-sponsor-feature-head">START HERE</div>
     <ul><li>Understand the DRA certification pathway</li><li>Review exam overview and preparation basics</li><li>Learn about ethical and compliant recovery conduct</li></ul>
   </div></div><div class="ltl-sponsor-note">Lex Talk Legal editorial resource. Check IIBF for current eligibility, registration, syllabus and examination dates.</div>
