@@ -212,12 +212,29 @@
         '</header>' +
         '<div class="ltl-reader-scroll" tabindex="0"><article class="ltl-reader-document"></article></div>' +
         '<footer class="ltl-reader-footer ltl-reader-disclaimer" aria-label="DISCLAIMER: The views, opinions, statements, facts, sources, articles and posts presented are attributed to their respective authors and sources and do not necessarily reflect the views of Lex Talk Legal. Content is provided for general informational, educational and media purposes only and does not constitute legal advice. Readers are advised to independently verify facts and refer to official sources where appropriate. For any correction, omission, factual clarification or feedback, please contact office.lextalklegal@gmail.com. Lex Talk Legal is a media initiative of LEXBOTICS AI MEDIA LLP. | LAW. CONTEXT. CLARITY. |"><div class="ltl-reader-disclaimer-track" aria-hidden="true"><span>DISCLAIMER: The views, opinions, statements, facts, sources, articles and posts presented are attributed to their respective authors and sources and do not necessarily reflect the views of Lex Talk Legal. Content is provided for general informational, educational and media purposes only and does not constitute legal advice. Readers are advised to independently verify facts and refer to official sources where appropriate. For any correction, omission, factual clarification or feedback, please contact office.lextalklegal@gmail.com. Lex Talk Legal is a media initiative of LEXBOTICS AI MEDIA LLP. | LAW. CONTEXT. CLARITY. |</span><span>DISCLAIMER: The views, opinions, statements, facts, sources, articles and posts presented are attributed to their respective authors and sources and do not necessarily reflect the views of Lex Talk Legal. Content is provided for general informational, educational and media purposes only and does not constitute legal advice. Readers are advised to independently verify facts and refer to official sources where appropriate. For any correction, omission, factual clarification or feedback, please contact office.lextalklegal@gmail.com. Lex Talk Legal is a media initiative of LEXBOTICS AI MEDIA LLP. | LAW. CONTEXT. CLARITY. |</span></div></footer>' +
+      '<div class="ltl-reader-watermark" aria-hidden="true"></div>' +
       '</section>';
 
     const documentPane = overlay.querySelector(".ltl-reader-document");
     cloneArticleContent(documentPane);
 
+    // Session-timestamped attribution deters casual reposting; this is not DRM.
+    const watermark = overlay.querySelector(".ltl-reader-watermark");
+    const stamp = new Date().toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+    const watermarkText = Array(8).fill("LEX TALK LEGAL  •  lextalk.legal  •  " + stamp).join("     ");
+    watermark.textContent = watermarkText;
+    watermark.setAttribute("data-watermark", watermarkText);
+
     overlay.querySelector(".ltl-reader-close").addEventListener("click", closeReader);
+
+    // Deter casual copying/printing without disabling selection or assistive access.
+    overlay.addEventListener("contextmenu", function (event) {
+      if (event.target.closest(".ltl-reader-document")) event.preventDefault();
+    });
+    overlay.addEventListener("keydown", function (event) {
+      const key = (event.key || "").toLowerCase();
+      if ((event.ctrlKey || event.metaKey) && ["p", "s"].includes(key)) event.preventDefault();
+    });
     overlay.addEventListener("click", function (event) {
       if (event.target === overlay) closeReader();
     });
