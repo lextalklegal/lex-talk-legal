@@ -1322,8 +1322,8 @@ def article(a, all_articles=None):
                   f'{("<meta property=\"article:modified_time\" content=\""+H.escape(updated_iso,quote=True)+"\">") if updated_iso else ""}'
                   f'<meta property="article:section" content="{H.escape(section_name,quote=True)}">'
                   f'<meta name="author" content="Lex Talk Legal Editorial Desk">'
-                  f'<link rel="stylesheet" href="/assets/pages/article.css?v=20261022-protection-v8">'
-                  f'<script src="/assets/pages/article-reading-mode.js?v=20261022-protection-v5" defer></script>'
+                  f'<link rel="stylesheet" href="/assets/pages/article.css?v=20261022-protection-v9">'
+                  f'<script src="/assets/pages/article-reading-mode.js?v=20261022-protection-v6" defer></script>'
                   f'<script type="application/ld+json">{schema_json}</script>'
                   f'<script type="application/ld+json">{breadcrumb_json}</script>')
     return html.replace('</head>',article_head+video_schema_json+'</head>',1)
