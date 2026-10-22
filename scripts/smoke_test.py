@@ -1,3 +1,4 @@
+# Editorial static-route deployment trigger: generated pages must be deployed after sync-editorial succeeds.
 from pathlib import Path
 import ast
 import json
