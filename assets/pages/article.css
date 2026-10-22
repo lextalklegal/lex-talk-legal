@@ -95,3 +95,11 @@
 .ltl-reader-disclaimer:hover .ltl-reader-disclaimer-track{animation-play-state:paused}
 @media(max-width:700px){.ltl-reader-window{grid-template-rows:72px minmax(0,1fr) 36px}.ltl-reader-footer.ltl-reader-disclaimer{height:36px;min-height:36px;font-size:10px;line-height:35px}.ltl-reader-disclaimer-track{animation-duration:115s}}
 @media(prefers-reduced-motion:reduce){.ltl-reader-disclaimer-track{animation:ltl-disclaimer-right 95s linear infinite;transform:none;min-width:200%}.ltl-reader-disclaimer-track span+span{display:block}}
+
+
+/* TV Frame attribution watermark: visible in captures, low-contrast for readability. */
+.ltl-reader-window{isolation:isolate}
+.ltl-reader-watermark{position:absolute;z-index:4;pointer-events:none;inset:100px 2.2% 36px;overflow:hidden;display:flex;align-items:center;justify-content:center;opacity:.12;color:#6f1023;font:900 clamp(16px,2vw,25px)/2 Arial,sans-serif;letter-spacing:2px;text-align:center;overflow-wrap:anywhere;white-space:normal;user-select:none;-webkit-user-select:none;background-image:repeating-linear-gradient(-28deg,transparent 0,transparent 92px,rgba(111,16,35,.035) 93px,rgba(111,16,35,.035) 94px,transparent 95px,transparent 188px)}
+.ltl-reader-watermark::before{content:attr(data-watermark)}
+@media(max-width:700px){.ltl-reader-watermark{inset:72px 10px 36px;font-size:14px;letter-spacing:1px;opacity:.10}}
+@media print{.ltl-reader-overlay,.ltl-reader-watermark{display:none!important}}
