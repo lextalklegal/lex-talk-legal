@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Saurabh Bharadwaj alleges a Delhi Jal Board tender issue</title>
+<desc id="desc">Lex Talk Legal banner about allegations regarding Icon Instruments and the timing of equipment deployment for Yamuna de-foaming at Kalindi Kunj, with tender documents and river foam imagery.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#111a27"/><stop offset=".65" stop-color="#222e3a"/><stop offset="1" stop-color="#421820"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b41128"/><stop offset="1" stop-color="#ee4148"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbe36"/><stop offset="1" stop-color="#ffdf86"/></linearGradient>
+  <pattern id="grain" width="27" height="27" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="1" fill="#fff" opacity=".06"/><circle cx="21" cy="18" r="1" fill="#fff" opacity=".04"/></pattern>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grain)"/>
+<path d="M0 560L410 675H0Z" fill="#b51228" opacity=".5"/>
+<g transform="translate(700 68)">
+  <rect x="0" y="0" width="450" height="420" rx="22" fill="#f2f0e9" opacity=".08" stroke="#fff" stroke-opacity=".16" stroke-width="2"/>
+  <path d="M25 130Q90 108 150 129T280 130T425 128V360H25Z" fill="#d9e0e5" opacity=".13"/>
+  <path d="M25 190Q80 170 145 192T265 190T425 192M25 229Q80 209 145 231T265 229T425 231M25 270Q80 250 145 272T265 270T425 272" stroke="#eff3f5" stroke-opacity=".45" stroke-width="5" fill="none"/>
+  <g transform="translate(90 80)">
+    <rect x="0" y="30" width="170" height="150" rx="8" fill="#f0eee7" stroke="#111a27" stroke-width="8"/>
+    <rect x="17" y="49" width="136" height="112" rx="5" fill="#d4dbe0"/>
+    <text x="85" y="91" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#1b2530" font-weight="700">DEFOAMER</text>
+    <text x="85" y="113" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#1b2530" font-weight="700">STOCK</text>
+  </g>
+  <g transform="translate(286 95)">
+    <path d="M30 0V54M10 24H51M22 54L11 80M38 54L50 80" stroke="#f4c542" stroke-width="7" stroke-linecap="round"/>
+    <rect x="0" y="80" width="64" height="110" rx="7" fill="#a8b4bf" stroke="#192331" stroke-width="7"/>
+    <circle cx="32" cy="123" r="16" fill="#364251"/><circle cx="32" cy="123" r="6" fill="#d4dbe0"/>
+    <path d="M32 190V223H68" fill="none" stroke="#dce3e8" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <rect x="34" y="320" width="382" height="62" rx="6" fill="url(#gold)"/>
+  <text x="225" y="346" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="17" font-weight="900" fill="#171d26">TENDER TIMELINE</text>
+  <text x="225" y="369" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="14" font-weight="700" fill="#171d26">BID STAGES NEED VERIFICATION</text>
+</g>
+<text x="54" y="58" font-family="Georgia,serif" font-size="29" letter-spacing="1.4" fill="#fff">LEX TALK LEGAL</text>
+<path d="M54 76H361" stroke="#d7d1c8" stroke-width="2"/>
+<text x="54" y="102" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4" fill="#e8c9a7">LAW. CONTEXT. CLARITY.</text>
+<rect x="54" y="130" width="480" height="45" rx="6" fill="url(#gold)"/>
+<text x="74" y="159" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="900" fill="#171d26">DELHI JAL BOARD • KALINDI KUNJ</text>
+<text x="54" y="248" font-family="Arial,Helvetica,sans-serif" font-size="51" font-weight="900" fill="#fff">TENDER</text>
+<text x="54" y="310" font-family="Arial,Helvetica,sans-serif" font-size="51" font-weight="900" fill="#fff">KHULNE SE</text>
+<rect x="42" y="330" width="506" height="76" rx="7" fill="url(#red)" transform="rotate(-1.1 295 368)"/>
+<text x="65" y="381" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">PEHLE SETUP?</text>
+<text x="54" y="457" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800" fill="#f4c542">SAURABH BHARADWAJ’S CLAIM</text>
+<text x="54" y="492" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#e5e7eb">Yamuna de-foaming tender explained</text>
+<path d="M54 524H1145" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+<text x="54" y="561" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="800" fill="#fff">ALLEGATION • OFFICIAL TIMELINE • CONTEXT</text>
+<text x="54" y="596" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#cbd2d9">Claims attributed • Tender records matter</text>
+<rect x="0" y="654" width="1200" height="21" fill="#b51228"/>
+</svg>
