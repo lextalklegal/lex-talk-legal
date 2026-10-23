@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Congress questions the Centre after ITBP reports ongoing face-offs on the China border</title>
+<desc id="desc">Lex Talk Legal editorial banner with Himalayan frontier silhouettes, patrol-point markers and a briefing document, highlighting the Congress statement and the need to compare political claims with official records.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101722"/><stop offset=".58" stop-color="#243541"/><stop offset="1" stop-color="#401a22"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b51228"/><stop offset="1" stop-color="#ef454b"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbe37"/><stop offset="1" stop-color="#ffe18a"/></linearGradient>
+  <pattern id="grain" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="1" fill="#fff" opacity=".06"/><circle cx="20" cy="18" r="1" fill="#fff" opacity=".04"/></pattern>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grain)"/>
+<path d="M0 330L125 120L220 255L350 91L460 255L565 135L705 325Z" fill="#c7d0d5" opacity=".16"/>
+<path d="M0 388L125 209L220 316L350 157L460 318L565 203L705 385Z" fill="#eff3f4" opacity=".09"/>
+<path d="M0 468Q150 423 300 469T600 465T900 472T1200 462V675H0Z" fill="#111b26" opacity=".86"/>
+<path d="M0 562L410 675H0Z" fill="#b51228" opacity=".55"/>
+<text x="54" y="58" font-family="Georgia,serif" font-size="29" letter-spacing="1.4" fill="#fff">LEX TALK LEGAL</text>
+<path d="M54 76H361" stroke="#d7d1c8" stroke-width="2"/>
+<text x="54" y="102" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4" fill="#e8c9a7">LAW. CONTEXT. CLARITY.</text>
+<rect x="54" y="130" width="550" height="46" rx="6" fill="url(#gold)"/>
+<text x="74" y="159" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="900" fill="#171d26">ITBP DG REPORTS BORDER FACE-OFFS</text>
+<text x="54" y="244" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">CHINA BORDER</text>
+<text x="54" y="303" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">ROW RETURNS</text>
+<rect x="42" y="323" width="600" height="75" rx="7" fill="url(#red)" transform="rotate(-1 342 360)"/>
+<text x="64" y="374" font-family="Arial,Helvetica,sans-serif" font-size="40" font-weight="900" fill="#fff">CONGRESS QUESTIONS PM</text>
+<text x="54" y="450" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#f4c542">GALWAN • LADAKH • ARUNACHAL</text>
+<text x="54" y="486" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#e5e7eb">What the statements and records say</text>
+<path d="M54 524H1145" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+<text x="54" y="560" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="800" fill="#fff">CLAIMS • OFFICIAL CLARIFICATION • CONTEXT</text>
+<text x="54" y="595" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#cbd2d9">Political allegations attributed • Border records matter</text>
+<g transform="translate(760 85)">
+  <rect x="0" y="0" width="390" height="420" rx="20" fill="#fff" opacity=".06" stroke="#fff" stroke-opacity=".14" stroke-width="2"/>
+  <g transform="translate(40 38)">
+    <rect x="0" y="0" width="310" height="235" rx="10" fill="#f1efe7"/>
+    <rect x="0" y="0" width="310" height="40" rx="10" fill="#1a2734"/>
+    <text x="155" y="26" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="16" font-weight="900" fill="#fff">LAC BRIEFING</text>
+    <g stroke="#bdc5cb" stroke-width="3"><path d="M24 68H285M24 95H285M24 122H285M24 149H285M24 176H285"/></g>
+    <g fill="#b51228"><circle cx="42" cy="68" r="7"/><circle cx="42" cy="95" r="7"/><circle cx="42" cy="122" r="7"/><circle cx="42" cy="149" r="7"/><circle cx="42" cy="176" r="7"/></g>
+    <g fill="#8fa0ad"><rect x="61" y="62" width="156" height="11" rx="4"/><rect x="61" y="89" width="192" height="11" rx="4"/><rect x="61" y="116" width="172" height="11" rx="4"/><rect x="61" y="143" width="188" height="11" rx="4"/><rect x="61" y="170" width="144" height="11" rx="4"/></g>
+    <rect x="84" y="196" width="142" height="25" rx="4" fill="#f4c542"/>
+    <text x="155" y="213" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="900" fill="#17202b">VERIFY THE RECORD</text>
+  </g>
+  <g transform="translate(52 301)">
+    <circle cx="45" cy="28" r="24" fill="#e3e8eb"/>
+    <path d="M12 96Q18 56 45 56Q72 56 78 96Z" fill="#c6d1d8"/>
+    <path d="M45 4L58 24H32Z" fill="#b51228"/>
+    <path d="M118 20L142 2L167 20L157 30H128Z" fill="#f4c542"/>
+    <path d="M145 30V73" stroke="#f4c542" stroke-width="7" stroke-linecap="round"/>
+    <rect x="205" y="4" width="78" height="54" rx="7" fill="url(#red)"/>
+    <text x="244" y="25" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="900" fill="#fff">CLAIMS</text>
+    <text x="244" y="41" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11" font-weight="900" fill="#fff">VS FACTS</text>
+  </g>
+</g>
+<rect x="0" y="654" width="1200" height="21" fill="#b51228"/>
+</svg>
