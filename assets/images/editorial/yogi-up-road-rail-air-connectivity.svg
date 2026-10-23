@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Yogi Adityanath claims Uttar Pradesh leads in road rail and air connectivity</title>
+<desc id="desc">Lex Talk Legal editorial banner illustrating Uttar Pradesh infrastructure with an expressway, train and aircraft, and highlighting the state-wide connectivity claim made by Yogi Adityanath.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101722"/><stop offset=".62" stop-color="#202b39"/><stop offset="1" stop-color="#172e40"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b51228"/><stop offset="1" stop-color="#ef454b"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbe37"/><stop offset="1" stop-color="#ffe18a"/></linearGradient>
+  <pattern id="grain" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="1" fill="#fff" opacity=".06"/><circle cx="20" cy="18" r="1" fill="#fff" opacity=".04"/></pattern>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grain)"/>
+<path d="M0 555L410 675H0Z" fill="#b51228" opacity=".55"/>
+<text x="54" y="58" font-family="Georgia,serif" font-size="29" letter-spacing="1.4" fill="#fff">LEX TALK LEGAL</text>
+<path d="M54 76H361" stroke="#d7d1c8" stroke-width="2"/>
+<text x="54" y="102" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4" fill="#e8c9a7">LAW. CONTEXT. CLARITY.</text>
+<rect x="54" y="130" width="545" height="46" rx="6" fill="url(#gold)"/>
+<text x="74" y="159" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="900" fill="#171d26">UTTAR PRADESH • CONNECTIVITY CLAIM</text>
+<text x="54" y="244" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">ROADS</text>
+<text x="54" y="302" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">RAILWAYS</text>
+<rect x="42" y="323" width="550" height="75" rx="7" fill="url(#red)" transform="rotate(-1 317 360)"/>
+<text x="63" y="374" font-family="Arial,Helvetica,sans-serif" font-size="46" font-weight="900" fill="#fff">AIR CONNECTIVITY</text>
+<text x="54" y="450" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#f4c542">YOGI ADITYANATH’S CLAIM</text>
+<text x="54" y="486" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#e5e7eb">What do the official figures show?</text>
+<path d="M54 524H1145" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+<text x="54" y="560" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="800" fill="#fff">EXPRESSWAYS • RAIL ROUTES • AIRPORTS</text>
+<text x="54" y="595" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#cbd2d9">Claim attributed • Compare like-for-like official data</text>
+<g transform="translate(705 78)">
+  <rect x="0" y="0" width="445" height="440" rx="22" fill="#fff" opacity=".055" stroke="#fff" stroke-opacity=".14" stroke-width="2"/>
+  <circle cx="222" cy="220" r="160" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>
+  <circle cx="222" cy="220" r="120" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
+  <g transform="translate(50 62)">
+    <path d="M0 66Q55 34 114 66T228 66L278 66V98H0Z" fill="#7f8d9a" opacity=".6"/>
+    <path d="M0 106Q55 74 114 106T228 106L278 106V138H0Z" fill="#687785" opacity=".6"/>
+    <path d="M0 146Q55 114 114 146T228 146L278 146V178H0Z" fill="#566574" opacity=".6"/>
+    <path d="M27 69L73 69M27 109L73 109M27 149L73 149" stroke="#f4c542" stroke-width="5" stroke-linecap="round"/>
+    <path d="M150 20L184 30L208 28L230 36L208 44L183 42L164 64L152 64L163 41L137 38L124 49L115 47L128 32L115 17L125 14L143 28Z" fill="#e7edf2" transform="rotate(-10 172 38)"/>
+  </g>
+  <g transform="translate(248 244)">
+    <rect x="0" y="0" width="115" height="95" rx="10" fill="#d7e0e6"/>
+    <path d="M10 72L31 39L51 61L72 26L104 72Z" fill="#253c4d"/>
+    <circle cx="84" cy="22" r="10" fill="#f4c542"/>
+  </g>
+  <g transform="translate(80 262)">
+    <rect x="0" y="0" width="110" height="70" rx="10" fill="url(#red)"/>
+    <rect x="11" y="12" width="88" height="46" rx="7" fill="#edf0f3"/>
+    <g stroke="#374151" stroke-width="3"><path d="M27 12V58M44 12V58M61 12V58M78 12V58"/></g>
+    <path d="M0 70H110" stroke="#f4c542" stroke-width="6"/>
+  </g>
+  <text x="222" y="393" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="20" font-weight="900" fill="#fff">MULTI-MODAL NETWORK</text>
+</g>
+<rect x="0" y="654" width="1200" height="21" fill="#b51228"/>
+</svg>
