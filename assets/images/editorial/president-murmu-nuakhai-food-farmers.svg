@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">President Murmu’s Nuakhai message on food, farmers and nature</title>
+<desc id="desc">Lex Talk Legal editorial banner showing ripe paddy fields, grain, a farmer silhouette and natural-resource imagery, reflecting President Droupadi Murmu’s Nuakhai remarks in Raipur.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101923"/><stop offset=".58" stop-color="#203b34"/><stop offset="1" stop-color="#46311a"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b51228"/><stop offset="1" stop-color="#ef454b"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#efbe37"/><stop offset="1" stop-color="#ffe18a"/></linearGradient>
+  <pattern id="grain" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="5" cy="6" r="1" fill="#fff" opacity=".06"/><circle cx="20" cy="18" r="1" fill="#fff" opacity=".04"/></pattern>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/><rect width="1200" height="675" fill="url(#grain)"/>
+<path d="M0 460Q160 397 310 451T620 452T920 447T1200 437V675H0Z" fill="#425b34" opacity=".72"/>
+<path d="M0 525Q160 464 310 518T620 519T920 514T1200 504M0 576Q160 515 310 569T620 570T920 565T1200 555" fill="none" stroke="#a9b85a" stroke-width="10" opacity=".55"/>
+<path d="M0 565L420 675H0Z" fill="#b51228" opacity=".55"/>
+<text x="54" y="58" font-family="Georgia,serif" font-size="29" letter-spacing="1.4" fill="#fff">LEX TALK LEGAL</text>
+<path d="M54 76H361" stroke="#d7d1c8" stroke-width="2"/>
+<text x="54" y="102" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4" fill="#e8c9a7">LAW. CONTEXT. CLARITY.</text>
+<rect x="54" y="130" width="535" height="46" rx="6" fill="url(#gold)"/>
+<text x="74" y="159" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="900" fill="#171d26">NUAKHAI FESTIVAL • RAIPUR</text>
+<text x="54" y="244" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">FOOD IS</text>
+<text x="54" y="303" font-family="Arial,Helvetica,sans-serif" font-size="46" font-weight="900" fill="#fff">MORE THAN</text>
+<rect x="42" y="323" width="570" height="75" rx="7" fill="url(#red)" transform="rotate(-1 327 360)"/>
+<text x="64" y="374" font-family="Arial,Helvetica,sans-serif" font-size="43" font-weight="900" fill="#fff">JUST FOOD</text>
+<text x="54" y="450" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="800" fill="#f4c542">PRESIDENT MURMU'S MESSAGE</text>
+<text x="54" y="486" font-family="Arial,Helvetica,sans-serif" font-size="19" fill="#e5e7eb">Honour farmers • Protect natural resources</text>
+<path d="M54 524H1145" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+<text x="54" y="560" font-family="Arial,Helvetica,sans-serif" font-size="19" font-weight="800" fill="#fff">AGRICULTURE • GRATITUDE • COMMUNITY</text>
+<text x="54" y="595" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#cbd2d9">Official remarks • Nuakhai celebrations, 22 October 2026</text>
+<g transform="translate(745 80)">
+  <rect x="0" y="0" width="405" height="420" rx="22" fill="#fff" opacity=".055" stroke="#fff" stroke-opacity=".14" stroke-width="2"/>
+  <circle cx="203" cy="200" r="147" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>
+  <circle cx="203" cy="200" r="111" fill="none" stroke="#fff" stroke-opacity=".09" stroke-width="2"/>
+  <g transform="translate(97 72)">
+    <path d="M105 183V25M105 93L65 58M105 117L145 73M105 147L63 122M105 164L148 134" stroke="#7faa4d" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <g fill="#f3cf66">
+      <ellipse cx="54" cy="53" rx="11" ry="25" transform="rotate(-44 54 53)"/>
+      <ellipse cx="65" cy="68" rx="11" ry="25" transform="rotate(-34 65 68)"/>
+      <ellipse cx="143" cy="68" rx="11" ry="25" transform="rotate(36 143 68)"/>
+      <ellipse cx="152" cy="85" rx="11" ry="25" transform="rotate(48 152 85)"/>
+      <ellipse cx="54" cy="117" rx="11" ry="25" transform="rotate(-49 54 117)"/>
+      <ellipse cx="149" cy="128" rx="11" ry="25" transform="rotate(48 149 128)"/>
+    </g>
+    <path d="M105 180Q67 159 49 192Q77 215 105 197Q132 220 160 193Q142 159 105 180Z" fill="#a6c75d"/>
+    <path d="M105 194V229" stroke="#e8d49c" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <rect x="34" y="332" width="337" height="48" rx="6" fill="url(#gold)"/>
+  <text x="202" y="362" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="18" font-weight="900" fill="#171d26">RESPECT FOOD • HONOUR FARMERS</text>
+</g>
+<rect x="0" y="654" width="1200" height="21" fill="#b51228"/>
+</svg>
