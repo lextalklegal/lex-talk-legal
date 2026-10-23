@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+<title id="title">Bhagwant Mann addresses media at Punjab Assembly on drugs, Congress and Delhi airport episode</title>
+<desc id="desc">Lex Talk Legal editorial banner with Punjab Assembly inspired architecture, microphones and typography highlighting the political issues mentioned in AAP Punjab's post.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#101722"/><stop offset=".62" stop-color="#202b39"/><stop offset="1" stop-color="#431820"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#b51228"/><stop offset="1" stop-color="#ed454b"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f1bf37"/><stop offset="1" stop-color="#ffe08a"/></linearGradient>
+  <pattern id="dots" width="25" height="25" patternUnits="userSpaceOnUse"><circle cx="5" cy="7" r="1" fill="#fff" opacity=".06"/><circle cx="19" cy="18" r="1" fill="#fff" opacity=".035"/></pattern>
+</defs>
+<rect width="1200" height="675" fill="url(#bg)"/>
+<rect width="1200" height="675" fill="url(#dots)"/>
+<path d="M680 0H1200V675H635Z" fill="#fff" opacity=".035"/>
+<path d="M0 555L365 675H0Z" fill="#b51228" opacity=".58"/>
+<g transform="translate(765 88)" opacity=".45" fill="#c6d0da">
+  <path d="M28 122L225 38L423 122Z" fill="#e1e6e9"/>
+  <rect x="49" y="122" width="353" height="18" fill="#e1e6e9"/>
+  <rect x="63" y="141" width="325" height="155" fill="none" stroke="#e1e6e9" stroke-width="9"/>
+  <g stroke="#e1e6e9" stroke-width="13">
+    <path d="M88 150V288M140 150V288M192 150V288M244 150V288M296 150V288M348 150V288"/>
+  </g>
+  <rect x="32" y="296" width="387" height="18" fill="#e1e6e9"/>
+  <rect x="9" y="314" width="433" height="18" fill="#e1e6e9"/>
+  <path d="M0 343H455" stroke="#e1e6e9" stroke-width="6"/>
+</g>
+<g transform="translate(920 365)">
+  <circle cx="120" cy="88" r="140" fill="#fff" opacity=".035"/>
+  <circle cx="120" cy="88" r="112" fill="none" stroke="#fff" stroke-opacity=".12" stroke-width="2"/>
+  <g transform="rotate(-15 130 100)">
+    <rect x="95" y="17" width="70" height="133" rx="31" fill="#f2eee7" stroke="#111923" stroke-width="8"/>
+    <rect x="107" y="31" width="46" height="80" rx="18" fill="#aab6c2"/>
+    <path d="M108 62H152M108 72H152M108 82H152" stroke="#34404d" stroke-width="4"/>
+    <path d="M130 150V221M101 221H159" fill="none" stroke="#f2eee7" stroke-width="13" stroke-linecap="round"/>
+  </g>
+  <g fill="#f4c542" opacity=".86"><circle cx="66" cy="104" r="4"/><circle cx="192" cy="82" r="4"/><circle cx="80" cy="159" r="3"/><circle cx="204" cy="138" r="3"/></g>
+</g>
+<text x="54" y="58" font-family="Georgia,serif" font-size="29" letter-spacing="1.4" fill="#fff">LEX TALK LEGAL</text>
+<path d="M54 76H361" stroke="#d7d1c8" stroke-width="2"/>
+<text x="54" y="102" font-family="Arial,Helvetica,sans-serif" font-size="15" letter-spacing="4" fill="#e8c9a7">LAW. CONTEXT. CLARITY.</text>
+<rect x="54" y="128" width="575" height="47" rx="6" fill="url(#gold)"/>
+<text x="75" y="159" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="800" fill="#171b22">PUNJAB VIDHAN SABHA • 23 OCT 2026</text>
+<text x="54" y="248" font-family="Arial,Helvetica,sans-serif" font-size="52" font-weight="900" letter-spacing="-1" fill="#fff">CM MANN</text>
+<text x="54" y="312" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="900" letter-spacing="-1" fill="#fff">VS AMIT SHAH</text>
+<rect x="43" y="332" width="600" height="76" rx="7" fill="url(#red)" transform="rotate(-1.1 343 370)"/>
+<text x="65" y="384" font-family="Arial,Helvetica,sans-serif" font-size="47" font-weight="900" fill="#fff">DRUGS DEBATE</text>
+<text x="54" y="455" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="800" fill="#f4c542">CONGRESS CLASH</text>
+<text x="54" y="491" font-family="Arial,Helvetica,sans-serif" font-size="22" font-weight="700" fill="#e5e7eb">+ DELHI AIRPORT EPISODE</text>
+<path d="M54 524H1145" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+<text x="54" y="563" font-family="Arial,Helvetica,sans-serif" font-size="21" font-weight="800" fill="#fff">AAP PUNJAB'S POST EXPLAINED</text>
+<text x="54" y="598" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#cbd2d9">Claims attributed • Context from published reporting</text>
+<rect x="0" y="654" width="1200" height="21" fill="#b51228"/>
+</svg>
